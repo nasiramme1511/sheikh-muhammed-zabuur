@@ -53,12 +53,12 @@ export default function LiveStream() {
     }
   };
 
+  const isChannelUrl = (url: string) => /youtube\.com\/@|youtube\.com\/channel\//i.test(url);
+
   const getEmbedUrl = (url: string) => {
-    if (!url) return '';
-    // If it is already an embed URL, return it
+    if (!url || isChannelUrl(url)) return '';
     if (url.includes('youtube.com/embed/')) return url;
 
-    // Convert standard YouTube watch/share URLs to embed URLs
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     if (match && match[2].length === 11) {
@@ -169,6 +169,25 @@ export default function LiveStream() {
                   allowFullScreen
                   title={state.title}
                 />
+              </div>
+            ) : state.isActive && state.url && isChannelUrl(state.url) ? (
+              <div className="aspect-video w-full rounded-2xl bg-gradient-to-br from-dark-800 to-dark-950 border border-white/5 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:30px_30px]" />
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 relative z-10">
+                  <ExternalLink className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 relative z-10">Live on YouTube</h3>
+                <p className="text-sm text-white/50 max-w-sm mb-6 relative z-10">
+                  The stream is active! Watch live on YouTube.
+                </p>
+                <a
+                  href={state.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/30"
+                >
+                  <Tv className="w-4 h-4" /> Watch on YouTube
+                </a>
               </div>
             ) : (
               <div className="aspect-video w-full rounded-2xl bg-gradient-to-br from-dark-800 to-dark-950 border border-white/5 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden group">

@@ -21,7 +21,7 @@ const SOCIAL_LINKS: SocialLink[] = [
   { name: 'YouTube', icon: <FaYoutube />, url: 'https://youtube.com/@sheikhmahammadzabuur-b7f?si=DE0JIVb15Eg_qyTo', color: '#FF0000' },
   { name: 'TikTok', icon: <FaTiktok />, url: 'https://www.tiktok.com/@sheikh.mahammad.z?_t=ZM-8t2Fl7d7POv&_r=1', color: '#FFFFFF' },
   { name: 'Telegram', icon: <FaTelegramPlane />, url: 'https://t.me/shaykhmohammedzabuur', color: '#229ED9' },
-  { name: 'Facebook', icon: <FaFacebook />, url: 'https://facebook.com/shaykhmohammedzabuur', color: '#1877F2' },
+  { name: 'Facebook', icon: <FaFacebook />, url: 'https://facebook.com/profile.php?id=61555767907866', color: '#1877F2' },
   { name: 'Instagram', icon: <FaInstagram />, url: 'https://instagram.com/shaykhmohammedzabuur', color: '#E4405F' },
 ];
 
