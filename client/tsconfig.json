@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/pages/admin/Lessons.tsx",
+    "src/pages/admin/Teachers.tsx",
+    "src/pages/admin/TelegramChannels.tsx",
+    "src/pages/admin/Books.tsx",
+    "src/pages/Beginner.tsx",
+    "src/pages/BookDetail.tsx",
+    "src/pages/Bookmarks.tsx",
+    "src/pages/courses/**",
+    "src/pages/Dashboard.tsx",
+    "src/pages/LessonDetail.tsx",
+    "src/pages/LevelPage.tsx",
+    "src/pages/teacher/**",
+    "src/pages/TeacherDetail.tsx",
+    "src/pages/Teachers.tsx",
+    "src/pages/TelegramChannels.tsx",
+    "src/components/AudioPlayer.tsx",
+    "src/components/sections/TelegramSection.tsx"
+  ]
+}

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="30%" stop-color="#1e293b"/>
+      <stop offset="60%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <g fill="white" opacity="0.3">
+    <circle cx="200" cy="80" r="1.5"/><circle cx="450" cy="120" r="1"/><circle cx="700" cy="60" r="1.8"/>
+    <circle cx="1000" cy="90" r="1.2"/><circle cx="1300" cy="50" r="1.5"/><circle cx="1600" cy="100" r="1"/>
+    <circle cx="1800" cy="70" r="1.8"/><circle cx="300" cy="200" r="1"/><circle cx="600" cy="180" r="1.2"/>
+    <circle cx="900" cy="150" r="1"/><circle cx="1200" cy="220" r="1.5"/><circle cx="1500" cy="170" r="0.8"/>
+    <circle cx="350" cy="300" r="1"/><circle cx="850" cy="280" r="1.3"/><circle cx="1400" cy="320" r="1"/>
+    <circle cx="1700" cy="250" r="1.2"/><circle cx="100" cy="400" r="1"/><circle cx="500" cy="380" r="0.8"/>
+    <circle cx="1100" cy="420" r="1.1"/><circle cx="1800" cy="400" r="1"/><circle cx="250" cy="500" r="0.8"/>
+    <circle cx="750" cy="480" r="1"/><circle cx="1250" cy="520" r="0.9"/><circle cx="1650" cy="490" r="1.2"/>
+  </g>
+  <g transform="translate(1400, 150)" filter="url(#glow)">
+    <circle cx="0" cy="0" r="45" fill="#FCD34D" opacity="0.9"/>
+    <circle cx="15" cy="-12" r="38" fill="#0f172a"/>
+  </g>
+  <g transform="translate(960, 520)">
+    <ellipse cx="0" cy="-120" rx="120" ry="90" fill="#1e293b" stroke="#F59E0B" stroke-width="2" opacity="0.9"/>
+    <ellipse cx="0" cy="-120" rx="80" ry="60" fill="#1e293b" stroke="#10B981" stroke-width="1" opacity="0.7"/>
+    <g transform="translate(0, -210)" filter="url(#glow)">
+      <circle cx="0" cy="0" r="12" fill="#FCD34D"/>
+      <circle cx="4" cy="-3" r="10" fill="#1e293b"/>
+    </g>
+    <rect x="-180" y="-200" width="16" height="200" fill="#1e293b" stroke="#10B981" stroke-width="1"/>
+    <rect x="-182" y="-220" width="20" height="20" fill="#1e293b" stroke="#F59E0B" stroke-width="1"/>
+    <circle cx="-172" cy="-230" r="6" fill="#10B981" filter="url(#glow)"/>
+    <rect x="164" y="-200" width="16" height="200" fill="#1e293b" stroke="#10B981" stroke-width="1"/>
+    <rect x="162" y="-220" width="20" height="20" fill="#1e293b" stroke="#F59E0B" stroke-width="1"/>
+    <circle cx="172" cy="-230" r="6" fill="#10B981" filter="url(#glow)"/>
+    <rect x="-260" y="-140" width="12" height="140" fill="#1e293b" stroke="#F59E0B" stroke-width="0.5"/>
+    <circle cx="-254" cy="-150" r="4" fill="#F59E0B" filter="url(#glow)"/>
+    <rect x="248" y="-140" width="12" height="140" fill="#1e293b" stroke="#F59E0B" stroke-width="0.5"/>
+    <circle cx="254" cy="-150" r="4" fill="#F59E0B" filter="url(#glow)"/>
+    <rect x="-100" y="-40" width="200" height="40" fill="#1e293b" stroke="#10B981" stroke-width="1"/>
+    <rect x="-60" y="0" width="120" height="100" fill="#0f172a" stroke="#F59E0B" stroke-width="1.5"/>
+    <path d="M-60,0 Q0,-60 60,0" fill="none" stroke="#10B981" stroke-width="2"/>
+    <rect x="-140" y="0" width="60" height="100" fill="#0f172a" stroke="#F59E0B" stroke-width="0.8"/>
+    <path d="M-140,0 Q-110,-40 -80,0" fill="none" stroke="#10B981" stroke-width="1.5"/>
+    <rect x="80" y="0" width="60" height="100" fill="#0f172a" stroke="#F59E0B" stroke-width="0.8"/>
+    <path d="M80,0 Q110,-40 140,0" fill="none" stroke="#10B981" stroke-width="1.5"/>
+    <rect x="-160" y="100" width="320" height="20" fill="#1e293b" stroke="#10B981" stroke-width="1"/>
+    <rect x="-160" y="-40" width="8" height="140" fill="#1e293b" stroke="#F59E0B" stroke-width="0.5"/>
+    <rect x="152" y="-40" width="8" height="140" fill="#1e293b" stroke="#F59E0B" stroke-width="0.5"/>
+  </g>
+  <rect x="0" y="620" width="1920" height="460" fill="#020617"/>
+  <g opacity="0.05" stroke="white" stroke-width="0.5" fill="none">
+    <line x1="0" y1="700" x2="200" y2="900"/><line x1="200" y1="700" x2="0" y2="900"/>
+    <line x1="400" y1="700" x2="600" y2="900"/><line x1="600" y1="700" x2="400" y2="900"/>
+    <line x1="800" y1="700" x2="1000" y2="900"/><line x1="1000" y1="700" x2="800" y2="900"/>
+    <line x1="1200" y1="700" x2="1400" y2="900"/><line x1="1400" y1="700" x2="1200" y2="900"/>
+    <line x1="1600" y1="700" x2="1800" y2="900"/><line x1="1800" y1="700" x2="1600" y2="900"/>
+  </g>
+  <g opacity="0.08">
+    <polygon points="960,400 800,1080 1120,1080" fill="#F59E0B" filter="url(#glow2)"/>
+    <polygon points="960,420 880,1080 1040,1080" fill="#10B981" filter="url(#glow2)"/>
+  </g>
+  <g fill="#F59E0B" opacity="0.06">
+    <polygon points="100,750 103,765 118,765 107,774 110,789 100,780 90,789 93,774 82,765 97,765"/>
+    <polygon points="1820,750 1823,765 1838,765 1827,774 1830,789 1820,780 1810,789 1813,774 1802,765 1817,765"/>
+    <polygon points="960,900 963,915 978,915 967,924 970,939 960,930 950,939 953,924 942,915 957,915"/>
+  </g>
+</svg>

@@ -1,0 +1,524 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int      @id @default(autoincrement())
+  email                String   @unique
+  password             String
+  name                 String
+  role                 Role     @default(USER)
+  image                String?
+  newsletterSubscribed Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  bookmarks       Bookmark[]
+  progress        UserProgress[]
+  schedules       Schedule[]
+  usageLogs       UsageLog[]
+  notifications   Notification[]
+  quizAttempts    QuizAttempt[]
+  chatMessages    ChatMessage[]
+  student         Student?
+  teacher         Teacher?
+  lessonProgress  LessonProgress[]
+  tasks           Task[]
+}
+
+enum Role {
+  USER
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  action      String   @unique
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  role         Role
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  @@unique([role, permissionId])
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrollments  Enrollment[]
+  submissions  Submission[]
+  certificates Certificate[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  nameAmharic String?
+  nameArabic  String?
+  nameOromic  String?
+  slug        String   @unique
+  description String?
+  descriptionAmharic String?
+  descriptionArabic  String?
+  descriptionOromic  String?
+  image       String?
+  icon        String?
+  color       String?
+  order       Int      @default(0)
+  isBeginner  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  books    Book[]
+  lessons  Lesson[]
+  courses  Course[]
+}
+
+model Teacher {
+  id          Int      @id @default(autoincrement())
+  userId      Int?     @unique
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name        String
+  nameAmharic String?
+  nameArabic  String?
+  nameOromic  String?
+  slug        String   @unique
+  bio         String?
+  bioAmharic  String?
+  bioArabic   String?
+  bioOromic   String?
+  image       String?
+  telegram    String?
+  youtube     String?
+  facebook    String?
+  instagram   String?
+  tiktok      String?
+  twitter     String?
+  whatsapp    String?
+  website     String?
+  languages   String?
+  specialties String?
+  education   String?
+  verified    Boolean  @default(false)
+  featured    Boolean  @default(false)
+  studentsCount Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons   Lesson[]
+  books     Book[]
+  courses   Course[]
+  resources Resource[]
+}
+
+model Book {
+  id          Int      @id @default(autoincrement())
+  title       String
+  titleAmharic String?
+  titleArabic String?
+  titleOromic String?
+  slug        String   @unique
+  description String?
+  descriptionAmharic String?
+  descriptionArabic  String?
+  descriptionOromic  String?
+  author      String?
+  pdfUrl      String?
+  pdfUrlAr    String?
+  pdfUrlAm    String?
+  pdfUrlOm    String?
+  coverImage  String?
+  coverImageAr String?
+  coverImageAm String?
+  coverImageOm String?
+  categoryId  Int?
+  teacherId   Int?
+  isBeginner  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category  Category?  @relation(fields: [categoryId], references: [id])
+  teacher   Teacher?   @relation(fields: [teacherId], references: [id])
+  lessons   Lesson[]
+  resources Resource[]
+}
+
+model Level {
+  id          Int      @id @default(autoincrement())
+  name        String
+  nameAmharic String?
+  nameArabic  String?
+  nameOromic  String?
+  slug        String   @unique
+  description String?
+  descriptionAmharic String?
+  descriptionArabic  String?
+  descriptionOromic  String?
+  order       Int      @default(0)
+  icon        String?
+  color       String?
+  createdAt   DateTime @default(now())
+
+  lessons Lesson[]
+  quizzes Quiz[]
+  courses Course[]
+}
+
+model Course {
+  id            Int            @id @default(autoincrement())
+  title         String
+  slug          String         @unique
+  thumbnail     String?
+  description   String?        @db.Text
+  teacherId     Int?
+  categoryId    Int?
+  levelId       Int?
+  language      String         @default("en")
+  duration      Int?
+  status        String         @default("DRAFT")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  teacher       Teacher?       @relation(fields: [teacherId], references: [id])
+  category      Category?      @relation(fields: [categoryId], references: [id])
+  level         Level?         @relation(fields: [levelId], references: [id])
+  modules       Module[]
+  lessons       Lesson[]
+  enrollments   Enrollment[]
+  assignments   Assignment[]
+  announcements Announcement[]
+  certificates  Certificate[]
+  quizzes       Quiz[]
+}
+
+model Module {
+  id          Int      @id @default(autoincrement())
+  courseId    Int
+  title       String
+  description String?  @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  titleAmharic String?
+  titleArabic String?
+  titleOromic String?
+  slug        String   @unique
+  description String?
+  descriptionAmharic String?
+  descriptionArabic  String?
+  descriptionOromic  String?
+  audioUrl    String
+  pdfUrl      String?
+  videoUrl    String?
+  transcript  String?  @db.Text
+  notes       String?  @db.Text
+  duration    Int?
+  episodeNumber Int?
+  categoryId  Int?
+  teacherId   Int?
+  bookId      Int?
+  levelId     Int?
+  courseId    Int?
+  moduleId    Int?
+  difficulty  String   @default("beginner")
+  isBeginner  Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  teacher     Teacher?    @relation(fields: [teacherId], references: [id])
+  book        Book?       @relation(fields: [bookId], references: [id])
+  level       Level?      @relation(fields: [levelId], references: [id])
+  course      Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  module      Module?     @relation(fields: [moduleId], references: [id], onDelete: SetNull)
+  bookmarks   Bookmark[]
+  progress    UserProgress[]
+  schedules   Schedule[]
+  lessonProgress LessonProgress[]
+  quizzes     Quiz[]
+}
+
+model LessonProgress {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  lessonId        Int
+  completed       Boolean  @default(false)
+  watchPercentage Float    @default(0)
+  completedAt     DateTime?
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Enrollment {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  courseId    Int
+  progress    Float    @default(0)
+  completed   Boolean  @default(false)
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  courseId    Int
+  title       String
+  description String?  @db.Text
+  fileUrl     String?
+  dueDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+}
+
+model Submission {
+  id           Int      @id @default(autoincrement())
+  assignmentId Int
+  studentId    Int
+  fileUrl      String
+  status       String   @default("PENDING") // PENDING, REVIEWED, PASSED, FAILED, REVISION
+  score        Int?
+  feedback     String?  @db.Text
+  submittedAt  DateTime @default(now())
+  gradedAt     DateTime?
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model Quiz {
+  id            Int           @id @default(autoincrement())
+  levelId       Int?
+  courseId      Int?
+  lessonId      Int?
+  question      String
+  questionAmharic String?
+  questionArabic  String?
+  questionOromic  String?
+  type          String        @default("MCQ") // MCQ, TF, FILL, MATCH
+  options       String
+  correctIndex  Int?
+  correctText   String?
+  points        Int           @default(1)
+  createdAt     DateTime      @default(now())
+
+  level     Level?        @relation(fields: [levelId], references: [id])
+  course    Course?       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson    Lesson?       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attempts  QuizAttempt[]
+}
+
+model QuizAttempt {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  quizId      Int
+  answerIndex Int?
+  answerText  String?
+  correct     Boolean
+  score       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model UserProgress {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  position  Float    @default(0)
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  dayOfWeek Int?
+  time      String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model UsageLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ResourceType {
+  PDF
+  AUDIO
+  VIDEO
+  IMAGE
+}
+
+model Resource {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String?      @db.Text
+  category     String
+  collection   String?
+  language     String       @default("en")
+  author       String?
+  teacherId    Int?
+  bookId       Int?
+  fileType     String       @default("pdf")
+  resourceType ResourceType @default(PDF)
+  fileUrl      String
+  fileHash     String?
+  thumbnail    String?
+  downloads    Int          @default(0)
+  views        Int          @default(0)
+  featured     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  teacher      Teacher?     @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  book         Book?        @relation(fields: [bookId], references: [id], onDelete: SetNull)
+}
+
+model Certificate {
+  id               Int      @id @default(autoincrement())
+  studentId        Int
+  courseId         Int
+  studentName      String
+  courseName       String
+  teacherName      String
+  issueDate        DateTime @default(now())
+  verificationCode String   @unique
+  qrCode           String?
+
+  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  title       String
+  description String?  @db.Text
+  dueDate     DateTime?
+  priority    String   @default("MEDIUM")
+  status      String   @default("PENDING")
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  courseId  Int?
+  title     String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model TelegramChannel {
+  id          Int      @id @default(autoincrement())
+  name        String
+  link        String
+  teacherName String?
+  description String?
+  category    String   @default("General")
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  language  String   @default("en")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  sessionId String
+  role      String
+  content   String
+  language  String   @default("en")
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

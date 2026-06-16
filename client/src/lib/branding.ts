@@ -1,0 +1,36 @@
+export const BRAND = {
+  name: 'Sheikh Mohammed Zabuur Iman Chercher College',
+  shortName: 'Sh. Mohammed Zabuur',
+  tagline: 'Authentic Islamic Knowledge Through Audio Lectures, Video Lessons, PDFs, and Live Sessions',
+  description: 'A dedicated Islamic media platform offering authentic audio lectures, video classes, PDF books, and live streams by Sheikh Mohammed Zabuur.',
+  logo: '/logo.svg',
+  logoIcon: '/favicon.svg',
+  email: 'info@shaykhmohammedzabuur.com',
+  social: {
+    facebook: '#',
+    youtube: '#',
+    telegram: 'https://t.me/Sheikh_Mohammed_Zabuur',
+    twitter: '#',
+    instagram: '#',
+  },
+  shaykh: {
+    name: 'Sheikh Mohammed Zabuur',
+    title: 'Scholar & Islamic Educator',
+    languages: ['Afaan Oromo', 'Arabic', 'English'],
+    specialties: ['Aqeedah', 'Tafsir', 'Hadith', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed'],
+  },
+  colors: {
+    primary: '#10B981',
+    primaryDark: '#047857',
+    primaryLight: '#34D399',
+    gold: '#F59E0B',
+    goldDark: '#D97706',
+    goldLight: '#FCD34D',
+  },
+  stats: {
+    audioLectures: '100+',
+    videoLectures: '50+',
+    pdfs: '30+',
+    languages: '3',
+  },
+} as const;

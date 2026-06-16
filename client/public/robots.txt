@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Sitemap: https://shaykhmohammedzabuur.com/sitemap.xml
+
+# Disallow admin routes
+Disallow: /admin/
