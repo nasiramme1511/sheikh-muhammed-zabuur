@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import {
   Palette, Save, Upload, AlertCircle, CheckCircle, Sliders, Image as ImageIcon, Eye,
@@ -610,7 +610,7 @@ export default function AdminAppearance() {
 
 /* ── Sub-components ────────────────────────────────────── */
 
-function SectionCard({ icon: Icon, title, subtitle, children }: { icon: any; title: string; subtitle: string; children: React.ReactNode }) {
+function SectionCard({ icon: Icon, title, subtitle, children }: { icon: any; title: string; subtitle: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
