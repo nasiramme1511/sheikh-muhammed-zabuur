@@ -131,7 +131,7 @@ router.post('/', authenticate, teacherOnly, async (req: AuthRequest, res: Respon
       return res.status(400).json({ error: 'Course slug already exists' });
     }
 
-    let teacherId = null;
+    let teacherId: number | null = null;
     if (req.userRole === 'TEACHER') {
       const teacher = await prisma.teacher.findUnique({ where: { userId: req.userId } });
       if (!teacher) return res.status(403).json({ error: 'Teacher profile not found' });
