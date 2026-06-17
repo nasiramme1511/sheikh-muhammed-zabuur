@@ -248,9 +248,9 @@ app.use('/api/appearance', appearanceRoutes);
 app.use('/api/download', downloadRoutes);
 app.use('/api/admin/settings', settingsRoutes);
 
-
-
-
+// Serve client static files
+const CLIENT_DIST = path.join(__dirname, '../../client/dist');
+app.use(express.static(CLIENT_DIST));
 
 app.get('/api/health', async (_, res) => {
   try {
@@ -258,6 +258,19 @@ app.get('/api/health', async (_, res) => {
     res.json({ status: 'ok', database: 'connected', uptime: process.uptime(), version: '1.0.0' });
   } catch {
     res.json({ status: 'ok', database: 'disconnected', uptime: process.uptime(), version: '1.0.0' });
+  }
+});
+
+// Fallback all other GET requests to client index.html (React Router)
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not Found' });
+  }
+  const indexPath = path.join(CLIENT_DIST, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend build not found. Please build the client first.');
   }
 });
 
