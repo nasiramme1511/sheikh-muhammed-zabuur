@@ -64,7 +64,7 @@ router.get('/:slug', optionalAuth, async (req: AuthRequest, res: Response) => {
     });
     if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
 
-    let userProgress = null;
+    let userProgress: Awaited<ReturnType<typeof prisma.userProgress.findUnique>> = null;
     let isBookmarked = false;
 
     if (req.userId) {
