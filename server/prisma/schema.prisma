@@ -58,10 +58,10 @@ model Category {
   nameArabic  String?
   nameOromic  String?
   slug        String   @unique
-  description String?
-  descriptionAmharic String?
-  descriptionArabic  String?
-  descriptionOromic  String?
+  description String?  @db.Text
+  descriptionAmharic String?  @db.Text
+  descriptionArabic  String?  @db.Text
+  descriptionOromic  String?  @db.Text
   image       String?
   icon        String?
   color       String?
@@ -84,10 +84,10 @@ model Teacher {
   nameArabic  String?
   nameOromic  String?
   slug        String   @unique
-  bio         String?
-  bioAmharic  String?
-  bioArabic   String?
-  bioOromic   String?
+  bio         String?  @db.Text
+  bioAmharic  String?  @db.Text
+  bioArabic   String?  @db.Text
+  bioOromic   String?  @db.Text
   image       String?
   telegram    String?
   youtube     String?
@@ -119,10 +119,10 @@ model Book {
   titleArabic String?
   titleOromic String?
   slug        String   @unique
-  description String?
-  descriptionAmharic String?
-  descriptionArabic  String?
-  descriptionOromic  String?
+  description String?  @db.Text
+  descriptionAmharic String?  @db.Text
+  descriptionArabic  String?  @db.Text
+  descriptionOromic  String?  @db.Text
   author      String?
   pdfUrl      String?
   pdfUrlAr    String?
@@ -212,10 +212,10 @@ model Lesson {
   titleArabic String?
   titleOromic String?
   slug        String   @unique
-  description String?
-  descriptionAmharic String?
-  descriptionArabic  String?
-  descriptionOromic  String?
+  description String?  @db.Text
+  descriptionAmharic String?  @db.Text
+  descriptionArabic  String?  @db.Text
+  descriptionOromic  String?  @db.Text
   audioUrl    String
   pdfUrl      String?
   videoUrl    String?
