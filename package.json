@@ -10,8 +10,8 @@
     "install:all": "cd server && npm install && cd ../client && npm install",
     "db:push": "cd server && npx prisma db push",
     "db:seed": "cd server && npx tsx prisma/seed.ts",
-    "build": "cd client && npm run build && cd ../server && npm run build",
-    "start": "cd server && npm start"
+    "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server && npm run build --prefix server",
+    "start": "node server/dist/index.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
