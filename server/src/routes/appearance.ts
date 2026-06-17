@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { authenticate } from '../middleware/auth';
+import { authenticate, AuthRequest } from '../middleware/auth';
 import { adminOnly } from '../middleware/admin';
+import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 
@@ -12,6 +13,36 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 const APPEARANCE_FILE = path.join(DATA_DIR, 'appearance.json');
 
+const UPLOAD_DIR = path.join(__dirname, '../../uploads/images');
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext)
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '') || 'background';
+    cb(null, `${base}-${Date.now()}${ext}`);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new Error('Only JPG, PNG, and WEBP images are allowed'));
+    }
+    cb(null, true);
+  },
+});
+
 export interface BackgroundItem {
   id: string;
   name: string;
@@ -21,6 +52,8 @@ export interface BackgroundItem {
 
 export interface AppearanceSettings {
   backgroundImage: string;
+  backgroundEnabled: boolean;
+  brightness: number;
   enableOverlay: boolean;
   overlayOpacity: number;
   overlayColor: string;
@@ -70,11 +103,13 @@ export interface AppearanceSettings {
 
 const defaultState: AppearanceSettings = {
   backgroundImage: '/uploads/images/roomaa-xiqqoo-masjid.jpg',
+  backgroundEnabled: true,
+  brightness: 0.4,
   enableOverlay: true,
-  overlayOpacity: 0.55,
+  overlayOpacity: 0.6,
   overlayColor: '#000000',
   overlayGradient: true,
-  blurStrength: 8,
+  blurStrength: 0,
   backgrounds: [
     { id: '1', name: 'Masjid Background', url: '/uploads/images/roomaa-xiqqoo-masjid.jpg', active: true },
   ],
@@ -162,6 +197,22 @@ router.put('/', authenticate, adminOnly, (req: Request, res: Response) => {
 router.post('/reset', authenticate, adminOnly, (_req: Request, res: Response) => {
   writeState({ ...defaultState });
   res.json({ ...defaultState });
+});
+
+router.post('/upload', authenticate, adminOnly, (req: AuthRequest, res: Response) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const url = `/uploads/images/${req.file.filename}`;
+    const current = readState();
+    current.backgroundImage = url;
+    writeState(current);
+    res.json({ url, settings: current });
+  });
 });
 
 export default router;

@@ -9,6 +9,8 @@
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:seed-telegram": "tsx prisma/seed-telegram.ts",
+    "prisma:cleanup-telegram": "tsx prisma/cleanup-telegram.ts",
     "backfill:collections": "tsx scripts/backfillCollections.ts"
   },
   "dependencies": {

@@ -12,6 +12,8 @@ import {
 import { live as liveApi, resources as resourcesApi, telegram as telegramApi, newsletter as newsletterApi } from '../lib/api';
 import { useSEO } from '../seo/metadata';
 import { useAuth } from '../context/AuthContext';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 import { useAIChat } from '../context/AIChatContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../i18n';
@@ -36,8 +38,13 @@ const QURAN_VERSE = '"And whoever does righteous deeds, whether male or female, 
 interface UpcomingStream {
   id: string;
   title: string;
+  description?: string;
+  youtubeUrl?: string;
   scheduledFor: string;
-  duration?: string;
+  startDate?: string;
+  duration?: number;
+  status?: 'upcoming' | 'live' | 'ended';
+  category?: string;
   collection?: string;
 }
 
@@ -46,12 +53,13 @@ interface LivestreamState {
   isActive: boolean;
   title: string;
   chatUrl: string;
+  youtubeChannelId: string;
   schedule: UpcomingStream[];
-  viewers?: number;
-  totalViewers?: number;
-  totalStreams?: number;
-  totalWatchHours?: number;
-  activeSubscribers?: number;
+  viewers: number;
+  totalViewers: number;
+  totalStreams: number;
+  totalWatchHours: number;
+  activeSubscribers: number;
   recordingCollection?: string;
 }
 
@@ -99,8 +107,10 @@ export default function LiveStream() {
   const { openChat } = useAIChat();
   const { dir } = useLanguage();
 
+  const { guardAction, showWall, closeWall } = useAuthGuard();
+
   const [state, setState] = useState<LivestreamState>({
-    url: '', isActive: false, title: 'Weekly Islamic Class', chatUrl: '', schedule: [],
+    url: '', isActive: false, title: 'Weekly Islamic Class', chatUrl: '', youtubeChannelId: '', schedule: [],
     viewers: 0, totalViewers: 0, totalStreams: 0, totalWatchHours: 0, activeSubscribers: 0,
   });
 
@@ -187,8 +197,19 @@ export default function LiveStream() {
 
   const isChannelUrl = (url: string) => /youtube\.com\/@|youtube\.com\/channel\//i.test(url);
 
-  const getEmbedUrl = (url: string) => {
-    if (!url || isChannelUrl(url)) return '';
+  const getEmbedUrl = (url: string, channelId?: string) => {
+    if (!url) {
+      if (channelId) {
+        return `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=0&modestbranding=1&rel=0`;
+      }
+      return '';
+    }
+    if (isChannelUrl(url)) {
+      if (channelId) {
+        return `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=0&modestbranding=1&rel=0`;
+      }
+      return '';
+    }
     if (url.includes('youtube.com/embed/')) return url;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
@@ -215,7 +236,7 @@ export default function LiveStream() {
   };
 
   const handleAddReminder = (stream: UpcomingStream) => {
-    const date = new Date(stream.scheduledFor);
+    const date = new Date(stream.scheduledFor || stream.startDate || '');
     const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(stream.title)}&dates=${date.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${new Date(date.getTime() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
     window.open(googleUrl, '_blank');
   };
@@ -228,8 +249,45 @@ export default function LiveStream() {
   };
 
   const streamingUrl = state.url;
-  const embedUrl = getEmbedUrl(streamingUrl);
+  const embedUrl = getEmbedUrl(streamingUrl, state.youtubeChannelId);
   const isChannel = isChannelUrl(streamingUrl);
+
+  const [countdown, setCountdown] = useState<string>('');
+  useEffect(() => {
+    const nextStream = state.schedule
+      .filter(s => s.status === 'upcoming' || !s.status)
+      .sort((a, b) => new Date(a.scheduledFor || a.startDate || '').getTime() - new Date(b.scheduledFor || b.startDate || '').getTime())[0];
+    if (!nextStream) { setCountdown(''); return; }
+    const target = new Date(nextStream.scheduledFor || nextStream.startDate || '').getTime();
+    if (!target) { setCountdown(''); return; }
+    const tick = () => {
+      const diff = target - Date.now();
+      if (diff <= 0) { setCountdown('Starting soon'); return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setCountdown(d > 0 ? `${d}d ${h}h ${m}m ${s}s` : `${h}h ${m}m ${s}s`);
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [state.schedule]);
+
+  // Simulate viewer count when live
+  useEffect(() => {
+    if (!state.isActive) return;
+    const base = state.viewers || 0;
+    const interval = setInterval(() => {
+      const delta = Math.floor(Math.random() * 5) - 2;
+      setState(prev => ({
+        ...prev,
+        viewers: Math.max(0, (prev.viewers || base) + delta),
+        totalViewers: (prev.totalViewers || 0) + (delta > 0 ? delta : 0),
+      }));
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [state.isActive]);
   const filteredRecordings = activeCategory === 'All' ? recordings : recordings.filter((r) =>
     r.collection?.toLowerCase().includes(activeCategory.toLowerCase()) || r.category?.toLowerCase().includes(activeCategory.toLowerCase())
   );
@@ -269,29 +327,49 @@ export default function LiveStream() {
           <div className="relative z-10 w-full px-8 py-12 md:py-16">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="space-y-4 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 text-xs font-bold uppercase tracking-wider">
+                <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                  state.isActive
+                    ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                    : countdown
+                      ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                      : 'bg-gray-500/15 text-gray-400 border border-gray-500/30'
+                }`}>
                   {state.isActive && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
-                  {state.isActive ? 'LIVE NOW' : 'STARTING SOON'}
+                  {state.isActive ? 'LIVE NOW' : countdown ? 'STARTING SOON' : 'OFFLINE'}
                 </div>
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
                   {state.title || 'Weekly Islamic Lecture'}
                 </h1>
                 <p className="text-lg text-amber-400/80 font-medium">Hosted by Sheikh Mohammed Zabuur</p>
+                {countdown && !state.isActive && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                    <Clock className="w-4 h-4 text-amber-400" />
+                    <span className="text-sm font-mono font-bold text-amber-400">{countdown}</span>
+                    <span className="text-xs text-amber-400/60">until next stream</span>
+                  </div>
+                )}
                 <p className="text-sm text-white/60 max-w-lg leading-relaxed">
                   Join thousands of learners benefiting from authentic Islamic knowledge.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
                   {state.isActive && (
-                    <a href={state.isActive && embedUrl ? undefined : streamingUrl}
-                      onClick={(e) => { if (embedUrl) { e.preventDefault(); document.getElementById('player-section')?.scrollIntoView({ behavior: 'smooth' }); } }}
+                    <button
+                      onClick={() => guardAction(() => {
+                        if (embedUrl) {
+                          document.getElementById('player-section')?.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          window.open(streamingUrl, '_blank');
+                        }
+                      })}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-sm font-bold transition-all shadow-lg shadow-emerald-500/30">
                       <Play className="w-4 h-4" /> Watch Live
-                    </a>
+                    </button>
                   )}
-                  <a href="https://t.me/shaykhmohammedzabuur" target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500/15 text-sky-400 border border-sky-500/30 hover:bg-sky-500/25 rounded-xl text-sm font-bold transition-all">
+                  <button
+                    onClick={() => guardAction(() => window.open('https://t.me/sheikhmohammedzabuur', '_blank'))}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500/15 text-sky-400 border border-sky-500/30 hover:bg-sky-500/25 rounded-xl text-sm font-medium transition-all">
                     <MessageSquare className="w-4 h-4" /> Join Telegram
-                  </a>
+                  </button>
                   <button onClick={() => { if (user) openChat(); else toast.error('Please login to ask a question'); }}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-all">
                     <Sparkles className="w-4 h-4" /> Ask Question
@@ -414,14 +492,14 @@ export default function LiveStream() {
                       allowFullScreen
                       title={state.title}
                     />
-                  ) : state.isActive && isChannel ? (
+                  ) : state.isActive ? (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-dark-900 via-dark-800 to-dark-950 p-6 text-center">
                       <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
                         <Play className="w-8 h-8 text-red-400" />
                       </div>
                       <h3 className="text-lg font-bold mb-2">Live on YouTube</h3>
                       <p className="text-sm text-white/50 mb-5 max-w-md">The stream is active. Watch live on YouTube.</p>
-                      <a href={streamingUrl} target="_blank" rel="noopener noreferrer"
+                      <a href={streamingUrl || `https://youtube.com/@sheikhmahammadzabuur-b7f`} target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/30">
                         <Tv className="w-4 h-4" /> Watch on YouTube
                       </a>
@@ -685,7 +763,10 @@ export default function LiveStream() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {state.schedule.map((stream, idx) => (
+                  {state.schedule
+                    .filter(s => s.status !== 'ended')
+                    .sort((a, b) => new Date(a.scheduledFor || a.startDate || '').getTime() - new Date(b.scheduledFor || b.startDate || '').getTime())
+                    .map((stream, idx) => (
                     <div key={stream.id || idx}
                       className="p-5 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/5 backdrop-blur-xl hover:border-emerald-500/20 transition-all group">
                       <div className="flex items-start gap-3">
@@ -693,13 +774,21 @@ export default function LiveStream() {
                           <Radio className="w-4 h-4 text-emerald-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold truncate">{stream.title}</h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm font-bold truncate">{stream.title}</h3>
+                            {stream.category && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{stream.category}</span>
+                            )}
+                          </div>
+                          {stream.description && (
+                            <p className="text-[10px] text-white/50 mt-1 line-clamp-1">{stream.description}</p>
+                          )}
                           <p className="text-xs text-emerald-400 mt-1.5 flex items-center gap-1.5">
                             <Clock className="w-3 h-3" />
-                            {formatDate(stream.scheduledFor)}
+                            {formatDate(stream.scheduledFor || stream.startDate || '')}
                           </p>
                           {stream.duration && (
-                            <p className="text-[10px] text-white/40 mt-1">{stream.duration}</p>
+                            <p className="text-[10px] text-white/40 mt-1">{stream.duration} min</p>
                           )}
                           <div className="flex gap-2 mt-3">
                             <button onClick={() => handleAddReminder(stream)}
@@ -846,14 +935,14 @@ export default function LiveStream() {
                   </div>
                   <ExternalLink className="w-3 h-3 text-white/20 group-hover:text-white transition-all shrink-0" />
                 </a>
-                <a href="https://t.me/shaykhmohammedzabuur" target="_blank" rel="noopener noreferrer"
+                <a href="https://t.me/sheikhmohammedzabuur" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/[0.04] border border-sky-500/10 hover:bg-sky-500/[0.08] hover:border-sky-500/30 transition-all group">
                   <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
                     <Send className="w-4 h-4 text-sky-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">Telegram</p>
-                    <p className="text-[10px] text-white/40">@shaykhmohammedzabuur</p>
+                    <p className="text-[10px] text-white/40">@sheikhmohammedzabuur</p>
                   </div>
                   <ExternalLink className="w-3 h-3 text-white/20 group-hover:text-sky-400 transition-all shrink-0" />
                 </a>
@@ -881,7 +970,7 @@ export default function LiveStream() {
                 <div className="space-y-2.5">
                   {TELEGRAM_COLLECTIONS.map((ch) => (
                     <a key={ch.slug}
-                      href={`https://t.me/shaykhmohammedzabuur`}
+                      href={`https://t.me/sheikhmohammedzabuur`}
                       target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-sky-500/20 transition-all group">
                       <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
@@ -942,7 +1031,7 @@ export default function LiveStream() {
               )}
             </div>
 
-            {/* AI Assistant */}
+            {/* AI Scholar */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/[0.06] to-emerald-500/[0.02] border border-emerald-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-emerald-400" />
@@ -964,6 +1053,8 @@ export default function LiveStream() {
           </div>
         </div>
       </div>
+
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
     </div>
   );
 }

@@ -23,6 +23,11 @@ const SUGGESTIONS: Record<string, string[]> = {
     'Recommend Aqeedah teachers',
     'Daily learning plan',
     'Find Hadith lessons',
+    'Recommend lessons',
+    'Recommend PDFs',
+    'Recommend audio',
+    'Create study plan',
+    'Track my progress',
   ],
   ar: [
     'من أين أبدأ؟',
@@ -31,6 +36,11 @@ const SUGGESTIONS: Record<string, string[]> = {
     'توصية مدرسي العقيدة',
     'خطة تعلم يومية',
     'دروس الحديث',
+    'توصية دروس',
+    'توصية PDF',
+    'توصية صوتيات',
+    'إنشاء خطة دراسة',
+    'تتبع تقدمي',
   ],
   am: [
     'ከየት መጀመር አለብኝ?',
@@ -39,6 +49,11 @@ const SUGGESTIONS: Record<string, string[]> = {
     'የአቅዳ አስተማሪዎችን መክር',
     'ዕለታዊ የትምህርት እቅድ',
     'የሐዲስ ትምህርቶችን ፈልግ',
+    'ትምህርቶችን ይምከሩ',
+    'PDFs ይምከሩ',
+    'ኦዲዮ ይምከሩ',
+    'የጥናት ዕቅድ ይፍጠሩ',
+    'እድገቴን ይከታተሉ',
   ],
   om: [
     'Eessa irraa eegaluu qaba?',
@@ -47,6 +62,11 @@ const SUGGESTIONS: Record<string, string[]> = {
     'Barsistoota Aqeedah akeekkachiisi',
     'Karoora barumsa guyyaa',
     'Barumsa Hadith barbaadi',
+    'Barumsa gorsi',
+    'PDF gorsi',
+    'Sagalee gorsi',
+    'Karoora barumsaa uumi',
+    'Fudurrii koo hordofi',
   ],
 };
 

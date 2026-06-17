@@ -8,6 +8,8 @@ import { resources as resourcesApi, collections as collectionsApi } from '../lib
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 
 const CATEGORIES = [
   'All PDFs',
@@ -34,6 +36,8 @@ export default function PdfLibrary() {
   const [collectionStats, setCollectionStats] = useState<Record<string, number>>({});
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const { guardAction, showWall, closeWall } = useAuthGuard();
 
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -88,17 +92,24 @@ export default function PdfLibrary() {
   };
 
   const handlePreview = (pdf: Resource) => {
-    setPreviewPdf(pdf);
-    resourcesApi.view(pdf.id);
+    guardAction(() => {
+      setPreviewPdf(pdf);
+      resourcesApi.view(pdf.id);
+    });
   };
 
-  const handleDownload = async (id: number) => {
+  const handleDownload = async (id: number, url: string) => {
     try {
       await resourcesApi.download(id);
       setPdfs(prev => prev.map(p => p.id === id ? { ...p, downloads: p.downloads + 1 } : p));
+      window.open(url, '_blank');
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDownloadGuarded = (id: number, url: string) => {
+    guardAction(() => handleDownload(id, url));
   };
 
   const filteredPdfs = pdfs
@@ -416,14 +427,12 @@ export default function PdfLibrary() {
                     >
                       <Eye className="w-4 h-4" /> Preview
                     </button>
-                    <a
-                      href={pdf.url}
-                      download
-                      onClick={() => handleDownload(pdf.id)}
+                    <button
+                      onClick={() => handleDownloadGuarded(pdf.id, pdf.url)}
                       className="flex-1 btn-icc py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-none"
                     >
                       <Download className="w-4 h-4" /> Download
-                    </a>
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -466,14 +475,12 @@ export default function PdfLibrary() {
                   >
                     <Eye className="w-3.5 h-3.5" /> Preview
                   </button>
-                  <a
-                    href={pdf.url}
-                    download
-                    onClick={() => handleDownload(pdf.id)}
+                  <button
+                    onClick={() => handleDownloadGuarded(pdf.id, pdf.url)}
                     className="px-3 py-2 rounded-lg btn-icc text-xs font-semibold flex items-center gap-1.5 transition-all shadow-none"
                   >
                     <Download className="w-3.5 h-3.5" /> Download
-                  </a>
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -508,15 +515,13 @@ export default function PdfLibrary() {
                   <span className="text-sm font-semibold text-white truncate max-w-md">{previewPdf.title}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <a
-                    href={previewPdf.url}
-                    download
-                    onClick={() => handleDownload(previewPdf.id)}
+                  <button
+                    onClick={() => handleDownloadGuarded(previewPdf.id, previewPdf.url)}
                     className="w-8 h-8 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/5 flex items-center justify-center transition-all"
                     title="Download Book"
                   >
                     <Download className="w-4 h-4 text-white/70" />
-                  </a>
+                  </button>
                   <button
                     onClick={() => setFullscreen(!fullscreen)}
                     className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center transition-all"
@@ -543,6 +548,8 @@ export default function PdfLibrary() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
     </div>
   );
 }

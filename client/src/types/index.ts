@@ -379,6 +379,7 @@ export interface Resource {
   resourceType: 'PDF' | 'AUDIO' | 'VIDEO' | 'IMAGE';
   createdAt: string;
   featured: boolean;
+  published?: boolean;
   downloads: number;
   views: number;
   thumbnail?: string;

@@ -3,5 +3,11 @@
   "isActive": false,
   "title": "Weekly Islamic Lecture",
   "chatUrl": "https://youtube.com/@sheikhmahammadzabuur-b7f?si=DE0JIVb15Eg_qyTo",
-  "schedule": []
+  "youtubeChannelId": "",
+  "schedule": [],
+  "viewers": 0,
+  "totalViewers": 0,
+  "totalStreams": 0,
+  "totalWatchHours": 0,
+  "activeSubscribers": 0
 }

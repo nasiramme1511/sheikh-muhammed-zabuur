@@ -16,7 +16,14 @@ const LIVESTREAM_FILE = path.join(DATA_DIR, 'livestream.json');
 interface UpcomingStream {
   id: string;
   title: string;
+  description?: string;
+  youtubeUrl?: string;
   scheduledFor: string;
+  startDate?: string;
+  duration?: number;
+  status?: 'upcoming' | 'live' | 'ended';
+  category?: string;
+  collection?: string;
 }
 
 interface LivestreamState {
@@ -24,7 +31,13 @@ interface LivestreamState {
   isActive: boolean;
   title: string;
   chatUrl: string;
+  youtubeChannelId: string;
   schedule: UpcomingStream[];
+  viewers: number;
+  totalViewers: number;
+  totalStreams: number;
+  totalWatchHours: number;
+  activeSubscribers: number;
 }
 
 const defaultState: LivestreamState = {
@@ -32,7 +45,13 @@ const defaultState: LivestreamState = {
   isActive: false,
   title: 'Weekly Islamic Lecture',
   chatUrl: '',
-  schedule: []
+  youtubeChannelId: '',
+  schedule: [],
+  viewers: 0,
+  totalViewers: 0,
+  totalStreams: 0,
+  totalWatchHours: 0,
+  activeSubscribers: 0,
 };
 
 function readState(): LivestreamState {
@@ -63,7 +82,7 @@ router.get('/', (_req: Request, res: Response) => {
 // PUT /api/live
 router.put('/', authenticate, adminOnly, async (req: Request, res: Response) => {
   try {
-    const { url, isActive, title, chatUrl, schedule, collection } = req.body;
+    const { url, isActive, title, chatUrl, youtubeChannelId, schedule, collection, viewers, totalViewers, totalStreams, totalWatchHours, activeSubscribers } = req.body;
     const currentState = readState();
     const wasActive = currentState.isActive;
 
@@ -71,13 +90,25 @@ router.put('/', authenticate, adminOnly, async (req: Request, res: Response) => 
     if (isActive !== undefined) currentState.isActive = !!isActive;
     if (title !== undefined) currentState.title = title;
     if (chatUrl !== undefined) currentState.chatUrl = chatUrl;
+    if (youtubeChannelId !== undefined) currentState.youtubeChannelId = youtubeChannelId;
     if (schedule !== undefined && Array.isArray(schedule)) {
       currentState.schedule = schedule;
+    }
+    if (viewers !== undefined) currentState.viewers = viewers;
+    if (totalViewers !== undefined) currentState.totalViewers = totalViewers;
+    if (totalStreams !== undefined) currentState.totalStreams = totalStreams;
+    if (totalWatchHours !== undefined) currentState.totalWatchHours = totalWatchHours;
+    if (activeSubscribers !== undefined) currentState.activeSubscribers = activeSubscribers;
+
+    // Track analytics: increment totalStreams when going live
+    if (!wasActive && currentState.isActive) {
+      currentState.totalStreams = (currentState.totalStreams || 0) + 1;
     }
 
     writeState(currentState);
 
     // Auto-save recording when stream ends
+    let savedRecordingUrl = '';
     if (wasActive && !currentState.isActive && currentState.url) {
       try {
         const finalTitle = title || currentState.title || 'Live Stream Recording';
@@ -87,7 +118,7 @@ router.put('/', authenticate, adminOnly, async (req: Request, res: Response) => 
           where: { fileUrl: currentState.url, fileType: 'recording' },
         });
         if (!existing) {
-          await prisma.resource.create({
+          const rec = await prisma.resource.create({
             data: {
               title: `${finalTitle} (${dateStr})`,
               fileUrl: currentState.url,
@@ -100,13 +131,38 @@ router.put('/', authenticate, adminOnly, async (req: Request, res: Response) => 
               downloads: 0,
             },
           });
+          savedRecordingUrl = rec.fileUrl;
         }
       } catch (recErr) {
         console.error('Failed to auto-save recording:', recErr);
       }
     }
 
-    res.json(currentState);
+    // Auto-mark scheduled streams as ended when stream ends
+    if (wasActive && !currentState.isActive) {
+      currentState.schedule = currentState.schedule.map(s => {
+        if (s.status === 'live') return { ...s, status: 'ended' as const };
+        return s;
+      });
+      writeState(currentState);
+    }
+
+    // Mark scheduled streams as live when starting
+    if (!wasActive && currentState.isActive) {
+      currentState.schedule = currentState.schedule.map(s => {
+        if (s.status === 'upcoming') {
+          const schedDate = s.scheduledFor || s.startDate;
+          if (schedDate) {
+            const diff = Math.abs(new Date().getTime() - new Date(schedDate).getTime());
+            if (diff < 3600000) return { ...s, status: 'live' as const };
+          }
+        }
+        return s;
+      });
+      writeState(currentState);
+    }
+
+    res.json({ ...currentState, savedRecording: savedRecordingUrl });
   } catch (err) {
     res.status(500).json({ error: 'Failed to update live stream details' });
   }

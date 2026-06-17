@@ -152,7 +152,7 @@ async function getSheikhTeacherId(): Promise<number | null> {
     const created = await prisma.teacher.create({
       data: {
         name: 'Sheikh Mohammed Zabuur',
-        slug: 'shaykh-mohammed-zabuur',
+        slug: 'sheikh-mohammed-zabuur',
         verified: true,
         featured: true,
       },
@@ -294,10 +294,10 @@ router.post('/', (req: AuthRequest, res: Response) => {
             continue;
           }
           if (duplicateAction === 'replace') {
-            const shaykhId = await getSheikhTeacherId();
+            const sheikhId = await getSheikhTeacherId();
             await prisma.resource.update({
               where: { id: existing.id },
-              data: { title, category, collection, language, resourceType: resourceType as any, fileType: typeLabel, fileHash: fileHash || existing.fileHash, featured: defaultFeatured, teacherId: shaykhId, updatedAt: new Date() },
+              data: { title, category, collection, language, resourceType: resourceType as any, fileType: typeLabel, fileHash: fileHash || existing.fileHash, featured: defaultFeatured, teacherId: sheikhId, updatedAt: new Date() },
             });
             results.push({ file: file.originalname, url: fileUrl, status: 'replaced' });
             try { fs.unlinkSync(file.path); } catch {}
@@ -306,7 +306,7 @@ router.post('/', (req: AuthRequest, res: Response) => {
           if (duplicateAction === 'rename') {
             const timestamp = Date.now();
             const renamedTitle = `${title} (${timestamp})`;
-            const shaykhId = await getSheikhTeacherId();
+            const sheikhId = await getSheikhTeacherId();
             const resource = await prisma.resource.create({
               data: {
                 title: renamedTitle,
@@ -318,7 +318,7 @@ router.post('/', (req: AuthRequest, res: Response) => {
                 collection,
                 language,
                 featured: defaultFeatured,
-                teacherId: shaykhId,
+                teacherId: sheikhId,
                 downloads: 0,
                 views: 0,
               },
@@ -341,7 +341,7 @@ router.post('/', (req: AuthRequest, res: Response) => {
           }
         }
 
-        const shaykhId = await getSheikhTeacherId();
+        const sheikhId = await getSheikhTeacherId();
         const resource = await prisma.resource.create({
           data: {
             title,
@@ -353,7 +353,7 @@ router.post('/', (req: AuthRequest, res: Response) => {
             collection,
             language,
             featured: defaultFeatured,
-            teacherId: shaykhId,
+            teacherId: sheikhId,
             downloads: 0,
             views: 0,
           },
@@ -450,7 +450,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
             continue;
           }
           if (duplicateAction === 'replace') {
-            const shaykhId = await getSheikhTeacherId();
+            const sheikhId = await getSheikhTeacherId();
             await prisma.resource.update({
               where: { id: existing.id },
               data: {
@@ -460,7 +460,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
                 fileType: sub === 'pdfs' ? 'pdf' : sub === 'audio' ? 'audio' : sub === 'videos' ? 'video' : 'image',
                 language,
                 featured,
-                teacherId: shaykhId,
+                teacherId: sheikhId,
                 fileHash: fileHash || existing.fileHash,
                 updatedAt: new Date(),
               },
@@ -471,7 +471,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
           if (duplicateAction === 'rename') {
             const timestamp = Date.now();
             const renamedTitle = `${prettyTitle(file)} (${timestamp})`;
-            const shaykhId = await getSheikhTeacherId();
+            const sheikhId = await getSheikhTeacherId();
             await prisma.resource.create({
               data: {
                 title: renamedTitle,
@@ -482,7 +482,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
                 category: detectCategory(file),
                 language,
                 featured,
-                teacherId: shaykhId,
+                teacherId: sheikhId,
               },
             });
             results.push({ file, url: fileUrl, status: 'created', message: 'Created as renamed copy' });
@@ -494,7 +494,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
         const category = detectCategory(file);
         let fileSize = 0;
         try { fileSize = fs.statSync(filePath).size; } catch {}
-        const shaykhId = await getSheikhTeacherId();
+        const sheikhId = await getSheikhTeacherId();
 
         await prisma.resource.create({
           data: {
@@ -506,7 +506,7 @@ router.post('/scan-folder', async (req: AuthRequest, res: Response) => {
             category,
             language,
             featured,
-            teacherId: shaykhId,
+            teacherId: sheikhId,
           },
         });
         results.push({ file, title, url: fileUrl, category, resourceType, status: 'created' });

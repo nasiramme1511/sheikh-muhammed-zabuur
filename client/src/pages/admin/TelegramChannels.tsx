@@ -1,11 +1,11 @@
-﻿import { useState, useEffect } from 'react';
-import { HiPlus, HiPencil, HiTrash } from 'react-icons/hi';
+﻿import { useState, useEffect, useCallback } from 'react';
+import { HiPlus, HiPencil, HiTrash, HiMenu } from 'react-icons/hi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { admin } from '../../lib/api';
 import { AdminModal, ConfirmDeleteModal } from '../../components/admin';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = ['RIYAD', 'TAFSIR', 'TAJREED', 'BULUGH AL-MARAM', 'USUL AL-THALATHAH', 'AQEEDAH', 'BAYQUNIYYAH', 'General'];
+const CATEGORIES = ['RIYADH', 'TAFSIR', 'BULUGH', 'TAJREED', 'USUL', 'BAYQUNIYYAH', 'TAWHEED', 'General'];
 
 interface TelegramChannel {
   id?: number;
@@ -15,6 +15,7 @@ interface TelegramChannel {
   description: string;
   category: string;
   enabled: boolean;
+  order?: number;
 }
 
 const emptyForm: TelegramChannel = { name: '', link: '', teacherName: 'Sheikh Muhammad Zabuur', description: '', category: 'General', enabled: true };
@@ -28,16 +29,18 @@ export default function AdminTelegramChannels() {
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     admin.telegram.getAll()
       .then((res) => setItems(res.data ?? []))
       .catch(() => toast.error('Failed to load Telegram channels'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { load() }, []);
+  useEffect(() => { load() }, [load]);
 
   const openCreate = () => {
     setEditId(null);
@@ -97,6 +100,23 @@ export default function AdminTelegramChannels() {
     }
   };
 
+  const handleDragStart = (idx: number) => setDragIndex(idx);
+  const handleDragOver = (idx: number) => { if (dragIndex !== null && dragIndex !== idx) setOverIndex(idx); };
+  const handleDragLeave = () => setOverIndex(null);
+  const handleDrop = async () => {
+    if (dragIndex === null || overIndex === null || dragIndex === overIndex) { setDragIndex(null); setOverIndex(null); return; }
+    const reordered = [...items];
+    const [moved] = reordered.splice(dragIndex, 1);
+    reordered.splice(overIndex, 0, moved);
+    setItems(reordered);
+    setDragIndex(null);
+    setOverIndex(null);
+    try {
+      await admin.telegram.reorder(reordered.map((i: TelegramChannel) => i.id!));
+      toast.success('Reordered');
+    } catch { toast.error('Failed to save order'); }
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -121,6 +141,8 @@ export default function AdminTelegramChannels() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800">
+                  <th className="px-4 py-3 w-10"></th>
+                  <th className="px-4 py-3">Order</th>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3">Link</th>
@@ -131,7 +153,19 @@ export default function AdminTelegramChannels() {
               </thead>
               <tbody>
                 {items.map((item, i) => (
-                  <tr key={item.id ?? i} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <tr
+                    key={item.id ?? i}
+                    draggable
+                    onDragStart={() => handleDragStart(i)}
+                    onDragOver={() => handleDragOver(i)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 ${overIndex === i ? 'ring-2 ring-primary-500' : ''}`}
+                  >
+                    <td className="px-4 py-3 cursor-grab active:cursor-grabbing text-gray-400">
+                      <HiMenu className="w-4 h-4" />
+                    </td>
+                    <td className="px-4 py-3 text-xs text-gray-400">{i + 1}</td>
                     <td className="px-4 py-3 font-medium">
                       <div className="flex items-center gap-2">
                         <FaTelegramPlane className="w-4 h-4 text-blue-500" />

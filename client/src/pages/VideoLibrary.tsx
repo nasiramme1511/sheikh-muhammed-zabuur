@@ -8,6 +8,8 @@ import { resources as resourcesApi, collections as collectionsApi } from '../lib
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 
 const CATEGORIES = [
   'All Videos',
@@ -33,6 +35,8 @@ export default function VideoLibrary() {
   const [collectionStats, setCollectionStats] = useState<Record<string, number>>({});
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const { guardAction, showWall, closeWall } = useAuthGuard();
 
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -102,8 +106,17 @@ export default function VideoLibrary() {
   };
 
   const handleVideoSelect = (video: Resource) => {
-    setActiveVideo(video);
-    resourcesApi.view(video.id);
+    guardAction(() => {
+      setActiveVideo(video);
+      resourcesApi.view(video.id);
+    });
+  };
+
+  const handleVideoDownloadGuarded = (id: number, url: string) => {
+    guardAction(() => {
+      resourcesApi.download(id);
+      window.open(url, '_blank');
+    });
   };
 
   const filteredVideos = videos
@@ -522,14 +535,12 @@ export default function VideoLibrary() {
                     </span>
                   </div>
                   {!getYoutubeId(activeVideo.url) && (
-                    <a
-                      href={activeVideo.url}
-                      download
-                      onClick={() => resourcesApi.download(activeVideo.id)}
+                    <button
+                      onClick={() => handleVideoDownloadGuarded(activeVideo.id, activeVideo.url)}
                       className="btn-icc text-xs py-2 px-4 rounded-lg flex items-center gap-1.5"
                     >
                       <Download className="w-4 h-4" /> Download Video File
-                    </a>
+                    </button>
                   )}
                 </div>
                 <p className="text-sm text-white/60">{activeVideo.description || 'No additional details provided for this video lecture.'}</p>
@@ -538,6 +549,8 @@ export default function VideoLibrary() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
     </div>
   );
 }

@@ -61,7 +61,7 @@ const ITEMS_PER_PAGE = 20;
 
 const MOCK_USERS = [
   { id: 1, name: 'Admin User', email: 'admin@islamiclearning.org', role: 'ADMIN' },
-  { id: 2, name: 'Sheikh Mohammed Zabuur', email: 'shaykh@islamiclearning.org', role: 'TEACHER' },
+  { id: 2, name: 'Sheikh Mohammed Zabuur', email: 'sheikh@islamiclearning.org', role: 'TEACHER' },
   { id: 3, name: 'Fatima Hassan', email: 'fatima@example.com', role: 'USER' },
   { id: 4, name: 'Abdullah Khalid', email: 'abdullah@example.com', role: 'USER' },
   { id: 5, name: 'Aisha Omar', email: 'aisha@example.com', role: 'STUDENT' },

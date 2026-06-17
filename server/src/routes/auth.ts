@@ -2,10 +2,11 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
+import { validate, registerSchema, loginSchema } from '../middleware/validate';
 
 const router = Router();
 
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', validate(registerSchema), async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
     const exists = await prisma.user.findUnique({ where: { email } });
@@ -32,7 +33,7 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', validate(loginSchema), async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({

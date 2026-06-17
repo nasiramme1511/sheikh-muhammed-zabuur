@@ -9,8 +9,8 @@ const FALLBACKS: Record<string, FallbackGroup> = {
   greetings: {
     patterns: [/^(hi|hello|hey|salam|assalam|as-salam|peace|marhaba)/i],
     responses: [
-      () => "Wa alaykum assalam wa rahmatullahi wa barakatuh! 👋\n\nI'm the Sheikh Mohammed Zabuur Iman Chercher College AI assistant, currently in offline mode. I can still answer many questions about our platform and Islamic studies. What would you like help with?",
-      () => "Hello! 🌙 Welcome to Sheikh Mohammed Zabuur Iman Chercher College. I'm operating in offline mode right now, but I'm still here to guide you. Feel free to ask about lessons, teachers, or where to begin your Islamic learning journey.",
+      () => "Wa alaykum assalam wa rahmatullahi wa barakatuh! 👋\n\nI'm the Iman Chercher AI Scholar, currently in offline mode. I can still answer many questions about our platform and Islamic studies. What would you like help with?",
+      () => "Hello! 🌙 Welcome to Sheikh Mohammed Zabuur Iman Chercher College. The AI Scholar is operating in offline mode right now, but I'm still here to guide you. Feel free to ask about lessons, teachers, or where to begin your Islamic learning journey.",
     ],
   },
   beginner: {
@@ -105,7 +105,7 @@ const FALLBACKS: Record<string, FallbackGroup> = {
     ],
   },
   about: {
-    patterns: [/about|what is|shaykh.*mohammed.*zabuur|platform|this (site|website|app)/i],
+    patterns: [/about|what is|sheikh.*mohammed.*zabuur|platform|this (site|website|app)/i],
     responses: [
       () => "**Sheikh Mohammed Zabuur Iman Chercher College** is an Islamic online learning platform. 📚\n\n**What we offer:**\n- Audio lessons from qualified teachers\n- All Islamic sciences\n- Structured levels with quizzes\n- PDF books and resources\n- Progress tracking\n- 4 languages (EN, AR, AM, OM)\n\n*\"Seeking knowledge is an obligation upon every Muslim.\"*",
     ],

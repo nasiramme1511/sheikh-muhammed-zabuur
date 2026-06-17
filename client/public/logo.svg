@@ -70,9 +70,9 @@
     <polygon points="0,-8 7,-3 4,5 -4,5 -7,-3" fill="url(#g2)"/>
   </g>
 
-  <!-- Text: Shaykh Mohammed Zabuur Islamic Learning Platform -->
-  <text x="115" y="58" class="icc-title" font-size="34" fill="white" dominant-baseline="central">Shaykh Mohammed</text>
-  <text x="115" y="92" class="icc-sub" font-size="14" fill="rgba(255,255,255,0.5)" dominant-baseline="central">ISLAMIC LEARNING PLATFORM</text>
+  <!-- Text: Sheikh Mohammed Zabuur Iman Chercher College -->
+  <text x="115" y="58" class="icc-title" font-size="34" fill="white" dominant-baseline="central">Sheikh Mohammed</text>
+  <text x="115" y="92" class="icc-sub" font-size="14" fill="rgba(255,255,255,0.5)" dominant-baseline="central">IMAN CHERCHER COLLEGE</text>
 
   <!-- Decorative line under text -->
   <line x1="115" y1="102" x2="380" y2="102" stroke="url(#g3)" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>

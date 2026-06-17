@@ -18,7 +18,7 @@ export default function Terms() {
       publisher: { '@type': 'Organization', name: 'Sheikh Mohammed Zabuur Iman Chercher College' },
       dateModified: '2026-06-01',
       inLanguage: ['en', 'ar', 'am', 'om'],
-      isPartOf: { '@type': 'WebSite', name: 'Sheikh Mohammed Zabuur Iman Chercher College', url: 'https://shaykhmohammedzabuur.com' },
+      isPartOf: { '@type': 'WebSite', name: 'Sheikh Mohammed Zabuur Iman Chercher College', url: 'https://sheikhmohammedzabuur.com' },
     },
   });
 

@@ -4,6 +4,7 @@ import { X, Send, Trash2, RotateCcw, Sparkles } from 'lucide-react';
 import { useAIChat } from '../../context/AIChatContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../i18n';
+import type { TranslationKey } from '../../i18n';
 import ChatMessage from './ChatMessage';
 import AITypingIndicator from './AITypingIndicator';
 import QuickPrompts from './QuickPrompts';
@@ -142,26 +143,28 @@ export default function AIChatPanel() {
                 <p className="text-sm text-white/50 leading-relaxed max-w-[260px] mb-3">
                   {t('ai_assistant.empty_desc')}
                 </p>
-                <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Aqeedah
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Tafsir
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Hadith
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Fiqh
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Seerah
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Tajweed
-                  </span>
-                </div>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 mb-4">
+                {([
+                  { labelKey: 'ai_assistant.quick_lessons' as TranslationKey, icon: '\u{1F4DA}', promptKey: 'ai_assistant.prompt_lessons' as TranslationKey },
+                  { labelKey: 'ai_assistant.quick_pdfs' as TranslationKey, icon: '\u{1F4C4}', promptKey: 'ai_assistant.prompt_pdfs' as TranslationKey },
+                  { labelKey: 'ai_assistant.quick_audio' as TranslationKey, icon: '\u{1F3A7}', promptKey: 'ai_assistant.prompt_audio' as TranslationKey },
+                  { labelKey: 'ai_assistant.quick_collections' as TranslationKey, icon: '\u{1F4C1}', promptKey: 'ai_assistant.prompt_collections' as TranslationKey },
+                  { labelKey: 'ai_assistant.quick_study_plan' as TranslationKey, icon: '\u{1F4CB}', promptKey: 'ai_assistant.prompt_study_plan' as TranslationKey },
+                  { labelKey: 'ai_assistant.quick_track' as TranslationKey, icon: '\u{1F4CA}', promptKey: 'ai_assistant.prompt_track' as TranslationKey },
+                ]).map((action) => (
+                  <button
+                    key={action.labelKey}
+                    onClick={() => handleQuickPrompt(t(action.promptKey))}
+                    disabled={isStreaming}
+                    className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-200
+                      bg-white/5 hover:bg-icc-500/15 border border-white/5 hover:border-icc-500/30
+                      text-white/60 hover:text-icc-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    <span>{action.icon}</span>
+                    <span>{t(action.labelKey)}</span>
+                  </button>
+                ))}
+              </div>
                 <div className="w-full">
                   <QuickPrompts
                     prompts={suggestions.length > 0 ? suggestions : [

@@ -1,10 +1,12 @@
 {
   "backgroundImage": "/uploads/images/roomaa-xiqqoo-masjid.jpg",
+  "backgroundEnabled": true,
+  "brightness": 0.4,
   "enableOverlay": true,
-  "overlayOpacity": 0.55,
+  "overlayOpacity": 0.6,
   "overlayColor": "#1e293b",
   "overlayGradient": true,
-  "blurStrength": 8,
+  "blurStrength": 0,
   "backgrounds": [
     {
       "id": "1",

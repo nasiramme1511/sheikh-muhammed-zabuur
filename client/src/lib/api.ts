@@ -37,6 +37,7 @@ export const auth = {
 export const categories = {
   getAll: () => api.get('/categories'),
   getBySlug: (slug: string) => api.get(`/categories/${slug}`),
+  getBeginner: () => api.get('/categories/beginner'),
 };
 
 export const search = {
@@ -66,6 +67,7 @@ export const teachers = {
 export const books = {
   getAll: () => api.get('/books'),
   getBySlug: (slug: string) => api.get(`/books/${slug}`),
+  getByTeacher: (teacherId: number) => api.get(`/books/teacher/${teacherId}`),
 };
 
 export const newsletter = {
@@ -81,6 +83,13 @@ export const appearance = {
   get: () => api.get('/appearance'),
   update: (data: any) => api.put('/appearance', data),
   reset: () => api.post('/appearance/reset'),
+  uploadBackground: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/appearance/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };
 
 export const admin = {
@@ -96,7 +105,10 @@ export const admin = {
     getById: (id: number) => api.get(`/admin/users/${id}`),
     delete: (id: number) => api.delete(`/admin/users/${id}`),
   },
-  upload: (formData: FormData) => api.post('/admin/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  upload: (formData: FormData, onProgress?: (pct: number) => void) => api.post('/admin/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: onProgress ? (e) => { if (e.total) onProgress(Math.round((e.loaded / e.total) * 100)); } : undefined,
+  }),
   uploadBulk: (formData: FormData) => api.post('/admin/upload/bulk', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 600000,
@@ -112,6 +124,8 @@ export const admin = {
       api.post('/admin/resources/move-collection', { ids, collection }),
     autoClassify: (ids?: number[]) => api.post('/admin/resources/auto-classify', { ids }),
     deleteAll: (resourceType?: string) => api.post('/admin/resources/delete-all', { resourceType: resourceType || 'ALL' }),
+    bulkFeatured: (ids: number[], featured: boolean) => api.post('/admin/resources/bulk-featured', { ids, featured }),
+    bulkPublish: (ids: number[], published: boolean) => api.post('/admin/resources/bulk-publish', { ids, published }),
   },
   collections: {
     delete: (slug: string) => api.delete(`/admin/collections/${slug}`),
@@ -151,7 +165,26 @@ export const admin = {
     bulkDelete: (ids: number[]) => api.post('/admin/telegram/bulk-delete', { ids }),
     bulkImport: (data: any[]) => api.post('/admin/telegram/bulk-import', data),
     toggleEnabled: (id: number) => api.put(`/admin/telegram/${id}/toggle-enabled`),
+    reorder: (ids: number[]) => api.put('/admin/telegram/reorder', { ids }),
     getStats: () => api.get('/admin/telegram/stats'),
+  },
+  lessons: {
+    getAll: (params?: any) => api.get('/admin/lessons', { params }),
+    create: (data: any) => api.post('/admin/lessons', data),
+    update: (id: number, data: any) => api.put(`/admin/lessons/${id}`, data),
+    delete: (id: number) => api.delete(`/admin/lessons/${id}`),
+  },
+  teachers: {
+    getAll: (params?: any) => api.get('/admin/teachers', { params }),
+    create: (data: any) => api.post('/admin/teachers', data),
+    update: (id: number, data: any) => api.put(`/admin/teachers/${id}`, data),
+    delete: (id: number) => api.delete(`/admin/teachers/${id}`),
+  },
+  books: {
+    getAll: (params?: any) => api.get('/admin/books', { params }),
+    create: (data: any) => api.post('/admin/books', data),
+    update: (id: number, data: any) => api.put(`/admin/books/${id}`, data),
+    delete: (id: number) => api.delete(`/admin/books/${id}`),
   },
 };
 
@@ -203,12 +236,14 @@ export const downloads = {
 
 // Convenience aliases used by AudioPlayer, LessonDetail etc.
 export const bookmarks = {
+  getAll: () => api.get('/dashboard/bookmarks'),
   add: (lessonId: number) => api.post(`/dashboard/bookmarks/${lessonId}`),
   remove: (lessonId: number) => api.delete(`/dashboard/bookmarks/${lessonId}`),
   check: (lessonId: number) => api.get(`/dashboard/bookmarks/check/${lessonId}`),
 };
 
 export const progress = {
+  getAll: () => api.get('/progress'),
   update: (lessonId: number, position: number, completed = false) =>
     api.post('/progress', { lessonId, position, completed }),
 };
@@ -221,5 +256,33 @@ export const lessons = {
 export const collections = {
   getBySlug: (slug: string, params?: any) => api.get(`/resources/collections/${slug}`, { params }),
   getStats: () => api.get('/resources/collections/stats'),
+};
+
+export const courses = {
+  getAll: (params?: any) => api.get('/courses', { params }),
+  getBySlug: (slug: string) => api.get(`/courses/${slug}`),
+  getMyEnrollments: () => api.get('/courses/my-enrollments'),
+  enroll: (courseId: number) => api.post(`/courses/${courseId}/enroll`),
+  create: (data: any) => api.post('/admin/courses', data),
+  update: (id: number, data: any) => api.put(`/admin/courses/${id}`, data),
+  createModule: (courseId: number, data: any) => api.post(`/admin/courses/${courseId}/modules`, data),
+};
+
+export const levels = {
+  getAll: () => api.get('/levels'),
+  getBySlug: (slug: string) => api.get(`/levels/${slug}`),
+  getLessons: (slug: string) => api.get(`/levels/${slug}/lessons`),
+};
+
+export const tasks = {
+  getAll: () => api.get('/tasks'),
+};
+
+export const assignments = {
+  getMySubmissions: () => api.get('/assignments/my-submissions'),
+};
+
+export const certificates = {
+  getMyCertificates: () => api.get('/certificates/my'),
 };
 

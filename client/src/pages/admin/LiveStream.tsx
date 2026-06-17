@@ -9,7 +9,13 @@ import { COLLECTIONS } from '../../config/collections';
 interface UpcomingStream {
   id: string;
   title: string;
+  description?: string;
+  youtubeUrl?: string;
   scheduledFor: string;
+  startDate?: string;
+  duration?: number;
+  status?: 'upcoming' | 'live' | 'ended';
+  category?: string;
 }
 
 interface LiveState {
@@ -17,7 +23,13 @@ interface LiveState {
   isActive: boolean;
   title: string;
   chatUrl: string;
+  youtubeChannelId: string;
   schedule: UpcomingStream[];
+  viewers: number;
+  totalViewers: number;
+  totalStreams: number;
+  totalWatchHours: number;
+  activeSubscribers: number;
 }
 
 export default function AdminLiveStream() {
@@ -26,7 +38,13 @@ export default function AdminLiveStream() {
     isActive: false,
     title: 'Weekly Islamic Lecture',
     chatUrl: '',
+    youtubeChannelId: '',
     schedule: [],
+    viewers: 0,
+    totalViewers: 0,
+    totalStreams: 0,
+    totalWatchHours: 0,
+    activeSubscribers: 0,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -65,7 +83,7 @@ export default function AdminLiveStream() {
     const updated = { ...state, isActive: !state.isActive };
     setState(updated);
     try {
-      await liveApi.update({ isActive: !state.isActive });
+      await liveApi.update({ isActive: !state.isActive, collection: recordingCollection || undefined });
     } catch {
       setState(state); // revert
     }
@@ -192,6 +210,23 @@ export default function AdminLiveStream() {
             />
             <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
               Supports: youtube.com/watch?v=..., youtu.be/..., or direct embed URLs
+            </p>
+          </div>
+
+          {/* YouTube Channel ID */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              YouTube Channel ID
+            </label>
+            <input
+              type="text"
+              value={state.youtubeChannelId}
+              onChange={(e) => setState(prev => ({ ...prev, youtubeChannelId: e.target.value }))}
+              placeholder="UC_xxxxxxxxxxxxx"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono"
+            />
+            <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
+              Used for embedded live stream player. Find it in your YouTube channel URL: youtube.com/channel/<span className="font-mono">UC_...</span>
             </p>
           </div>
 
@@ -332,6 +367,39 @@ export default function AdminLiveStream() {
           )}
           {saving ? 'Saving...' : 'Save All Settings'}
         </button>
+      </div>
+
+      {/* Live Stream Analytics */}
+      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
+            <Radio className="w-4 h-4 text-emerald-500" />
+            Live Stream Analytics
+          </h2>
+        </div>
+        <div className="p-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-center">
+              <p className="text-2xl font-bold text-emerald-400">{state.totalStreams || 0}</p>
+              <p className="text-xs text-gray-400 mt-1">Total Sessions</p>
+            </div>
+            <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-center">
+              <p className="text-2xl font-bold text-blue-400">{state.totalViewers || 0}</p>
+              <p className="text-xs text-gray-400 mt-1">Total Viewers</p>
+            </div>
+            <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 text-center">
+              <p className="text-2xl font-bold text-amber-400">{state.totalWatchHours || 0}</p>
+              <p className="text-xs text-gray-400 mt-1">Watch Hours</p>
+            </div>
+            <div className="p-4 rounded-xl bg-rose-500/5 border border-rose-500/10 text-center">
+              <p className="text-2xl font-bold text-rose-400">{state.activeSubscribers || 0}</p>
+              <p className="text-xs text-gray-400 mt-1">Subscribers</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-gray-400 dark:text-gray-500 text-center">
+            Analytics are tracked automatically when you toggle the live stream.
+          </p>
+        </div>
       </div>
     </div>
   );

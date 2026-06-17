@@ -6,7 +6,7 @@ import { useSEO } from '../seo/metadata';
 import toast from 'react-hot-toast';
 
 const contactMethods = [
-  { icon: Mail, labelKey: 'contact.email' as const, value: 'info@shaykhmohammedzabuur.com', href: 'mailto:info@shaykhmohammedzabuur.com' },
+  { icon: Mail, labelKey: 'contact.email' as const, value: 'info@sheikhmohammedzabuur.com', href: 'mailto:info@sheikhmohammedzabuur.com' },
   { icon: MessageSquare, labelKey: 'contact.telegram' as const, value: '@Sheikh_Mohammed_Zabuur', href: 'https://t.me/Sheikh_Mohammed_Zabuur' },
   { icon: MapPin, labelKey: 'footer.contact_us' as const, valueKey: 'contact.address_value' as const, href: '#' },
 ];

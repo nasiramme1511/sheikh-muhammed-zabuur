@@ -94,13 +94,8 @@ export default function AdminAppearance() {
     }
     setUploading(true);
     setError('');
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('title', 'Background Image');
-    formData.append('category', 'General');
-    formData.append('resourceType', 'IMAGE');
     try {
-      const res = await adminApi.upload(formData);
+      const res = await appearanceApi.uploadBackground(file);
       if (res.data?.url) {
         update({ backgroundImage: res.data.url });
       }
@@ -312,8 +307,9 @@ export default function AdminAppearance() {
 
           {/* ── 3. OVERLAY & BLUR ────────────────────── */}
           {activeSection === 'overlay' && (
-            <SectionCard icon={Sliders} title="Overlay & Blur Controls" subtitle="Control the dimming overlay and glass blur effect site-wide">
+            <SectionCard icon={Sliders} title="Overlay & Blur Controls" subtitle="Control the dimming overlay, brightness, and glass blur effect site-wide">
               <div className="space-y-5">
+                <ToggleRow label="Enable Background" desc="Show the background image across the entire website" checked={local.backgroundEnabled} onChange={(v) => update({ backgroundEnabled: v })} />
                 <ToggleRow label="Enable Overlay" desc="Dim the background to improve text readability" checked={local.enableOverlay} onChange={(v) => update({ enableOverlay: v })} />
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overlay Color</label>
@@ -329,6 +325,7 @@ export default function AdminAppearance() {
                 </div>
                 <ToggleRow label="Gradient Overlay" desc="Apply a gradient overlay instead of solid color" checked={local.overlayGradient} onChange={(v) => update({ overlayGradient: v })} />
                 <RangeRow label="Overlay Opacity" desc="How dark the overlay appears" value={local.overlayOpacity} min={0} max={0.85} step={0.05} format={(v) => `${Math.round(v * 100)}%`} onChange={(v) => update({ overlayOpacity: v })} />
+                <RangeRow label="Background Brightness" desc="Brightness of the background image (lower = darker)" value={local.brightness} min={0} max={2} step={0.05} format={(v) => `${Math.round(v * 100)}%`} onChange={(v) => update({ brightness: v })} />
                 <RangeRow label="Blur Strength" desc="Blur effect on the background image (0-40px)" value={local.blurStrength} min={0} max={40} step={1} format={(v) => `${v}px`} onChange={(v) => update({ blurStrength: v })} />
               </div>
             </SectionCard>
@@ -528,19 +525,20 @@ export default function AdminAppearance() {
               <div className="p-4">
                 <div className="w-full aspect-[3/4] rounded-xl relative overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col"
                   style={{
-                    backgroundImage: local.backgroundImage ? `url("${local.backgroundImage}")` : undefined,
+                    backgroundImage: local.backgroundEnabled && local.backgroundImage ? `url("${local.backgroundImage}")` : undefined,
                     backgroundSize: 'cover', backgroundPosition: 'center',
+                    backgroundColor: local.backgroundEnabled ? undefined : '#020617',
                   }}
                 >
-                  {local.enableOverlay && (
+                  {(local.backgroundEnabled && local.enableOverlay) && (
                     <div className="absolute inset-0 pointer-events-none transition-all duration-300 z-0"
                       style={{
                         background: local.overlayGradient
                           ? `linear-gradient(135deg, ${local.overlayColor}dd, ${local.overlayColor}99 40%, transparent 100%)`
                           : local.overlayColor,
                         opacity: local.overlayOpacity,
-                        backdropFilter: `blur(${local.blurStrength}px)`,
-                        WebkitBackdropFilter: `blur(${local.blurStrength}px)`,
+                        backdropFilter: `blur(${local.blurStrength}px) brightness(${local.brightness})`,
+                        WebkitBackdropFilter: `blur(${local.blurStrength}px) brightness(${local.brightness})`,
                       }}
                     />
                   )}

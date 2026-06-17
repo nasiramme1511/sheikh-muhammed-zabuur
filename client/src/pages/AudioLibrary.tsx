@@ -8,6 +8,8 @@ import { resources as resourcesApi, collections as collectionsApi } from '../lib
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 
 const CATEGORIES = [
   'All Lectures',
@@ -36,6 +38,8 @@ export default function AudioLibrary() {
   const [collectionStats, setCollectionStats] = useState<Record<string, number>>({});
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const { user, showWall, guardAction, closeWall } = useAuthGuard();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
@@ -132,6 +136,10 @@ export default function AudioLibrary() {
     }
   };
 
+  const handlePlayPauseGuarded = (track: Resource) => {
+    guardAction(() => handlePlayPause(track));
+  };
+
   const formatTime = (time: number) => {
     const mins = Math.floor(time / 60);
     const secs = Math.floor(time % 60);
@@ -163,13 +171,23 @@ export default function AudioLibrary() {
     }
   };
 
-  const handleDownload = async (id: number) => {
+  const handleDownload = async (id: number, url: string) => {
     try {
       await resourcesApi.download(id);
       setAudios(prev => prev.map(a => a.id === id ? { ...a, downloads: a.downloads + 1 } : a));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDownloadGuarded = (id: number, url: string) => {
+    guardAction(() => handleDownload(id, url));
   };
 
   const scrollCategories = (dir: 'left' | 'right') => {
@@ -442,7 +460,7 @@ export default function AudioLibrary() {
                   className={`glass-premium p-6 flex flex-col justify-between h-full relative overflow-hidden group cursor-pointer ${
                     isCurrent ? 'border-emerald-500/40 shadow-lg shadow-emerald-500/10' : ''
                   }`}
-                  onClick={() => handlePlayPause(audio)}
+                  onClick={() => handlePlayPauseGuarded(audio)}
                 >
                   {/* Progress indicator for currently playing */}
                   {isCurrent && (
@@ -455,14 +473,25 @@ export default function AudioLibrary() {
                   )}
 
                   <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className={`p-3 rounded-xl ${isCurrent ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
-                        {playing ? <BarChart3 className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
+                      <div className="flex justify-between items-start mb-4">
+                        <div className={`p-3 rounded-xl ${isCurrent ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+                          {playing ? <BarChart3 className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
+                        </div>
+                        <div className="flex flex-wrap gap-1 justify-end">
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/5 border border-white/10 text-white/60">
+                            {audio.category}
+                          </span>
+                          {audio.collection && (() => {
+                            const col = getCollectionBySlug(audio.collection);
+                            const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 border-white/10 text-white/50') : 'bg-white/5 border-white/10 text-white/50';
+                            return (
+                              <span className={`px-2.5 py-1 rounded-full text-[10px] font-medium border ${colColor}`}>
+                                {col?.icon} {col?.name || audio.collection}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/5 border border-white/10 text-white/60">
-                        {audio.category}
-                      </span>
-                    </div>
 
                     <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors">
                       {audio.title}
@@ -485,17 +514,15 @@ export default function AudioLibrary() {
                     </div>
 
                     <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                      <a
-                        href={audio.url}
-                        download
-                        onClick={() => handleDownload(audio.id)}
+                      <button
+                        onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                         className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
                         title="Download MP3"
                       >
                         <Download className="w-4 h-4 text-white/70" />
-                      </a>
+                      </button>
                       <button
-                        onClick={() => handlePlayPause(audio)}
+                        onClick={() => handlePlayPauseGuarded(audio)}
                         className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                           playing
                             ? 'bg-emerald-500 text-white'
@@ -525,7 +552,7 @@ export default function AudioLibrary() {
                   className={`glass-premium p-4 flex items-center gap-4 group cursor-pointer relative overflow-hidden ${
                     isCurrent ? 'border-emerald-500/40 shadow-lg shadow-emerald-500/10' : ''
                   }`}
-                  onClick={() => handlePlayPause(audio)}
+                  onClick={() => handlePlayPauseGuarded(audio)}
                 >
                   {isCurrent && (
                     <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10">
@@ -540,15 +567,24 @@ export default function AudioLibrary() {
                     {playing ? <BarChart3 className="w-4 h-4" /> : <Headphones className="w-4 h-4" />}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">
-                        {audio.title}
-                      </h3>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/5 border border-white/10 text-white/50 shrink-0">
-                        {audio.category}
-                      </span>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">
+                            {audio.title}
+                          </h3>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/5 border border-white/10 text-white/50 shrink-0">
+                            {audio.category}
+                          </span>
+                          {audio.collection && (() => {
+                            const col = getCollectionBySlug(audio.collection);
+                            const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 border-white/10 text-white/50') : 'bg-white/5 border-white/10 text-white/50';
+                            return (
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium border shrink-0 ${colColor}`}>
+                                {col?.icon} {col?.name || audio.collection}
+                              </span>
+                            );
+                          })()}
+                        </div>
                     <p className="text-xs text-white/40 truncate">
                       {audio.description || 'No description'}
                     </p>
@@ -563,17 +599,15 @@ export default function AudioLibrary() {
                       <Download className="w-3 h-3" />
                       {audio.downloads}
                     </span>
-                    <a
-                      href={audio.url}
-                      download
-                      onClick={() => handleDownload(audio.id)}
+                    <button
+                      onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                       className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
                       title="Download MP3"
                     >
                       <Download className="w-3.5 h-3.5 text-white/70" />
-                    </a>
+                    </button>
                     <button
-                      onClick={() => handlePlayPause(audio)}
+                      onClick={() => handlePlayPauseGuarded(audio)}
                       className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
                         playing
                           ? 'bg-emerald-500 text-white'
@@ -612,7 +646,7 @@ export default function AudioLibrary() {
             <div className="flex flex-col items-center gap-2 w-full md:w-1/2">
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => handlePlayPause(currentTrack)}
+                  onClick={() => handlePlayPauseGuarded(currentTrack)}
                   className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform"
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 pl-0.5" />}
@@ -637,18 +671,18 @@ export default function AudioLibrary() {
                 <Volume2 className="w-4 h-4 text-white/40" />
                 <span>Stereo</span>
               </div>
-              <a
-                href={currentTrack.url}
-                download
-                onClick={() => handleDownload(currentTrack.id)}
+              <button
+                onClick={() => handleDownloadGuarded(currentTrack.id, currentTrack.url)}
                 className="btn-icc py-2 px-4 text-xs h-9 rounded-lg"
               >
                 Download MP3
-              </a>
+              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
     </div>
   );
 }

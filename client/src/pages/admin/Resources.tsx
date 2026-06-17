@@ -3,10 +3,10 @@ import {
   Search, Trash2, Copy, Eye, Download, FileText,
   Music, Video, Image, HardDrive, RefreshCw,
   Upload, X, CheckCircle, AlertCircle, Edit3, Save,
-  MoveRight, Wand2,
+  MoveRight, Wand2, Star, Globe, Globe2,
 } from 'lucide-react';
 import { admin, teachers, books } from '../../lib/api';
-import { COLLECTIONS, getCollectionBySlug } from '../../config/collections';
+import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Teacher, Book } from '../../types';
 
@@ -109,6 +109,9 @@ export default function AdminResources() {
   const [uploadBookId, setUploadBookId] = useState<string>('');
   const [uploadCollection, setUploadCollection] = useState('');
   const [uploadError, setUploadError] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStartTime, setUploadStartTime] = useState(0);
+  const [uploadSpeed, setUploadSpeed] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -146,6 +149,11 @@ export default function AdminResources() {
       return;
     }
     setUploading(true);
+    setUploadProgress(0);
+    setUploadSpeed('');
+    const startTime = Date.now();
+    setUploadStartTime(startTime);
+    const fileForProgress = uploadFile;
     setUploadError('');
     try {
       const fd = new FormData();
@@ -160,7 +168,18 @@ export default function AdminResources() {
       if (uploadOverwrite) fd.append('overwrite', 'true');
       fd.append('collection', uploadCollection || '');
 
-      await admin.upload(fd);
+      await admin.upload(fd, (pct) => {
+        setUploadProgress(pct);
+        const elapsed = (Date.now() - startTime) / 1000;
+        if (elapsed > 0 && fileForProgress) {
+          const loaded = (pct / 100) * fileForProgress.size;
+          const speedBps = loaded / elapsed;
+          const speed = speedBps > 1024 * 1024
+            ? `${(speedBps / (1024 * 1024)).toFixed(1)} MB/s`
+            : `${(speedBps / 1024).toFixed(1)} KB/s`;
+          setUploadSpeed(speed);
+        }
+      });
       
       // Reset state and close modal
       setShowUploadModal(false);
@@ -178,6 +197,8 @@ export default function AdminResources() {
       setUploadError(err.response?.data?.error || 'Failed to upload resource');
     } finally {
       setUploading(false);
+      setUploadProgress(0);
+      setUploadSpeed('');
     }
   };
 
@@ -297,6 +318,19 @@ export default function AdminResources() {
             Repair Types
           </button>
           <button
+            onClick={async () => {
+              if (!confirm('Delete ALL resources? This cannot be undone!')) return;
+              try {
+                await admin.resources.deleteAll();
+                load();
+              } catch {}
+            }}
+            className="btn-secondary inline-flex items-center gap-2 text-xs text-red-500 border-red-500/20 hover:bg-red-500/10"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete All
+          </button>
+          <button
             onClick={() => setShowUploadModal(true)}
             className="btn-primary inline-flex items-center gap-2"
           >
@@ -360,6 +394,54 @@ export default function AdminResources() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium hover:bg-blue-500/20 transition-all"
           >
             <MoveRight className="w-3.5 h-3.5" /> Move
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                await admin.resources.bulkFeatured(selectedIds, true);
+                setSelectedIds([]);
+                load();
+              } catch {}
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition-all"
+          >
+            <Star className="w-3.5 h-3.5" /> Feature
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                await admin.resources.bulkFeatured(selectedIds, false);
+                setSelectedIds([]);
+                load();
+              } catch {}
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-500/10 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-500/20 transition-all"
+          >
+            <Star className="w-3.5 h-3.5" /> Unfeature
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                await admin.resources.bulkPublish(selectedIds, true);
+                setSelectedIds([]);
+                load();
+              } catch {}
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-all"
+          >
+            <Globe className="w-3.5 h-3.5" /> Publish
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                await admin.resources.bulkPublish(selectedIds, false);
+                setSelectedIds([]);
+                load();
+              } catch {}
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 text-xs font-medium hover:bg-orange-500/20 transition-all"
+          >
+            <Globe2 className="w-3.5 h-3.5" /> Unpublish
           </button>
           <button
             onClick={async () => {
@@ -435,6 +517,7 @@ export default function AdminResources() {
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Resource</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Collection</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Teacher</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Book</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
@@ -486,6 +569,19 @@ export default function AdminResources() {
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border uppercase ${colorClass}`}>
                           {file.resourceType?.toLowerCase() || file.type}
                         </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {file.collection ? (() => {
+                          const col = getCollectionBySlug(file.collection);
+                          const colColor = col ? (COLLECTION_COLORS[col.slug] || 'text-gray-400 bg-gray-500/10 border-gray-500/20') : 'text-gray-400 bg-gray-500/10 border-gray-500/20';
+                          return (
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${colColor}`}>
+                              {col?.icon} {col?.name || file.collection}
+                            </span>
+                          );
+                        })() : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-gray-500 max-w-[140px] truncate">
                         {file.teacher?.name || '-'}
@@ -757,6 +853,28 @@ export default function AdminResources() {
                   </label>
                 </div>
 
+                {uploading && uploadProgress > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{uploadProgress}%</span>
+                      {uploadSpeed && <span>{uploadSpeed}</span>}
+                      {uploadFile && (
+                        <span>{humanSize(uploadFile.size)}</span>
+                      )}
+                    </div>
+                    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      {uploadProgress < 100
+                        ? `Uploading... ~${uploadSpeed ? Math.round(((100 - uploadProgress) / uploadProgress) * ((Date.now() - uploadStartTime) / 1000)) + 's remaining' : 'calculating...'}`
+                        : 'Processing...'}
+                    </p>
+                  </div>
+                )}
                 <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
                     type="button"

@@ -14,11 +14,6 @@ interface ChannelData {
   category: string;
 }
 
-interface TeacherGroup {
-  name: string;
-  channels: ChannelData[];
-}
-
 const iconMap: Record<string, ElementType> = {
   default: BookOpen,
 };
@@ -60,22 +55,13 @@ export default function TelegramSection() {
   const { user } = useAuth();
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [groups, setGroups] = useState<TeacherGroup[]>([]);
+  const [channels, setChannels] = useState<ChannelData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     telegram.getAll()
-      .then((res) => {
-        const channels: ChannelData[] = res.data ?? [];
-        const grouped: Record<string, ChannelData[]> = {};
-        for (const ch of channels) {
-          const teacher = ch.teacherName || 'Other';
-          if (!grouped[teacher]) grouped[teacher] = [];
-          grouped[teacher].push(ch);
-        }
-        setGroups(Object.entries(grouped).map(([name, chs]) => ({ name, channels: chs })));
-      })
-      .catch(() => setGroups([]))
+      .then((res) => setChannels(res.data ?? []))
+      .catch(() => setChannels([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -111,25 +97,14 @@ export default function TelegramSection() {
           <div className="flex items-center justify-center py-16">
             <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
           </div>
-        ) : groups.length === 0 ? null : (
-          groups.map((group) => (
-            <div key={group.name} className="mb-12 last:mb-0">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/20 flex items-center justify-center">
-                  <span className="text-sm font-bold text-gold-400">{group.name.charAt(0)}</span>
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold text-white">{group.name}</h3>
-                  <p className="text-xs text-white/40">{group.channels.length} channels</p>
-                </div>
-              </div>
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate={isInView ? 'visible' : 'hidden'}
-                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-              >
-                {group.channels.map((ch, i) => {
+        ) : channels.length === 0 ? null : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+          >
+            {channels.map((ch, i) => {
                   const Icon = getIconForChannel(ch.name);
                   const color = iconColors[i % iconColors.length];
                   return (
@@ -177,10 +152,8 @@ export default function TelegramSection() {
                       </Link>
                     </motion.div>
                   );
-                })}
-              </motion.div>
-            </div>
-          ))
+            })}
+          </motion.div>
         )}
       </div>
     </section>

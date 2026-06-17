@@ -28,11 +28,11 @@ export default function Navbar() {
     { label: t('nav.pdf_library'), href: '/pdfs', icon: FileText },
     { label: t('nav.live_stream'), href: '/live', icon: Radio, live: true },
     { label: t('nav.recordings'), href: '/recordings', icon: Tv },
-    { label: t('nav.about_shaykh'), href: '/about', icon: Info },
+    { label: t('nav.about_sheikh'), href: '/about', icon: Info },
     { label: t('nav.contact'), href: '/contact', icon: Mail },
   ] : [
     { label: t('nav.home'), href: '/', icon: Home },
-    { label: t('nav.about_shaykh'), href: '/about', icon: Info },
+    { label: t('nav.about_sheikh'), href: '/about', icon: Info },
     { label: t('nav.contact'), href: '/contact', icon: Mail },
   ]);
 

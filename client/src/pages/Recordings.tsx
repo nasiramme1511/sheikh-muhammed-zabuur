@@ -7,6 +7,8 @@ import { resources as resourcesApi } from '../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 
 const CATEGORIES = [
   'All Recordings',
@@ -33,6 +35,7 @@ export default function Recordings() {
   const [selectedCollection, setSelectedCollection] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'most_viewed'>('newest');
   const [activeRecording, setActiveRecording] = useState<Resource | null>(null);
+  const { guardAction, showWall, closeWall } = useAuthGuard();
 
   useEffect(() => {
     fetchRecordings();
@@ -65,8 +68,10 @@ export default function Recordings() {
   };
 
   const handleSelectRecording = (rec: Resource) => {
-    setActiveRecording(rec);
-    resourcesApi.view(rec.id); // track view
+    guardAction(() => {
+      setActiveRecording(rec);
+      resourcesApi.view(rec.id);
+    });
   };
 
   const processedRecordings = recordings
@@ -370,6 +375,8 @@ export default function Recordings() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
     </div>
   );
 }

@@ -11,6 +11,9 @@ export default function AppearanceStyles() {
       s.backgroundBehavior === 'zoom' ? 'fixed' : s.backgroundBehavior;
     const attach = s.backgroundBehavior === 'parallax' ? 'fixed' :
       s.backgroundBehavior === 'zoom' ? 'fixed' : 'scroll';
+    const bgImage = s.backgroundEnabled && s.backgroundImage
+      ? `url("${s.backgroundImage}")`
+      : 'none';
 
     return `
 :root {
@@ -27,7 +30,9 @@ export default function AppearanceStyles() {
   --app-font-size: ${s.fontSize}px;
   --app-heading-weight: ${s.headingWeight};
   --app-body-weight: ${s.bodyWeight};
-  --app-bg-image: url("${s.backgroundImage}");
+  --app-bg-image: ${bgImage};
+  --app-bg-enabled: ${s.backgroundEnabled ? '1' : '0'};
+  --app-brightness: ${s.brightness};
   --app-overlay-color: ${s.overlayColor};
   --app-overlay-opacity: ${s.overlayOpacity};
   --app-overlay-gradient: ${s.overlayGradient ? '1' : '0'};

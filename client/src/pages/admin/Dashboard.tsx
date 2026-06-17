@@ -9,12 +9,18 @@ import {
 import {
   Upload, Radio, FileText, Image, Headphones, Video, Activity,
   Zap, UserPlus, Settings, BarChart3, Archive, Trash2,
-  Bell, Globe, AlertTriangle, X, Send,
+  Bell, Globe, AlertTriangle, X, Send, Printer, Download as DownloadIcon,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { admin, live } from '../../lib/api';
 import { useTranslation } from '../../i18n';
 import { COLLECTIONS, getCollectionBySlug } from '../../config/collections';
 import toast from 'react-hot-toast';
+
+interface ChartPoint {
+  date: string;
+  count: number;
+}
 
 interface AdminStats {
   totalUsers: number;
@@ -24,21 +30,120 @@ interface AdminStats {
   totalImages: number;
   totalRecordings: number;
   totalTelegramChannels: number;
+  totalTelegramMembers: number;
   totalResources: number;
   totalViews: number;
+  totalPlays: number;
   totalDownloads: number;
+  totalLiveStreams: number;
   totalStorage: number;
   storageByType: { audio: number; video: number; pdf: number; image: number };
   recentUsers: any[];
   recentActivity: any[];
   popularAudio: any[];
   popularVideos: any[];
+  uploadsOverTime: ChartPoint[];
+  downloadsOverTime: ChartPoint[];
+  usersOverTime: ChartPoint[];
+  viewsOverTime: ChartPoint[];
 }
 
 function humanSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
+function BarChart({ data, labels, color, height = 160 }: { data: number[]; labels: string[]; color: string; height?: number }) {
+  const max = Math.max(...data, 1);
+  return (
+    <div className="flex items-end gap-1" style={{ height }}>
+      {data.map((v, i) => (
+        <div key={i} className="flex flex-col items-center flex-1 h-full justify-end">
+          <div
+            style={{ height: `${(v / max) * 100}%` }}
+            className={`w-full ${color} rounded-t transition-all duration-300 min-h-[4px]`}
+            title={`${labels[i]}: ${v}`}
+          />
+          <span className="text-[9px] text-gray-400 mt-1 truncate w-full text-center">{labels[i]}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LineChart({ data, labels, color, height = 160 }: { data: number[]; labels: string[]; color: string; height?: number }) {
+  const max = Math.max(...data, 1);
+  if (data.length === 0) return <div className="text-gray-400 text-sm text-center py-8">No data</div>;
+  const w = 100;
+  const pts = data.map((v, i) => {
+    const x = (i / Math.max(data.length - 1, 1)) * w;
+    const y = height - (v / max) * (height - 20) - 10;
+    return `${x},${y}`;
+  });
+  const polyline = pts.join(' ');
+  const areaPts = `0,${height} ${polyline} ${w},${height}`;
+  return (
+    <svg viewBox={`0 0 ${w} ${height}`} className="w-full" style={{ height }}>
+      <defs>
+        <linearGradient id={`grad-${color.replace(/\s/g, '')}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPts} fill={`url(#grad-${color.replace(/\s/g, '')})`} className="text-emerald-500" />
+      <polyline points={polyline} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" className={color} />
+      {data.map((v, i) => {
+        const x = (i / Math.max(data.length - 1, 1)) * w;
+        const y = height - (v / max) * (height - 20) - 10;
+        if (i % Math.max(1, Math.floor(data.length / 6)) === 0 || i === data.length - 1) {
+          return (
+            <g key={i}>
+              <circle cx={x} cy={y} r="1.5" className={color} fill="currentColor" />
+              <text x={x} y={height - 2} textAnchor="middle" className="fill-gray-400" fontSize="3">{labels[i]}</text>
+            </g>
+          );
+        }
+        return <circle key={i} cx={x} cy={y} r="1.5" className={color} fill="currentColor" />;
+      })}
+    </svg>
+  );
+}
+
+function exportToCSV(data: any[], filename: string) {
+  if (data.length === 0) return;
+  const headers = Object.keys(data[0]);
+  const csv = [headers.join(','), ...data.map(row => headers.map(h => {
+    const val = row[h];
+    return typeof val === 'string' && (val.includes(',') || val.includes('"')) ? `"${val.replace(/"/g, '""')}"` : val;
+  }).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportToExcel(data: any[], filename: string) {
+  if (data.length === 0) return;
+  const headers = Object.keys(data[0]);
+  const csv = [headers.join(','), ...data.map(row => headers.map(h => {
+    const val = row[h];
+    return typeof val === 'string' && (val.includes(',') || val.includes('"')) ? `"${val.replace(/"/g, '""')}"` : val;
+  }).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename.replace(/\.\w+$/, '') + '.xls';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportToPrint() {
+  window.print();
 }
 
 export default function AdminDashboard() {
@@ -115,17 +220,18 @@ export default function AdminDashboard() {
       </motion.div>
 
       {/* Main Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3">
         {[
           { icon: HiUsers, label: t('admin.total_users'), value: s?.totalUsers || 0, color: 'from-emerald-500 to-emerald-600' },
           { icon: Headphones, label: t('admin.total_audio'), value: s?.totalAudio || 0, color: 'from-blue-500 to-blue-600' },
           { icon: HiVideoCamera, label: t('admin.total_video'), value: s?.totalVideo || 0, color: 'from-purple-500 to-purple-600' },
           { icon: FileText, label: t('admin.total_pdfs'), value: s?.totalPdf || 0, color: 'from-red-500 to-red-600' },
-          { icon: HiClock, label: t('admin.total_recordings'), value: s?.totalRecordings || 0, color: 'from-amber-500 to-amber-600' },
+          { icon: HiPlay, label: 'Total Plays', value: s?.totalPlays || 0, color: 'from-amber-500 to-amber-600' },
           { icon: HiDownload, label: t('admin.total_downloads'), value: s?.totalDownloads || 0, color: 'from-teal-500 to-teal-600' },
-          { icon: HiDatabase, label: t('admin.total_storage'), value: s?.totalStorage ? humanSize(s.totalStorage) : '0 B', color: 'from-rose-500 to-rose-600' },
-          { icon: Radio, label: t('admin.total_live_sessions'), value: liveStatus?.totalSessions || 0, color: 'from-indigo-500 to-indigo-600' },
-        ].concat(s?.totalTelegramChannels ? [{ icon: Send, label: 'Telegram', value: s.totalTelegramChannels, color: 'from-sky-500 to-sky-600' }] : []).map((card, i) => (
+          { icon: HiEye, label: 'Total Views', value: s?.totalViews || 0, color: 'from-rose-500 to-rose-600' },
+          { icon: Send, label: 'Telegram', value: s?.totalTelegramChannels || 0, color: 'from-sky-500 to-sky-600' },
+          { icon: Radio, label: 'Live Streams', value: s?.totalLiveStreams || 0, color: 'from-indigo-500 to-indigo-600' },
+        ].map((card, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-center hover:shadow-md transition-all">
             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center mx-auto mb-1.5`}>
               <card.icon className="w-4 h-4 text-white" />
@@ -134,6 +240,93 @@ export default function AdminDashboard() {
             <p className="text-[10px] text-gray-500 leading-tight">{card.label}</p>
           </motion.div>
         ))}
+      </div>
+
+      {/* Export Buttons */}
+      <div className="flex flex-wrap gap-2 print:hidden">
+        <button onClick={exportToPrint} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
+          <Printer className="w-3.5 h-3.5" /> Export PDF
+        </button>
+        <button onClick={() => exportToCSV([
+          { Metric: 'Total Users', Value: s?.totalUsers },
+          { Metric: 'Total Audio', Value: s?.totalAudio },
+          { Metric: 'Total Videos', Value: s?.totalVideo },
+          { Metric: 'Total PDFs', Value: s?.totalPdf },
+          { Metric: 'Total Downloads', Value: s?.totalDownloads },
+          { Metric: 'Total Views', Value: s?.totalViews },
+          { Metric: 'Total Plays', Value: s?.totalPlays },
+          { Metric: 'Telegram Channels', Value: s?.totalTelegramChannels },
+          { Metric: 'Live Streams', Value: s?.totalLiveStreams },
+          { Metric: 'Storage', Value: s?.totalStorage ? humanSize(s.totalStorage) : '0 B' },
+        ], 'admin-stats.csv')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
+          <DownloadIcon className="w-3.5 h-3.5" /> Export CSV
+        </button>
+        <button onClick={() => exportToExcel([
+          { Metric: 'Total Users', Value: s?.totalUsers },
+          { Metric: 'Total Audio', Value: s?.totalAudio },
+          { Metric: 'Total Videos', Value: s?.totalVideo },
+          { Metric: 'Total PDFs', Value: s?.totalPdf },
+          { Metric: 'Total Downloads', Value: s?.totalDownloads },
+          { Metric: 'Total Views', Value: s?.totalViews },
+          { Metric: 'Total Plays', Value: s?.totalPlays },
+          { Metric: 'Telegram Channels', Value: s?.totalTelegramChannels },
+          { Metric: 'Live Streams', Value: s?.totalLiveStreams },
+          { Metric: 'Storage', Value: s?.totalStorage ? humanSize(s.totalStorage) : '0 B' },
+        ], 'admin-stats.xls')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
+          <FileSpreadsheet className="w-3.5 h-3.5" /> Export Excel
+        </button>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
+            <Upload className="w-4 h-4 text-emerald-500" /> Uploads (30 days)
+          </h3>
+          {s?.uploadsOverTime ? (
+            <BarChart
+              data={s.uploadsOverTime.map(p => p.count)}
+              labels={s.uploadsOverTime.map(p => p.date.slice(5))}
+              color="bg-emerald-500"
+            />
+          ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
+            <HiDownload className="w-4 h-4 text-blue-500" /> Downloads (30 days)
+          </h3>
+          {s?.downloadsOverTime ? (
+            <LineChart
+              data={s.downloadsOverTime.map(p => p.count)}
+              labels={s.downloadsOverTime.map(p => p.date.slice(5))}
+              color="text-blue-500"
+            />
+          ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
+            <HiUsers className="w-4 h-4 text-purple-500" /> Users (30 days)
+          </h3>
+          {s?.usersOverTime ? (
+            <LineChart
+              data={s.usersOverTime.map(p => p.count)}
+              labels={s.usersOverTime.map(p => p.date.slice(5))}
+              color="text-purple-500"
+            />
+          ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
+            <HiEye className="w-4 h-4 text-rose-500" /> Views (30 days)
+          </h3>
+          {s?.viewsOverTime ? (
+            <LineChart
+              data={s.viewsOverTime.map(p => p.count)}
+              labels={s.viewsOverTime.map(p => p.date.slice(5))}
+              color="text-rose-500"
+            />
+          ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
+        </motion.div>
       </div>
 
       {/* Content Overview + Live Stream + User Management */}

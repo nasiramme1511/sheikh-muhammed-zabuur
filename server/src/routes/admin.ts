@@ -157,12 +157,12 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
     // Auto-assign Sheikh Mohammed Zabuur as teacher
     let teacherId: number | null = null;
     try {
-      const shaykh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
-      if (shaykh) {
-        teacherId = shaykh.id;
+      const sheikh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
+      if (sheikh) {
+        teacherId = sheikh.id;
       } else {
         const created = await prisma.teacher.create({
-          data: { name: 'Sheikh Mohammed Zabuur', slug: 'shaykh-mohammed-zabuur', verified: true, featured: true },
+          data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
         });
         teacherId = created.id;
       }
@@ -763,6 +763,27 @@ router.delete('/users/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+function groupByDate(
+  items: { createdAt: Date }[],
+  valueFn?: (item: any) => number,
+  days = 30,
+): { date: string; count: number }[] {
+  const map = new Map<string, number>();
+  const now = new Date();
+  for (let i = days; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    map.set(d.toISOString().split('T')[0], 0);
+  }
+  for (const item of items) {
+    const key = item.createdAt.toISOString().split('T')[0];
+    if (map.has(key)) {
+      map.set(key, map.get(key)! + (valueFn ? valueFn(item) : 1));
+    }
+  }
+  return Array.from(map.entries()).map(([date, count]) => ({ date, count }));
+}
+
 router.get('/stats', async (_req: AuthRequest, res: Response) => {
   try {
     const [
@@ -777,6 +798,9 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       recentUsers,
       recentActivity,
       totalTelegramChannels,
+      resourcesForChart,
+      usersForChart,
+      totalPlays,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.resource.count({ where: { resourceType: 'AUDIO' } }),
@@ -816,6 +840,17 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
         },
       }),
       prisma.telegramChannel.count(),
+      prisma.resource.findMany({
+        select: { createdAt: true, views: true, downloads: true },
+      }),
+      prisma.user.findMany({
+        select: { createdAt: true },
+      }),
+      prisma.usageLog.count({
+        where: {
+          action: { in: ['listen', 'watch', 'play'] },
+        },
+      }),
     ]);
 
     // Calculate total storage and per-type storage
@@ -855,6 +890,29 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       }),
     ]);
 
+    // Time-series chart data (last 30 days)
+    const uploadsOverTime = groupByDate(resourcesForChart);
+    const downloadsOverTime = groupByDate(resourcesForChart, (r) => r.downloads);
+    const usersOverTime = groupByDate(usersForChart);
+    const viewsOverTime = groupByDate(resourcesForChart, (r) => r.views);
+
+    // Read live stream stats from JSON file
+    let totalLiveStreams = 0;
+    try {
+      const livestreamPath = path.join(__dirname, '../../data/livestream.json');
+      if (fs.existsSync(livestreamPath)) {
+        const liveData = JSON.parse(fs.readFileSync(livestreamPath, 'utf-8'));
+        totalLiveStreams = liveData.totalStreams || 0;
+      }
+    } catch {}
+
+    // Get download logs count for total downloads chart
+    const downloadLogs = await prisma.usageLog.findMany({
+      where: { action: { contains: 'download' } },
+      select: { createdAt: true },
+    });
+    const downloadsOverTimeFromLogs = groupByDate(downloadLogs);
+
     res.json({
       totalUsers,
       totalAudio,
@@ -863,9 +921,12 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       totalImages,
       totalRecordings,
       totalTelegramChannels,
+      totalTelegramMembers: totalTelegramChannels,
       totalResources: totalAudio + totalVideo + totalPdf + totalImages + totalRecordings,
       totalViews: aggregates._sum.views || 0,
+      totalPlays,
       totalDownloads: aggregates._sum.downloads || 0,
+      totalLiveStreams,
       totalStorage,
       storageByType: {
         audio: audioStorage,
@@ -877,6 +938,10 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       recentActivity,
       popularAudio,
       popularVideos,
+      uploadsOverTime,
+      downloadsOverTime: downloadsOverTimeFromLogs,
+      usersOverTime,
+      viewsOverTime,
     });
   } catch (err) {
     console.error('Stats error:', err);
@@ -982,7 +1047,7 @@ router.post('/levels/:id/quizzes', async (req: AuthRequest, res: Response) => {
 
 router.get('/telegram', async (_req: AuthRequest, res: Response) => {
   try {
-    const channels = await prisma.telegramChannel.findMany({ orderBy: { name: 'asc' } });
+    const channels = await prisma.telegramChannel.findMany({ orderBy: [{ order: 'asc' }, { name: 'asc' }] });
     res.json(channels);
   } catch {
     res.status(500).json({ error: 'Failed to fetch channels' });
@@ -1063,6 +1128,19 @@ router.put('/telegram/:id/toggle-enabled', async (req: AuthRequest, res: Respons
     res.json(updated);
   } catch {
     res.status(500).json({ error: 'Failed to toggle status' });
+  }
+});
+
+router.put('/telegram/reorder', async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
+    for (let i = 0; i < ids.length; i++) {
+      await prisma.telegramChannel.update({ where: { id: ids[i] }, data: { order: i + 1 } });
+    }
+    res.json({ message: 'Reordered successfully' });
+  } catch {
+    res.status(500).json({ error: 'Failed to reorder channels' });
   }
 });
 
@@ -1249,7 +1327,7 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
                 if (fs.existsSync(destPath)) {
                   const fileUrl = '/uploads/' + subdir + '/' + safeName;
                   const title = prettyTitle(safeName);
-                  const shaykhId = await getSheikhTeacherId();
+                  const sheikhId = await getSheikhTeacherId();
                   const existing = await prisma.resource.findFirst({ where: { fileUrl } });
                   if (!existing || duplicateAction === 'replace') {
                     const data = {
@@ -1261,7 +1339,7 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
                       category: deriveCategory(safeName),
                       collection: deriveCollectionFromName(safeName),
                       language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
-                      teacherId: shaykhId,
+                      teacherId: sheikhId,
                     };
                     if (existing) {
                       await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
@@ -1555,6 +1633,44 @@ router.post('/resources/auto-classify', async (req: AuthRequest, res: Response) 
   }
 });
 
+// ── Bulk Featured ─────────────────────────────────────────────
+router.post('/resources/bulk-featured', async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids, featured } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids array is required' });
+    }
+    const isFeatured = featured === true || featured === 'true';
+    await prisma.resource.updateMany({
+      where: { id: { in: ids } },
+      data: { featured: isFeatured },
+    });
+    res.json({ message: `Updated ${ids.length} resources`, featured: isFeatured });
+  } catch (err) {
+    console.error('Bulk featured error:', err);
+    res.status(500).json({ error: 'Failed to update featured status' });
+  }
+});
+
+// ── Bulk Publish / Unpublish ──────────────────────────────────
+router.post('/resources/bulk-publish', async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids, published } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids array is required' });
+    }
+    const isPublished = published !== false && published !== 'false';
+    await prisma.resource.updateMany({
+      where: { id: { in: ids } },
+      data: { published: isPublished },
+    });
+    res.json({ message: `Updated ${ids.length} resources`, published: isPublished });
+  } catch (err) {
+    console.error('Bulk publish error:', err);
+    res.status(500).json({ error: 'Failed to update publish status' });
+  }
+});
+
 // ── Helper functions ──────────────────────────────────────────
 function deriveCollectionFromName(filename: string): string | null {
   const n = path.basename(filename, path.extname(filename)).toLowerCase().replace(/[-_]/g, ' ');
@@ -1574,6 +1690,7 @@ function deriveCollectionFromName(filename: string): string | null {
     ['fiqh', 'fiqh'], ['salah', 'fiqh'], ['prayer', 'fiqh'], ['wudu', 'fiqh'], ['zakat', 'fiqh'], ['sawm', 'fiqh'], ['hajj', 'fiqh'],
     ['ramadan', 'ramadan'], ['ramadhan', 'ramadan'],
     ['khutbah', 'khutbah'], ['sermon', 'khutbah'],
+    ['tajreed', 'tajreed'], ['tajrid', 'tajreed'],
     ['qa-', 'questions-and-answers'], ['question', 'questions-and-answers'], ['fatwa', 'questions-and-answers'],
     ['general', 'general-lectures'], ['lecture', 'general-lectures'], ['dawah', 'general-lectures'],
   ];
@@ -1588,7 +1705,7 @@ async function getSheikhTeacherId(): Promise<number | null> {
     const existing = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
     if (existing) return existing.id;
     const created = await prisma.teacher.create({
-      data: { name: 'Sheikh Mohammed Zabuur', slug: 'shaykh-mohammed-zabuur', verified: true, featured: true },
+      data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
     });
     return created.id;
   } catch { return null; }

@@ -55,7 +55,9 @@ export default function Layout() {
       root.classList.toggle('dark', prefersDark);
     }
     root.classList.toggle('app-zoom-bg', settings.backgroundBehavior === 'zoom');
-  }, [settings.defaultMode, settings.backgroundBehavior]);
+    root.classList.toggle('app-bg-enabled', settings.backgroundEnabled);
+    root.classList.toggle('app-bg-disabled', !settings.backgroundEnabled);
+  }, [settings.defaultMode, settings.backgroundBehavior, settings.backgroundEnabled]);
 
   return (
     <BackgroundLayout>

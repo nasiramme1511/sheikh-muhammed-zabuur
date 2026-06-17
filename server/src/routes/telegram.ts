@@ -10,7 +10,7 @@ router.get('/', async (_req: Request, res: Response) => {
   try {
     const channels = await prisma.telegramChannel.findMany({
       where: { enabled: true, teacherName: 'Sheikh Muhammad Zabuur' },
-      orderBy: { category: 'asc' },
+      orderBy: [{ order: 'asc' }, { name: 'asc' }],
     });
     // Never expose links to unauthenticated/unsubscribed users
     const safe = channels.map(c => ({ id: c.id, name: c.name, teacherName: c.teacherName, description: c.description, category: c.category, enabled: c.enabled }));
@@ -36,7 +36,7 @@ router.get('/channels', authenticate, requireTelegramAccess, async (_req: AuthRe
   try {
     const channels = await prisma.telegramChannel.findMany({
       where: { enabled: true, teacherName: 'Sheikh Muhammad Zabuur' },
-      orderBy: { category: 'asc' },
+      orderBy: [{ order: 'asc' }, { name: 'asc' }],
     });
     res.json(channels);
   } catch {
@@ -48,7 +48,7 @@ router.get('/collection/:slug', authenticate, requireTelegramAccess, async (req:
   try {
     const { slug } = req.params;
     const keyword = slug.replace(/[-_]/g, ' ');
-    const channels = await prisma.telegramChannel.findMany({ where: { name: { contains: keyword }, enabled: true, teacherName: 'Sheikh Muhammad Zabuur' } });
+    const channels = await prisma.telegramChannel.findMany({ where: { name: { contains: keyword }, enabled: true, teacherName: 'Sheikh Muhammad Zabuur' }, orderBy: [{ order: 'asc' }, { name: 'asc' }] });
     res.json(channels);
   } catch {
     res.status(500).json({ error: 'Failed to fetch channels' });

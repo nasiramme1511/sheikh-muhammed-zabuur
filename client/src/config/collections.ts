@@ -23,6 +23,7 @@ export const COLLECTIONS: CollectionDef[] = [
   { slug: 'ramadan', name: 'Ramadan', nameAr: 'رمضان', icon: '🌙', prefixes: ['ramadan', 'ramadhan'] },
   { slug: 'khutbah', name: 'Khutbah', nameAr: 'خطبة', icon: '📖', prefixes: ['khutbah', 'sermon'] },
   { slug: 'bayquniyyah', name: 'Bayquniyyah', nameAr: 'البيقونية', icon: '📖', prefixes: ['bayquniyyah', 'bayquni', 'manzumah'] },
+  { slug: 'tajreed', name: 'Tajreed', nameAr: 'التجريد', icon: '📖', prefixes: ['tajreed', 'tajrid'] },
   { slug: 'questions-and-answers', name: 'Questions & Answers', nameAr: 'أسئلة وأجوبة', icon: '❓', prefixes: ['qa-', 'question', 'fatwa'] },
   { slug: 'general-lectures', name: 'General Lectures', nameAr: 'محاضرات عامة', icon: '📖', prefixes: ['general', 'lecture', 'dawah', 'da\'wah'] },
 ];
@@ -58,6 +59,7 @@ export const COLLECTION_COLORS: Record<string, string> = {
   'ramadan': 'bg-emerald-600/10 text-emerald-300 border-emerald-600/20',
   'khutbah': 'bg-amber-600/10 text-amber-300 border-amber-600/20',
   'bayquniyyah': 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+  'tajreed': 'bg-lime-500/10 text-lime-400 border-lime-500/20',
   'questions-and-answers': 'bg-pink-500/10 text-pink-400 border-pink-500/20',
   'general-lectures': 'bg-gray-500/10 text-gray-400 border-gray-500/20',
 };

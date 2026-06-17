@@ -209,7 +209,7 @@ export default function AdminSettings() {
   const renderFeatures = () => (
     <div className="space-y-4">
       {[
-        { key: 'aiAssistant', label: 'AI Assistant', desc: 'Enable AI-powered learning assistant for users' },
+        { key: 'aiAssistant', label: 'AI Scholar', desc: 'Enable AI-powered Iman Chercher AI Scholar for users' },
         { key: 'userRegistration', label: 'User Registration', desc: 'Allow new users to create accounts' },
         { key: 'comments', label: 'Comments', desc: 'Enable comments on lessons and resources' },
         { key: 'ratings', label: 'Ratings', desc: 'Allow users to rate lessons and resources' },

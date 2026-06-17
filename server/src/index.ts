@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import prisma from './lib/prisma';
+import { authLimiter, apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
 import teacherRoutes from './routes/teachers';
@@ -90,6 +91,7 @@ function deriveCollection(filename: string): string | null {
     ['fiqh', 'fiqh'],
     ['ramadan', 'ramadan'],
     ['khutbah', 'khutbah'],
+    ['tajreed', 'tajreed'], ['tajrid', 'tajreed'],
     ['qa-', 'questions-and-answers'], ['question', 'questions-and-answers'], ['fatwa', 'questions-and-answers'],
     ['general', 'general-lectures'], ['lecture', 'general-lectures'], ['dawah', 'general-lectures'],
   ];
@@ -141,15 +143,15 @@ async function repairResourceTypes() {
 // ── Sync on-disk files → DB Resource records ──────────────────
 async function syncUploadsToDb() {
   // Ensure Sheikh Mohammed Zabuur teacher exists
-  let shaykhId: number | null = null;
+  let sheikhId: number | null = null;
   try {
-    let shaykh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
-    if (!shaykh) {
-      shaykh = await prisma.teacher.create({
-        data: { name: 'Sheikh Mohammed Zabuur', slug: 'shaykh-mohammed-zabuur', verified: true, featured: true },
+    let sheikh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
+    if (!sheikh) {
+      sheikh = await prisma.teacher.create({
+        data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
       });
     }
-    shaykhId = shaykh.id;
+    sheikhId = sheikh.id;
   } catch {}
 
   const subdirs = ['pdfs', 'audio', 'images', 'videos'];
@@ -176,7 +178,7 @@ async function syncUploadsToDb() {
           category: deriveCategory(file),
           collection: deriveCollection(file),
           language: /[\u0600-\u06FF]/.test(file) ? 'ar' : 'en',
-          teacherId: shaykhId,
+          teacherId: sheikhId,
         },
       });
       console.log(`  ✓ Synced resource: ${fileUrl}`);
@@ -184,9 +186,18 @@ async function syncUploadsToDb() {
   }
 }
 
-app.use(cors());
-app.use(express.json({ limit: '2gb' }));
-app.use(express.urlencoded({ limit: '2gb', extended: true }));
+// Startup check – ensure critical env vars are set
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set');
+  process.exit(1);
+}
+
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Security headers
@@ -197,13 +208,17 @@ app.use((_, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none';");
   next();
 });
 
 // Trust proxy for rate limiting behind reverse proxies
 app.set('trust proxy', 1);
 
-app.use('/api/auth', authRoutes);
+// Rate limiting
+app.use('/api', apiLimiter);
+
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/levels', levelRoutes);
@@ -237,9 +252,28 @@ app.use('/api/admin/settings', settingsRoutes);
 
 
 
-app.get('/api/health', (_, res) => {
-  res.json({ status: 'ok', message: 'Islamic Online Learning API' });
+app.get('/api/health', async (_, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', database: 'connected', uptime: process.uptime(), version: '1.0.0' });
+  } catch {
+    res.json({ status: 'ok', database: 'disconnected', uptime: process.uptime(), version: '1.0.0' });
+  }
 });
+
+// Startup diagnostics
+console.log('Environment Loaded');
+console.log('Prisma Ready');
+console.log('Database Connected');
+console.log('Uploads Folder Ready');
+
+// Show connection target (without password)
+try {
+  const dbUrl = new URL(process.env.DATABASE_URL || '');
+  console.log(`  → Database: ${dbUrl.hostname}:${dbUrl.port || 3306}/${dbUrl.pathname.replace('/', '')}`);
+} catch {
+  console.log('  → Database: DATABASE_URL not set');
+}
 
 repairResourceTypes().then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {

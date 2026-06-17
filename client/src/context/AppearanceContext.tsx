@@ -10,6 +10,8 @@ export interface BackgroundItem {
 
 export interface AppearanceSettings {
   backgroundImage: string;
+  backgroundEnabled: boolean;
+  brightness: number;
   enableOverlay: boolean;
   overlayOpacity: number;
   overlayColor: string;
@@ -67,11 +69,13 @@ interface AppearanceContextType {
 
 const defaultSettings: AppearanceSettings = {
   backgroundImage: '/uploads/images/roomaa-xiqqoo-masjid.jpg',
+  backgroundEnabled: true,
+  brightness: 0.4,
   enableOverlay: true,
-  overlayOpacity: 0.55,
+  overlayOpacity: 0.6,
   overlayColor: '#000000',
   overlayGradient: true,
-  blurStrength: 8,
+  blurStrength: 0,
   backgrounds: [
     { id: '1', name: 'Masjid Background', url: '/uploads/images/roomaa-xiqqoo-masjid.jpg', active: true },
   ],

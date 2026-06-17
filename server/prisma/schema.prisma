@@ -39,21 +39,6 @@ enum Role {
   SUPER_ADMIN
 }
 
-model Permission {
-  id          Int      @id @default(autoincrement())
-  action      String   @unique
-  description String?
-  roles       RolePermission[]
-}
-
-model RolePermission {
-  id           Int        @id @default(autoincrement())
-  role         Role
-  permissionId Int
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  @@unique([role, permissionId])
-}
-
 model Student {
   id        Int      @id @default(autoincrement())
   userId    Int      @unique
@@ -443,6 +428,7 @@ model Resource {
   downloads    Int          @default(0)
   views        Int          @default(0)
   featured     Boolean      @default(false)
+  published    Boolean      @default(true)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
@@ -498,6 +484,7 @@ model TelegramChannel {
   description String?
   category    String   @default("General")
   enabled     Boolean  @default(true)
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

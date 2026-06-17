@@ -13,7 +13,7 @@ interface SEOProps {
 const DEFAULT_DESCRIPTION = 'Sheikh Mohammed Zabuur Iman Chercher College - Authentic Islamic education platform. Learn Aqeedah, Tafsir, Hadith, Fiqh and more from qualified Sunni teachers.';
 const DEFAULT_IMAGE = '/og-image.png';
 const SITE_NAME = 'Sheikh Mohammed Zabuur Iman Chercher College';
-const SITE_URL = 'https://shaykhmohammedzabuur.com';
+const SITE_URL = 'https://sheikhmohammedzabuur.com';
 
 export function useSEO({ title, description, ogImage = DEFAULT_IMAGE, ogType = 'website', canonical, keywords, structuredData }: SEOProps) {
   useEffect(() => {

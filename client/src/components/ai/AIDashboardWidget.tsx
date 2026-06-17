@@ -6,7 +6,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../i18n';
 
 const quickActions = [
-  { icon: BookOpen, labelKey: 'ai_assistant.quick_continue' as const, promptKey: 'ai_assistant.learn_continue' as const },
+  { icon: BookOpen, labelKey: 'ai_assistant.quick_lessons' as const, promptKey: 'ai_assistant.prompt_lessons' as const },
   { icon: Lightbulb, labelKey: 'ai_assistant.quick_reminder' as const, promptKey: 'ai_assistant.reminder_prompt' as const },
   { icon: Sparkles, labelKey: 'ai_assistant.quick_recommend' as const, promptKey: 'ai_assistant.recommend_prompt' as const },
 ];

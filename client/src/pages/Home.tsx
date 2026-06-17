@@ -12,7 +12,7 @@ import {
   Coffee, Moon, Sun, Users, Award,
 } from 'lucide-react';
 import { resources as resourcesApi, collections as collectionsApi, live as liveApi } from '../lib/api';
-import { COLLECTIONS, COLLECTION_COLORS } from '../config/collections';
+import { COLLECTIONS, COLLECTION_COLORS, getCollectionBySlug } from '../config/collections';
 import type { Resource } from '../types';
 import { useTranslation } from '../i18n';
 import { useAppearance } from '../context/AppearanceContext';
@@ -440,9 +440,20 @@ export default function Home() {
                           <Music className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className={`inline-block mb-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[audio.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                            {audio.category}
-                          </span>
+                          <div className="flex flex-wrap gap-1.5 mb-1.5">
+                            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[audio.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
+                              {audio.category}
+                            </span>
+                            {audio.collection && (() => {
+                              const col = getCollectionBySlug(audio.collection);
+                              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
+                              return (
+                                <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${colColor}`}>
+                                  {col?.icon} {col?.name || audio.collection}
+                                </span>
+                              );
+                            })()}
+                          </div>
                           <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-icc-400 transition-colors leading-snug">
                             {audio.title}
                           </h3>
@@ -510,9 +521,20 @@ export default function Home() {
                           </div>
                         </div>
                         <div className="p-4">
-                          <span className={`inline-block mb-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[video.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                            {video.category}
-                          </span>
+                          <div className="flex flex-wrap gap-1.5 mb-1.5">
+                            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[video.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
+                              {video.category}
+                            </span>
+                            {video.collection && (() => {
+                              const col = getCollectionBySlug(video.collection);
+                              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
+                              return (
+                                <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${colColor}`}>
+                                  {col?.icon} {col?.name || video.collection}
+                                </span>
+                              );
+                            })()}
+                          </div>
                           <Link to="/videos" className="block text-sm font-bold text-white group-hover:text-icc-400 transition-colors line-clamp-2 leading-snug">
                             {video.title}
                           </Link>
@@ -557,9 +579,20 @@ export default function Home() {
                           <FileText className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className={`inline-block mb-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[pdf.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                            {pdf.category}
-                          </span>
+                          <div className="flex flex-wrap gap-1.5 mb-1.5">
+                            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[pdf.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
+                              {pdf.category}
+                            </span>
+                            {pdf.collection && (() => {
+                              const col = getCollectionBySlug(pdf.collection);
+                              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
+                              return (
+                                <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${colColor}`}>
+                                  {col?.icon} {col?.name || pdf.collection}
+                                </span>
+                              );
+                            })()}
+                          </div>
                           <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-red-400 transition-colors leading-snug">
                             {pdf.title}
                           </h3>
@@ -663,9 +696,20 @@ export default function Home() {
                         {isPdf ? <FileText className="w-5 h-5" /> : isAudio ? <Music className="w-5 h-5" /> : <Video className="w-5 h-5" />}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className={`inline-block mb-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[item.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                          {item.category}
-                        </span>
+                        <div className="flex flex-wrap gap-1.5 mb-1">
+                          <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[item.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
+                            {item.category}
+                          </span>
+                          {item.collection && (() => {
+                            const col = getCollectionBySlug(item.collection);
+                            const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
+                            return (
+                              <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${colColor}`}>
+                                {col?.icon} {col?.name || item.collection}
+                              </span>
+                            );
+                          })()}
+                        </div>
                         <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-icc-400 transition-colors">
                           {item.title}
                         </h3>
@@ -749,7 +793,7 @@ export default function Home() {
                 <UserRound className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t('home.about_shaykh')}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t('home.about_sheikh')}</h3>
                 <p className="text-white/60 text-sm md:text-base leading-relaxed max-w-xl">
                   {t('home.about_desc')}
                 </p>

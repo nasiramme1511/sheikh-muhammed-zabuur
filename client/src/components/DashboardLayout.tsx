@@ -57,7 +57,7 @@ export default function DashboardLayout() {
               </div>
               <div>
                 <span className="text-sm font-bold text-white block leading-tight">{t('dashboard.title')}</span>
-                <span className="text-[9px] text-white/40 block leading-tight">Sh. Mohammed Zabuur</span>
+                <span className="text-[9px] text-white/40 block leading-tight">Sheikh Mohammed Zabuur</span>
               </div>
             </Link>
             <button className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-white/50 transition-all" onClick={() => setSidebarOpen(false)}>

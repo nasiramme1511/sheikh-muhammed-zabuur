@@ -5,6 +5,8 @@ import { FaTelegramPlane } from 'react-icons/fa';
 import { telegram, telegramAccess } from '../lib/api';
 import { useTranslation } from '../i18n';
 import { useAuth } from '../context/AuthContext';
+import { useAuthGuard } from '../hooks/useAuthGuard';
+import LoginWallModal from '../components/LoginWallModal';
 import { useNavigate } from 'react-router-dom';
 
 interface Channel {
@@ -21,7 +23,7 @@ interface Stats {
   categories: number;
 }
 
-const CATEGORY_ORDER = ['RIYAD', 'TAFSIR', 'TAJREED', 'BULUGH AL-MARAM', 'USUL AL-THALATHAH', 'AQEEDAH', 'BAYQUNIYYAH', 'General'];
+const CATEGORY_ORDER = ['RIYADH', 'TAFSIR', 'BULUGH', 'TAJREED', 'USUL', 'BAYQUNIYYAH', 'TAWHEED', 'General'];
 
 function categorySortKey(cat: string): number {
   const idx = CATEGORY_ORDER.indexOf(cat);
@@ -31,13 +33,13 @@ function categorySortKey(cat: string): number {
 export default function TelegramChannels() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { guardAction, showWall, closeWall } = useAuthGuard();
   const navigate = useNavigate();
   const [channels, setChannels] = useState<Channel[]>([]);
   const [fullChannels, setFullChannels] = useState<Map<number, string>>(new Map());
   const [stats, setStats] = useState<Stats>({ total: 0, categories: 0 });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [accessChecked, setAccessChecked] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
@@ -83,15 +85,13 @@ export default function TelegramChannels() {
   }, [user]);
 
   const handleJoin = (ch: Channel) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
-    if (!hasAccess || !fullChannels.has(ch.id)) {
-      setShowSubscribeModal(true);
-      return;
-    }
-    window.open(fullChannels.get(ch.id), '_blank', 'noopener,noreferrer');
+    guardAction(() => {
+      if (!hasAccess || !fullChannels.has(ch.id)) {
+        setShowSubscribeModal(true);
+        return;
+      }
+      window.open(fullChannels.get(ch.id), '_blank', 'noopener,noreferrer');
+    });
   };
 
   const filtered = channels.filter(ch =>
@@ -223,26 +223,7 @@ export default function TelegramChannels() {
         )}
       </div>
 
-      {/* Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowLoginModal(false)}>
-          <div className="bg-dark-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-white/10" onClick={e => e.stopPropagation()}>
-            <div className="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-              <LogIn className="w-7 h-7 text-blue-400" />
-            </div>
-            <h3 className="text-xl font-bold text-center mb-2">{t('telegram.login_required')}</h3>
-            <p className="text-white/50 text-center text-sm mb-6">{t('telegram.login_to_access')}</p>
-            <div className="flex gap-3">
-              <button onClick={() => setShowLoginModal(false)} className="flex-1 py-2.5 rounded-xl bg-white/5 text-white/70 hover:bg-white/10 transition-colors text-sm font-medium">
-                {t('common.back')}
-              </button>
-              <button onClick={() => navigate('/login')} className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-medium">
-                {t('auth.sign_in')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <LoginWallModal isOpen={showWall} onClose={closeWall} />
 
       {/* Subscribe Modal */}
       {showSubscribeModal && (

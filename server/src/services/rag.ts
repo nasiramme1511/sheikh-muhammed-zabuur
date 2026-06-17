@@ -19,7 +19,7 @@ export async function buildRAGContext(query: string): Promise<string> {
     .split(/\s+/)
     .filter((t) => t.length > 2);
 
-  const [categories, teachers, lessons, books, levels, resources, courses, assignments, announcements] = await Promise.all([
+  const [categories, teachers, lessons, books, levels, resources, courses, assignments, announcements, collections] = await Promise.all([
     prisma.category.findMany({
       where: buildOrConditions(searchTerms, [
         'name', 'nameArabic', 'nameAmharic', 'nameOromic',
@@ -101,6 +101,14 @@ export async function buildRAGContext(query: string): Promise<string> {
       },
       orderBy: { createdAt: 'desc' },
     }),
+    prisma.resource.findMany({
+      where: {
+        collection: { not: null },
+      },
+      select: { collection: true },
+      distinct: ['collection'],
+      orderBy: { collection: 'asc' },
+    }).then(rows => rows.map(r => r.collection).filter(Boolean) as string[]),
   ]);
 
   const contextParts: string[] = [];
@@ -166,6 +174,12 @@ export async function buildRAGContext(query: string): Promise<string> {
       .map((a) => `- ${a.title}${a.course ? ` [Course: ${a.course.title}]` : ''}: ${escapeForPrompt(a.content)}`)
       .join('\n');
     contextParts.push(`=== ANNOUNCEMENTS ===\n${ann}`);
+  }
+
+  if (collections.length > 0) {
+    const audioCount = await prisma.resource.count({ where: { collection: { not: null }, resourceType: 'AUDIO' } });
+    const pdfCount = await prisma.resource.count({ where: { collection: { not: null }, resourceType: 'PDF' } });
+    contextParts.push(`=== COLLECTIONS ===\nAvailable collections: ${collections.join(', ')}\nTotal audio resources: ${audioCount}, Total PDF resources: ${pdfCount}`);
   }
 
   return contextParts.join('\n\n');

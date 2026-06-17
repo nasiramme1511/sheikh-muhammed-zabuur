@@ -27,13 +27,20 @@
   body {
     font-family: 'Poppins', system-ui, sans-serif;
     @apply bg-surface-950 text-white antialiased;
-    background-image: var(--app-bg-image);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-color: #020617;
     min-height: 100vh;
+  }
+
+  body.app-bg-enabled {
+    background-image: var(--app-bg-image);
+  }
+
+  body.app-bg-disabled {
+    background-image: none;
   }
 
   /* ── CSS Custom Properties ── */
