@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon.svg" color="#10B981" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
     <title>Sheikh Muhammed Zabuur and Iman Chercher College</title>
     <meta name="description" content="Sheikh Muhammed Zabuur and Iman Chercher College — Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities." />
     <meta name="keywords" content="sheikh muhammed zabuur, iman chercher college, islamic learning, online islamic education, quran, hadith, tafsir, fiqh, aqeedah" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#020617" />
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
     <meta name="application-name" content="Sheikh Muhammed Zabuur and Iman Chercher College" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -30,7 +32,7 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Sheikh Muhammed Zabuur and Iman Chercher College" />
-    <meta name="twitter:description" content="Sheikh Muhammed Zabuur and Iman Chercher College — Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities." />
+    <meta name="twitter:description" content="Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities." />
     <meta name="twitter:image" content="/og-image.png" />
     <meta name="twitter:site" content="@shaykhmzabuur" />
 
@@ -41,7 +43,7 @@
       "@type": "EducationalOrganization",
       "name": "Sheikh Muhammed Zabuur and Iman Chercher College",
       "alternateName": "Iman Chercher College",
-      "description": "Sheikh Muhammed Zabuur and Iman Chercher College — Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities.",
+      "description": "Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities.",
       "url": "https://shaykhmohammedzabuur.com",
       "logo": "/logo.svg",
       "image": "/og-image.png",
@@ -49,15 +51,11 @@
       "sameAs": [
         "https://facebook.com/shaykhmohammedzabuur",
         "https://youtube.com/@shaykhmohammedzabuur",
-        "https://t.me/shaykhmohammedzabuur",
-        "https://twitter.com/shaykhmzabuur"
+        "https://t.me/shaykhmohammedzabuur"
       ],
       "knowsAbout": ["Islam", "Quran", "Hadith", "Aqeedah", "Tafsir", "Fiqh", "Tajweed", "Seerah"],
       "availableLanguage": ["English", "Arabic", "Amharic", "Afaan Oromo"],
-      "areaServed": {
-        "@type": "Place",
-        "name": "Worldwide"
-      },
+      "areaServed": { "@type": "Place", "name": "Worldwide" },
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -85,20 +83,6 @@
     }
     </script>
 
-    <!-- BreadcrumbList JSON-LD -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://shaykhmohammedzabuur.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Audio Lectures", "item": "https://shaykhmohammedzabuur.com/audio" },
-        { "@type": "ListItem", "position": 3, "name": "Video Lectures", "item": "https://shaykhmohammedzabuur.com/videos" },
-        { "@type": "ListItem", "position": 4, "name": "PDF Library", "item": "https://shaykhmohammedzabuur.com/pdfs" }
-      ]
-    }
-    </script>
-
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -108,7 +92,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#020617">
+        <div style="text-align:center">
+          <div style="display:inline-flex;gap:8px">
+            <div style="width:12px;height:12px;border-radius:50%;background:#10B981;animation:bounce 1.4s infinite ease-in-out both;animation-delay:-0.32s"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#10B981;animation:bounce 1.4s infinite ease-in-out both;animation-delay:-0.16s"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#10B981;animation:bounce 1.4s infinite ease-in-out both"></div>
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes bounce {
+          0%, 80%, 100% { transform: scale(0) }
+          40% { transform: scale(1) }
+        }
+      </style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,63 +1,32 @@
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
-import { useTranslation, type TranslationKey } from '../../i18n';
 
 interface SectionHeaderProps {
   badge?: string;
-  badgeKey?: TranslationKey;
   title: string;
-  titleKey?: TranslationKey;
-  highlight?: string;
-  highlightKey?: TranslationKey;
   subtitle?: string;
-  subtitleKey?: TranslationKey;
-  icon?: ReactNode;
   align?: 'left' | 'center';
-  variant?: 'icc' | 'gold';
+  className?: string;
 }
 
-export function SectionHeader({
-  badge,
-  badgeKey,
-  title,
-  titleKey,
-  highlight,
-  highlightKey,
-  subtitle,
-  subtitleKey,
-  icon,
-  align = 'center',
-  variant = 'gold',
-}: SectionHeaderProps) {
-  const { t } = useTranslation();
-  const badgeText = badgeKey ? t(badgeKey) : badge;
-  const titleText = titleKey ? t(titleKey) : title;
-  const highlightText = highlightKey ? t(highlightKey) : highlight;
-  const subtitleText = subtitleKey ? t(subtitleKey) : subtitle;
-
-  const gradientClass = variant === 'gold' ? 'text-gradient-gold' : 'text-gradient-icc';
-  const badgeVariant = variant === 'gold' ? 'bg-gold-500/10 border-gold-500/20 text-gold-300' : 'bg-icc-500/10 border-icc-500/20 text-icc-300';
-
+export function SectionHeader({ badge, title, subtitle, align = 'center', className = '' }: SectionHeaderProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className={`mb-12 ${align === 'center' ? 'text-center' : 'text-left'}`}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`mb-10 ${align === 'center' ? 'text-center' : ''} ${className}`}
     >
-      {badgeText && (
-        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border mb-4 ${badgeVariant}`}>
-          {icon && <span className="w-3.5 h-3.5">{icon}</span>}
-          <span className="text-xs font-medium">{badgeText}</span>
-        </div>
+      {badge && (
+        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider mb-4">
+          {badge}
+        </span>
       )}
-      <h2 className="section-title">
-        {titleText}{' '}
-        {highlightText && <span className={gradientClass}>{highlightText}</span>}
+      <h2 className="text-heading-xl md:text-display-sm font-bold text-white mb-3">
+        {title}
       </h2>
-      {subtitleText && (
-        <p className="section-subtitle">{subtitleText}</p>
+      {subtitle && (
+        <p className="text-body-md text-white/50 max-w-2xl mx-auto">
+          {subtitle}
+        </p>
       )}
     </motion.div>
   );

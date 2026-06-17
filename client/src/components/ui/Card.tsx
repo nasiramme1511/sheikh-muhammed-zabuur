@@ -9,7 +9,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const variantMap = {
   'glass': 'glass',
   'glass-dark': 'glass-card-dark',
-  'glass-premium': 'glass-card-premium',
+  'glass-premium': 'glass-premium',
   'shimmer': 'shimmer-bg',
 };
 

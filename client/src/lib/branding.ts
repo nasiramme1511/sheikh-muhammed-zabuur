@@ -26,11 +26,15 @@ export const BRAND = {
     gold: '#F59E0B',
     goldDark: '#D97706',
     goldLight: '#FCD34D',
+    teal: '#14B8A6',
+    darkBg: '#020617',
+    darkCard: '#0F172A',
+    lightBg: '#F8FAFC',
   },
   stats: {
     audioLectures: '100+',
     videoLectures: '50+',
     pdfs: '30+',
-    languages: '3',
+    languages: '4',
   },
 } as const;

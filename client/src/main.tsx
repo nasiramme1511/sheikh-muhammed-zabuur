@@ -22,10 +22,14 @@ function Root() {
                 <AIChatProvider>
                   <App />
                 </AIChatProvider>
-                <Toaster position="top-right" toastOptions={{
-                  className: '!bg-dark-800 !text-white !border !border-white/10 !shadow-2xl',
-                  duration: 3000,
-                }} />
+                <Toaster
+                  position="top-right"
+                  toastOptions={{
+                    className: '!bg-surface-900 !text-white !border !border-white/10 !shadow-modal',
+                    duration: 3000,
+                    style: { borderRadius: '1rem', padding: '0.75rem 1rem' },
+                  }}
+                />
               </PlayerProvider>
             </AuthProvider>
           </LanguageProvider>

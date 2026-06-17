@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { HiCog, HiTranslate, HiSun, HiBell, HiMail } from 'react-icons/hi';
-import { Moon, Monitor, Check } from 'lucide-react';
+import { Moon, Monitor, Check, Settings2, Languages, Palette, Bell, Mail } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useLanguage } from '../../context/LanguageContext';
-import toast from 'react-hot-toast';
+import { HiSun } from 'react-icons/hi';
 import type { ThemeMode } from '../../context/ThemeContext';
 import type { Language } from '../../lib/language';
 
@@ -31,19 +30,24 @@ export default function DashboardSettings() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-        <HiCog className="w-6 h-6 text-emerald-400" />
-        {t('dashboard.settings')}
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <Settings2 className="w-6 h-6 text-emerald-400" />
+          {t('dashboard.settings')}
+        </h1>
+        <span className="text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+          {resolved === 'dark' ? t('theme.dark') : t('theme.light')}
+        </span>
+      </div>
 
       {/* Language */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card-dark p-6"
+        className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <HiTranslate className="w-5 h-5 text-emerald-400" />
+          <Languages className="w-5 h-5 text-emerald-400" />
           {t('settings.language')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -53,7 +57,7 @@ export default function DashboardSettings() {
               onClick={() => setLanguage(opt.value)}
               className={`p-3 rounded-xl text-sm font-medium transition-all border ${
                 language === opt.value
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/5'
                   : 'bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
               }`}
             >
@@ -69,10 +73,10 @@ export default function DashboardSettings() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="glass-card-dark p-6"
+        className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <HiSun className="w-5 h-5 text-emerald-400" />
+          <Palette className="w-5 h-5 text-emerald-400" />
           {t('settings.theme')}
         </h2>
         <div className="flex gap-3">
@@ -85,7 +89,7 @@ export default function DashboardSettings() {
                 onClick={() => setMode(opt.value)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all border ${
                   isActive
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/5'
                     : 'bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
                 }`}
               >
@@ -95,9 +99,6 @@ export default function DashboardSettings() {
             );
           })}
         </div>
-        <p className="text-xs text-white/30 mt-3">
-          {t('settings.current_mode', { mode: resolved === 'dark' ? t('theme.dark') : t('theme.light') })}
-        </p>
       </motion.div>
 
       {/* Notifications */}
@@ -105,24 +106,25 @@ export default function DashboardSettings() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="glass-card-dark p-6"
+        className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <HiBell className="w-5 h-5 text-emerald-400" />
+          <Bell className="w-5 h-5 text-emerald-400" />
           {t('settings.notifications')}
         </h2>
         <div className="space-y-4">
-          <label className="flex items-center justify-between">
+          <label className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-3">
-              <HiBell className="w-5 h-5 text-white/40" />
+              <Bell className="w-5 h-5 text-white/40" />
               <div>
                 <p className="text-sm text-white">{t('settings.push_notifications')}</p>
                 <p className="text-xs text-white/40">{t('settings.push_notifications_desc')}</p>
               </div>
             </div>
             <button
+              type="button"
               onClick={() => setNotifications(!notifications)}
-              className={`w-10 h-6 rounded-full transition-all relative ${
+              className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${
                 notifications ? 'bg-emerald-500' : 'bg-white/10'
               }`}
             >
@@ -132,17 +134,18 @@ export default function DashboardSettings() {
             </button>
           </label>
 
-          <label className="flex items-center justify-between">
+          <label className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-3">
-              <HiMail className="w-5 h-5 text-white/40" />
+              <Mail className="w-5 h-5 text-white/40" />
               <div>
                 <p className="text-sm text-white">{t('settings.email_updates')}</p>
                 <p className="text-xs text-white/40">{t('settings.email_updates_desc')}</p>
               </div>
             </div>
             <button
+              type="button"
               onClick={() => setEmailUpdates(!emailUpdates)}
-              className={`w-10 h-6 rounded-full transition-all relative ${
+              className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${
                 emailUpdates ? 'bg-emerald-500' : 'bg-white/10'
               }`}
             >

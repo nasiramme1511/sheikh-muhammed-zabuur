@@ -3,15 +3,14 @@ import { ReactNode } from 'react';
 interface BadgeProps {
   variant?: 'icc' | 'gold' | 'default';
   size?: 'sm' | 'md';
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
-  icon?: ReactNode;
 }
 
 const variantClasses = {
-  icc: 'badge-icc',
-  gold: 'badge-gold',
-  default: 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-white/60 border border-white/10',
+  icc: 'bg-icc-500/10 text-icc-400 border-icc-500/20',
+  gold: 'bg-gold-500/10 text-gold-400 border-gold-500/20',
+  default: 'bg-white/5 text-white/60 border-white/10',
 };
 
 const sizeClasses = {
@@ -19,10 +18,9 @@ const sizeClasses = {
   md: 'px-3 py-1 text-xs',
 };
 
-export function Badge({ variant = 'default', size = 'md', children, className = '', icon }: BadgeProps) {
+export function Badge({ variant = 'default', size = 'md', children, className = '' }: BadgeProps) {
   return (
-    <span className={`${variantClasses[variant]} ${sizeClasses[size]} ${className}`}>
-      {icon && <span className="w-3.5 h-3.5">{icon}</span>}
+    <span className={`inline-flex items-center gap-1.5 rounded-full font-medium border ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}>
       {children}
     </span>
   );

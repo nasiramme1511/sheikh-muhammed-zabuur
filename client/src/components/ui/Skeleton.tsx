@@ -1,32 +1,31 @@
 interface SkeletonProps {
-  className?: string;
   variant?: 'text' | 'circle' | 'rect' | 'card';
-  width?: string | number;
-  height?: string | number;
+  width?: string;
+  height?: string;
   count?: number;
+  className?: string;
 }
 
-export function Skeleton({ className = '', variant = 'text', width, height, count = 1 }: SkeletonProps) {
-  const baseClass = 'shimmer-bg rounded-lg';
-  const variantClasses = {
-    text: 'h-4 w-full',
-    circle: 'rounded-full',
-    rect: 'rounded-xl',
-    card: 'h-48 rounded-2xl',
-  };
+const variantClasses = {
+  text: 'h-4 rounded-lg',
+  circle: 'rounded-full',
+  rect: 'rounded-xl',
+  card: 'rounded-2xl h-40',
+};
 
-  const style = {
-    ...(width ? { width: typeof width === 'number' ? `${width}px` : width } : {}),
-    ...(height ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
-  };
+export function Skeleton({ variant = 'text', width, height, count = 1, className = '' }: SkeletonProps) {
+  const items = Array.from({ length: count }, (_, i) => i);
 
   return (
     <>
-      {Array.from({ length: count }).map((_, i) => (
+      {items.map((i) => (
         <div
           key={i}
-          className={`${baseClass} ${variantClasses[variant]} ${className}`}
-          style={style}
+          className={`animate-pulse bg-white/5 border border-white/5 ${variantClasses[variant]} ${className}`}
+          style={{
+            width: width || (variant === 'circle' ? '40px' : '100%'),
+            height: height || (variant === 'circle' ? '40px' : variant === 'text' ? '16px' : variant === 'card' ? '160px' : '80px'),
+          }}
         />
       ))}
     </>

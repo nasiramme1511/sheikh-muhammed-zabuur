@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HiUser, HiMail, HiLockClosed, HiCamera } from 'react-icons/hi';
-import { Save, Upload, Eye, EyeOff } from 'lucide-react';
+import { Save, Upload, Eye, EyeOff, User, ShieldCheck, BadgeCheck } from 'lucide-react';
 import { dashboard } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../i18n';
@@ -92,33 +92,39 @@ export default function DashboardProfile() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-        <HiUser className="w-6 h-6 text-emerald-400" />
-        {t('dashboard.my_profile')}
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <User className="w-6 h-6 text-emerald-400" />
+          {t('dashboard.my_profile')}
+        </h1>
+        <div className="flex items-center gap-2 text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+          <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+          {user?.role || 'Student'}
+        </div>
+      </div>
 
       <motion.form
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onSubmit={handleSaveProfile}
-        className="glass-card-dark p-6 space-y-6"
+        className="glass-premium p-6 space-y-6"
       >
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold overflow-hidden ring-2 ring-emerald-500/20">
               {image ? (
                 <img src={image} alt="" className="w-full h-full object-cover" />
               ) : (
                 user?.name?.charAt(0)?.toUpperCase() || 'U'
               )}
             </div>
-            <label className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center cursor-pointer hover:bg-emerald-400 transition-colors">
+            <label className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center cursor-pointer hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20">
               <HiCamera className="w-4 h-4 text-white" />
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
           </div>
           <div>
-            <p className="text-white font-medium">{user?.name}</p>
+            <p className="text-white font-medium text-lg">{user?.name}</p>
             <p className="text-sm text-white/40">{user?.email}</p>
           </div>
         </div>
@@ -165,10 +171,10 @@ export default function DashboardProfile() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         onSubmit={handleChangePassword}
-        className="glass-card-dark p-6 space-y-4"
+        className="glass-premium p-6 space-y-4"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <HiLockClosed className="w-5 h-5 text-emerald-400" />
+          <ShieldCheck className="w-5 h-5 text-emerald-400" />
           {t('dashboard.change_password')}
         </h2>
 

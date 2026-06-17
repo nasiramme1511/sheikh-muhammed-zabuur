@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, Play, Video as VideoIcon, Eye, Download, X, Sparkles, Maximize2, Filter, BookOpen
+  Search, Play, Video as VideoIcon, Eye, Download, X, Sparkles, Maximize2, Filter, BookOpen,
+  Grid3X3, List, ChevronLeft, ChevronRight, Clock, Film
 } from 'lucide-react';
 import { resources as resourcesApi, collections as collectionsApi } from '../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
@@ -31,6 +32,9 @@ export default function VideoLibrary() {
   const [activeVideo, setActiveVideo] = useState<Resource | null>(null);
   const [collectionStats, setCollectionStats] = useState<Record<string, number>>({});
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchVideos();
@@ -47,7 +51,6 @@ export default function VideoLibrary() {
     setLoading(true);
     try {
       const res = await resourcesApi.getAll({ type: 'VIDEO' });
-      // Exclude recorded live sessions from regular library
       const filtered = res.data.filter((r: any) => r.fileType !== 'recording');
       setVideos(filtered);
     } catch (err) {
@@ -95,13 +98,12 @@ export default function VideoLibrary() {
     if (ytId) {
       return `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
     }
-    // Return a default fallback placeholder or standard image if none
-    return `/video-placeholder.jpg`; // Fallback image path
+    return '/video-placeholder.jpg';
   };
 
   const handleVideoSelect = (video: Resource) => {
     setActiveVideo(video);
-    resourcesApi.view(video.id); // track view
+    resourcesApi.view(video.id);
   };
 
   const filteredVideos = videos
@@ -122,11 +124,17 @@ export default function VideoLibrary() {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
+  const scrollCategories = (dir: 'left' | 'right') => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-dark-900 pt-24 pb-16 text-white px-4 md:px-8">
+    <div className="min-h-screen bg-surface-900 pt-24 pb-16 text-white px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -139,7 +147,7 @@ export default function VideoLibrary() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold mb-4 tracking-tight"
+            className="text-4xl md:text-5xl font-bold mb-3 tracking-tight"
           >
             Watch Video Lectures
           </motion.h1>
@@ -147,7 +155,7 @@ export default function VideoLibrary() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-white/60 max-w-2xl mx-auto text-base md:text-lg"
+            className="text-white/60 max-w-2xl mx-auto text-base"
           >
             Watch high-quality, structured classes and video series covering essential Islamic topics with Sheikh Mohammed Zabuur.
           </motion.p>
@@ -155,8 +163,8 @@ export default function VideoLibrary() {
 
         {/* Browse By Collection */}
         {Object.keys(collectionStats).length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <div className="mb-5">
+            <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-emerald-400" />
               Browse By Collection
             </h3>
@@ -185,7 +193,7 @@ export default function VideoLibrary() {
         )}
 
         {selectedCollection && (
-          <div className="mb-4 flex items-center gap-2 text-sm bg-dark-800/40 p-3 rounded-xl border border-white/5">
+          <div className="mb-4 flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/5">
             <span className="text-white/60">Showing only:</span>
             <span className="font-semibold text-emerald-400">
               {getCollectionBySlug(selectedCollection)?.icon} {getCollectionBySlug(selectedCollection)?.name || selectedCollection}
@@ -199,8 +207,8 @@ export default function VideoLibrary() {
           </div>
         )}
 
-        {/* Search & Categories */}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-8 bg-dark-800/50 p-4 rounded-2xl border border-white/5 backdrop-blur-xl">
+        {/* Sticky Filter Bar */}
+        <div className="sticky top-20 z-30 flex flex-col md:flex-row gap-4 justify-between items-center mb-6 bg-surface-900/90 backdrop-blur-xl border border-white/5 p-4 rounded-2xl shadow-lg shadow-black/20">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/40" />
             <input
@@ -208,12 +216,12 @@ export default function VideoLibrary() {
               placeholder="Search videos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-dark-900 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 items-center w-full md:w-auto">
-            <div className="flex gap-1 bg-dark-900/60 border border-white/5 rounded-xl p-0.5">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex gap-1 bg-white/5 border border-white/5 rounded-xl p-0.5">
               {(['latest', 'downloads', 'views'] as const).map((s) => (
                 <button
                   key={s}
@@ -226,16 +234,48 @@ export default function VideoLibrary() {
                 </button>
               ))}
             </div>
+
+            <div className="flex gap-1 bg-white/5 border border-white/5 rounded-xl p-0.5">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title="Grid View"
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title="List View"
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Navigation */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => scrollCategories('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-surface-900/90 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/20 transition-all backdrop-blur-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div
+            ref={categoryScrollRef}
+            className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth px-10"
+          >
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat;
               return (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-medium shrink-0 transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-medium shrink-0 transition-all whitespace-nowrap ${
                     active
                       ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                      : 'bg-dark-900/60 text-white/60 hover:text-white border border-white/5 hover:bg-dark-900'
+                      : 'bg-white/5 text-white/60 hover:text-white border border-white/5 hover:bg-white/10'
                   }`}
                 >
                   {cat}
@@ -243,14 +283,20 @@ export default function VideoLibrary() {
               );
             })}
           </div>
+          <button
+            onClick={() => scrollCategories('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-surface-900/90 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/20 transition-all backdrop-blur-sm"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Videos Grid */}
+        {/* Loading */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
             {[1, 2, 3, 4, 5, 6].map((idx) => (
-              <div key={idx} className="animate-pulse bg-dark-800/40 border border-white/5 rounded-2xl overflow-hidden h-64 flex flex-col justify-between">
-                <div className="bg-white/5 h-40 w-full" />
+              <div key={idx} className="animate-pulse bg-white/5 border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between">
+                <div className="bg-white/5 aspect-video w-full" />
                 <div className="p-4 space-y-2">
                   <div className="h-4 bg-white/5 rounded w-3/4" />
                   <div className="h-3 bg-white/5 rounded w-1/2" />
@@ -262,47 +308,29 @@ export default function VideoLibrary() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-24 bg-dark-800/20 rounded-3xl border border-white/5 backdrop-blur-sm relative overflow-hidden"
+            className="text-center py-24 bg-white/5 rounded-3xl border border-white/5 backdrop-blur-sm relative overflow-hidden"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="relative z-10">
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
-                transition={{ type: 'spring', damping: 15 }}
                 className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/10 flex items-center justify-center"
               >
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                >
+                <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
                   <VideoIcon className="w-12 h-12 text-emerald-400/60" />
                 </motion.div>
               </motion.div>
-              <motion.h3
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-2xl font-bold text-white/80 mb-3"
-              >
+              <h3 className="text-2xl font-bold text-white/80 mb-3">
                 {searchQuery || selectedCategory !== 'All Videos' ? 'No Videos Found' : 'Video Library Coming Soon'}
-              </motion.h3>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-sm text-white/40 max-w-md mx-auto mb-8 leading-relaxed"
-              >
+              </h3>
+              <p className="text-sm text-white/40 max-w-md mx-auto mb-8 leading-relaxed">
                 {searchQuery || selectedCategory !== 'All Videos'
                   ? 'No videos match your current search criteria. Try different keywords or browse another category to find Islamic video content.'
                   : 'Video lectures by Sheikh Mohammed Zabuur are being prepared. Subscribe to stay notified when new content is uploaded and published.'}
-              </motion.p>
+              </p>
               {(searchQuery || selectedCategory !== 'All Videos') && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
+                <motion.div>
                   <button
                     onClick={() => { setSearchQuery(''); setSelectedCategory('All Videos'); }}
                     className="px-5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all text-sm font-medium flex items-center gap-2 mx-auto"
@@ -314,7 +342,8 @@ export default function VideoLibrary() {
               )}
             </div>
           </motion.div>
-        ) : (
+        ) : viewMode === 'grid' ? (
+          /* Grid View */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVideos.map((video, idx) => {
               const isYoutube = !!getYoutubeId(video.url);
@@ -326,9 +355,8 @@ export default function VideoLibrary() {
                   transition={{ delay: idx * 0.05 }}
                   key={video.id}
                   onClick={() => handleVideoSelect(video)}
-                  className="glass-card flex flex-col overflow-hidden h-full cursor-pointer group relative"
+                  className="glass-premium flex flex-col overflow-hidden h-full cursor-pointer group"
                 >
-                  {/* Thumbnail / Video Indicator */}
                   <div className="relative aspect-video bg-dark-950 overflow-hidden">
                     {isYoutube ? (
                       <img
@@ -353,8 +381,6 @@ export default function VideoLibrary() {
                       {isYoutube ? 'YouTube' : 'MP4 File'}
                     </span>
                   </div>
-
-                  {/* Details */}
                   <div className="p-5 flex flex-col justify-between flex-grow">
                     <div>
                       <div className="flex justify-between items-center mb-2">
@@ -376,13 +402,63 @@ export default function VideoLibrary() {
                         {video.description || 'Watch class video recording by Sheikh Mohammed Zabuur.'}
                       </p>
                     </div>
-
                     <div className="pt-4 mt-4 border-t border-white/5 flex items-center gap-3 text-xs text-white/40">
                       <span className="flex items-center gap-1">
                         <Eye className="w-3.5 h-3.5" />
                         {video.views} views
                       </span>
                     </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        ) : (
+          /* List View */
+          <div className="space-y-3">
+            {filteredVideos.map((video, idx) => {
+              const isYoutube = !!getYoutubeId(video.url);
+              const thumbUrl = getThumbnail(video);
+              return (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.03 }}
+                  key={video.id}
+                  onClick={() => handleVideoSelect(video)}
+                  className="glass-premium flex items-center gap-4 p-3 cursor-pointer group"
+                >
+                  <div className="relative w-24 h-16 md:w-36 md:h-20 rounded-xl overflow-hidden bg-dark-950 shrink-0">
+                    {isYoutube ? (
+                      <img
+                        src={thumbUrl}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-dark-950">
+                        <VideoIcon className="w-5 h-5 text-emerald-500/40" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">{video.title}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">{video.category}</span>
+                      <span className="text-[10px] text-white/40 flex items-center gap-1">
+                        <Eye className="w-3 h-3" /> {video.views}
+                      </span>
+                      <span className="text-[10px] text-white/40">
+                        {new Date(video.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Download className="w-4 h-4 text-white/40" />
                   </div>
                 </motion.div>
               );
@@ -407,10 +483,9 @@ export default function VideoLibrary() {
               exit={{ scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl bg-dark-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-4xl bg-surface-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-dark-850">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-surface-800">
                 <span className="text-sm font-semibold text-white truncate max-w-xl">{activeVideo.title}</span>
                 <button
                   onClick={() => setActiveVideo(null)}
@@ -420,7 +495,6 @@ export default function VideoLibrary() {
                 </button>
               </div>
 
-              {/* Player Container */}
               <div className="aspect-video bg-black relative">
                 {getYoutubeId(activeVideo.url) ? (
                   <iframe
@@ -440,8 +514,7 @@ export default function VideoLibrary() {
                 )}
               </div>
 
-              {/* Video Info Footer */}
-              <div className="p-6 bg-dark-900 border-t border-white/5">
+              <div className="p-6 bg-surface-900 border-t border-white/5">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">

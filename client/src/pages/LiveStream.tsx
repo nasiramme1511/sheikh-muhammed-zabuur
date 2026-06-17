@@ -236,8 +236,8 @@ export default function LiveStream() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%)' }}>
+      <div className="min-h-screen flex items-center justify-center bg-surface-900"
+        style={{ background: 'linear-gradient(135deg, #041824 0%, #0a1f2e 50%, #041824 100%)' }}>
         <div className="text-center">
           <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
             <Loader2 className="w-7 h-7 text-emerald-400 animate-spin" />
@@ -256,8 +256,8 @@ export default function LiveStream() {
   ];
 
   return (
-    <div className="min-h-screen pt-20 pb-16 text-white px-4 md:px-6 lg:px-8"
-      style={{ background: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%)' }}>
+    <div className="min-h-screen pt-20 pb-16 text-white px-4 md:px-6 lg:px-8 bg-surface-900"
+      style={{ background: 'linear-gradient(135deg, #041824 0%, #0a1f2e 50%, #041824 100%)' }}>
       <div className="max-w-[1440px] mx-auto">
         {/* ── PROFESSIONAL LIVE HERO ── */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
