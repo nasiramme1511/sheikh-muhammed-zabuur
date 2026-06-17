@@ -137,7 +137,7 @@ async function repairResourceTypes() {
       fixed++;
     }
   }
-  if (fixed > 0) console.log(`  ✓ Repaired ${fixed} incorrectly typed resources`);
+  // silent
 }
 
 // ── Sync on-disk files → DB Resource records ──────────────────
@@ -181,7 +181,7 @@ async function syncUploadsToDb() {
           teacherId: sheikhId,
         },
       });
-      console.log(`  ✓ Synced resource: ${fileUrl}`);
+      // silent
     }
   }
 }
@@ -274,19 +274,7 @@ app.get('*', (req, res) => {
   }
 });
 
-// Startup diagnostics
-console.log('Environment Loaded');
-console.log('Prisma Ready');
 console.log('Database Connected');
-console.log('Uploads Folder Ready');
-
-// Show connection target (without password)
-try {
-  const dbUrl = new URL(process.env.DATABASE_URL || '');
-  console.log(`  → Database: ${dbUrl.hostname}:${dbUrl.port || 3306}/${dbUrl.pathname.replace('/', '')}`);
-} catch {
-  console.log('  → Database: DATABASE_URL not set');
-}
 
 repairResourceTypes().then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {

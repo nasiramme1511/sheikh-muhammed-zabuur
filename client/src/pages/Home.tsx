@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   Music, Video, FileText, Radio, Tv, ArrowRight,
   Play, Download, Eye, Sparkles, BookOpen, ChevronRight,
   Star, ScrollText, UserRound, Heart, Library,
   Quote, Headphones, Clock, Globe, Monitor, CheckCircle,
-  Moon, Sun, Users, Award,
+  Moon, Sun, Users, Award, BookOpenCheck, MapPin, 
+  ExternalLink, Calendar, Bookmark, X
 } from 'lucide-react';
 import { resources as resourcesApi, collections as collectionsApi, live as liveApi } from '../lib/api';
 import { COLLECTIONS, COLLECTION_COLORS, getCollectionBySlug } from '../config/collections';
 import type { Resource } from '../types';
-import { useTranslation } from '../i18n';
+import { useTranslation, type TranslationKey } from '../i18n';
 import { useAppearance } from '../context/AppearanceContext';
 import { useSEO } from '../seo/metadata';
 import TelegramSection from '../components/sections/TelegramSection';
-import PrayerTimesWidget from '../components/PrayerTimesWidget';
 
 interface LiveState {
   isActive: boolean;
@@ -31,11 +31,73 @@ interface ResourceStats {
   total: number;
 }
 
-const CATEGORIES = [
-  'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
-  'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
-  'Questions & Answers', 'General',
+interface PrayerTime {
+  name: string;
+  nameAr: string;
+  time: string;
+  icon: any;
+  color: string;
+}
+
+const PRAYER_TIMES: PrayerTime[] = [
+  { name: 'Fajr', nameAr: 'الفجر', time: '05:12', icon: SunriseIcon, color: '#10B981' },
+  { name: 'Dhuhr', nameAr: 'الظهر', time: '12:30', icon: Sun, color: '#F59E0B' },
+  { name: 'Asr', nameAr: 'العصر', time: '15:45', icon: Sun, color: '#F97316' },
+  { name: 'Maghrib', nameAr: 'المغرب', time: '18:30', icon: SunsetIcon, color: '#EC4899' },
+  { name: 'Isha', nameAr: 'العشاء', time: '20:00', icon: Moon, color: '#8B5CF6' },
 ];
+
+function SunriseIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M18 22H6" />
+      <path d="m12 18-4-4h8z" />
+      <path d="M12 2v8" />
+      <path d="m5.22 10.22 1.42 1.42" />
+      <path d="m17.36 11.64 1.42-1.42" />
+      <path d="M22 22H2" />
+      <path d="M16 22a4 4 0 0 0-8 0" />
+    </svg>
+  );
+}
+
+function SunsetIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M18 22H6" />
+      <path d="m16 14-4 4-4-4z" />
+      <path d="M12 2v8" />
+      <path d="m5.22 10.22 1.42 1.42" />
+      <path d="m17.36 11.64 1.42-1.42" />
+      <path d="M22 22H2" />
+      <path d="M16 22a4 4 0 0 0-8 0" />
+    </svg>
+  );
+}
+
+function getCurrentPrayerIndex(): number {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  for (let i = PRAYER_TIMES.length - 1; i >= 0; i--) {
+    const [h, m] = PRAYER_TIMES[i].time.split(':').map(Number);
+    const prayerMinutes = h * 60 + m;
+    if (currentMinutes >= prayerMinutes) return i;
+  }
+  return -1;
+}
+
+function getNextPrayerIndex(): number {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  for (let i = 0; i < PRAYER_TIMES.length; i++) {
+    const [h, m] = PRAYER_TIMES[i].time.split(':').map(Number);
+    const prayerMinutes = h * 60 + m;
+    if (currentMinutes < prayerMinutes) return i;
+  }
+  return 0;
+}
 
 const CAT_COLORS: Record<string, string> = {
   Aqeedah: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -55,59 +117,72 @@ const CAT_COLORS: Record<string, string> = {
 };
 
 const TRACKS = [
-  { name: 'Aqeedah', icon: '⭐', desc: 'Islamic Creed & Theology', color: 'from-emerald-500 to-emerald-700' },
-  { name: 'Tafsir', icon: '📜', desc: 'Quranic Exegesis', color: 'from-purple-500 to-purple-700' },
-  { name: 'Hadith', icon: '📖', desc: 'Prophetic Traditions', color: 'from-blue-500 to-blue-700' },
-  { name: 'Fiqh', icon: '⚖️', desc: 'Islamic Jurisprudence', color: 'from-orange-500 to-orange-700' },
-  { name: 'Seerah', icon: '🕌', desc: 'Prophetic Biography', color: 'from-yellow-500 to-yellow-700' },
-  { name: 'Tajweed', icon: '🎵', desc: 'Quranic Recitation', color: 'from-teal-500 to-teal-700' },
-  { name: 'Arabic', icon: '📝', desc: 'Arabic Language', color: 'from-red-500 to-red-700' },
-  { name: 'Manhaj', icon: '🗺️', desc: 'Islamic Methodology', color: 'from-cyan-500 to-cyan-700' },
+  { name: 'Aqeedah', icon: '⭐', desc: 'Islamic Creed & Theology', color: 'from-emerald-500 to-emerald-700', lessons: 45, duration: '18h', difficulty: 'Beginner', featured: true },
+  { name: 'Tafsir', icon: '📜', desc: 'Quranic Exegesis', color: 'from-purple-500 to-purple-700', lessons: 60, duration: '25h', difficulty: 'Intermediate', featured: false },
+  { name: 'Hadith', icon: '📖', desc: 'Prophetic Traditions', color: 'from-blue-500 to-blue-700', lessons: 38, duration: '15h', difficulty: 'Intermediate', featured: false },
+  { name: 'Fiqh', icon: '⚖️', desc: 'Islamic Jurisprudence', color: 'from-orange-500 to-orange-700', lessons: 52, duration: '20h', difficulty: 'Advanced', featured: false },
+  { name: 'Seerah', icon: '🕌', desc: 'Prophetic Biography', color: 'from-yellow-500 to-yellow-700', lessons: 28, duration: '12h', difficulty: 'Beginner', featured: false },
+  { name: 'Tajweed', icon: '🎵', desc: 'Quranic Recitation', color: 'from-teal-500 to-teal-700', lessons: 30, duration: '10h', difficulty: 'Beginner', featured: false },
+  { name: 'Arabic', icon: '📝', desc: 'Arabic Language', color: 'from-red-500 to-red-700', lessons: 40, duration: '16h', difficulty: 'Beginner', featured: false },
+  { name: 'Manhaj', icon: '🗺️', desc: 'Islamic Methodology', color: 'from-cyan-500 to-cyan-700', lessons: 24, duration: '8h', difficulty: 'Advanced', featured: false },
 ];
 
 const TRUST_FEATURES = [
-  { icon: ScrollText, label: 'Authentic Sources', desc: 'All content verified from Quran & Sunnah' },
-  { icon: UserRound, label: 'Qualified Teaching', desc: 'Taught by Sheikh Mohammed Zabuur' },
-  { icon: Monitor, label: 'Live Learning', desc: 'Real-time interactive sessions' },
-  { icon: BookOpen, label: 'Structured Curriculum', desc: 'Step-by-step learning paths' },
+  { icon: ScrollText, label: 'Authentic Knowledge', desc: 'All materials fully verified directly from Quran & Sahih Sunnah.' },
+  { icon: BookOpenCheck, label: 'Structured Learning', desc: 'Step-by-step tracks curated from beginner levels to deep scientific studies.' },
+  { icon: Globe, label: 'Multi-language Support', desc: 'Lessons provided across English, Arabic, Amharic, and Afaan Oromo.' },
+  { icon: Heart, label: 'Free Resources', desc: 'Access to the core educational portal is entirely free, always.' },
 ];
 
 const TESTIMONIALS = [
-  { name: 'Aisha Mohamed', country: 'Ethiopia', text: 'This platform has completely transformed my understanding of Islam. The structured courses and authentic teachers make learning so easy and enjoyable.' },
-  { name: 'Ahmed Hassan', country: 'Somalia', text: 'Finally, a platform that provides authentic Islamic knowledge in multiple languages. The audio lessons are perfect for learning on the go.' },
-  { name: 'Fatima Ali', country: 'Kenya', text: 'I started as a complete beginner and now I can recite Quran with proper Tajweed. The teachers are patient and knowledgeable.' },
-  { name: 'Omar Abdirahman', country: 'USA', text: 'The level system is brilliant. It guides you step by step from basics to advanced topics.' },
+  { name: 'Aisha Mohamed', country: 'Ethiopia', text: 'This platform has completely transformed my understanding of Islam. The structured courses and authentic teachings make learning so structured and accessible.', rating: 5, initial: 'A' },
+  { name: 'Ahmed Hassan', country: 'Somalia', text: 'Finally, a platform that provides authentic Islamic knowledge in multiple languages. The audio lessons are perfect for listening during my daily commute.', rating: 5, initial: 'A' },
+  { name: 'Fatima Ali', country: 'Kenya', text: 'I started as a complete beginner in Arabic and now I can recite Quran with proper Tajweed rules. The Sheikh is incredibly patient and clear.', rating: 5, initial: 'F' },
+  { name: 'Omar Abdirahman', country: 'USA', text: 'The linear progression system is brilliant. It takes you on a guided path rather than leaving you overwhelmed with random videos.', rating: 5, initial: 'O' },
+  { name: 'Bilal Ibrahim', country: 'Saudi Arabia', text: 'A premium educational site that respects Islamic tradition and leverages modern UX. Highly recommended for students of knowledge.', rating: 5, initial: 'B' },
+  { name: 'Mariam Yusuf', country: 'Ethiopia', text: 'The PDF lecture outlines combined with the streaming audio makes learning extremely easy to follow. May Allah reward the team.', rating: 5, initial: 'M' }
 ];
 
-function useCounter(end: number, duration = 2000) {
+const GALLERY_IMAGES = [
+  { url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80', title: 'Grand Masjid Interior', size: 'large' },
+  { url: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad5d?auto=format&fit=crop&w=600&q=80', title: 'Islamic Calligraphy Art', size: 'medium' },
+  { url: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=600&q=80', title: 'Classical Arabic Library', size: 'medium' },
+  { url: 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=600&q=80', title: 'Students Study Space', size: 'large' },
+  { url: 'https://images.unsplash.com/photo-1609599006353-e629f1d40a4a?auto=format&fit=crop&w=600&q=80', title: 'Noble Quran Stand', size: 'medium' },
+];
+
+function ScrollCounterStat({ value, label, icon: Icon, suffix = '' }: { value: number; label: string; icon: any; suffix?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [count, setCount] = useState(0);
   const started = useRef(false);
+
   useEffect(() => {
-    if (started.current) return;
+    if (!isInView || started.current) return;
     started.current = true;
+    const duration = 2000;
     const startTime = performance.now();
     const step = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * end));
+      setCount(Math.floor(eased * value));
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [end, duration]);
-  return count;
-}
+  }, [isInView, value]);
 
-function CounterStat({ value, label, icon: Icon, suffix = '' }: { value: number; label: string; icon: any; suffix?: string }) {
-  const count = useCounter(value);
   return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-      <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+    <div ref={ref} className="glass-premium p-6 text-center relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-300">
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-3xl md:text-4xl font-extrabold text-white mb-1">{count}{suffix}</div>
-      <div className="text-xs text-white/50 tracking-wider uppercase">{label}</div>
-    </motion.div>
+      <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+        {count}{suffix}
+      </div>
+      <div className="text-xs text-white/50 tracking-wider uppercase font-semibold">{label}</div>
+    </div>
   );
 }
 
@@ -126,6 +201,150 @@ function SkeletonCard({ wide = false }: { wide?: boolean }) {
   );
 }
 
+// Custom Streaming style card for Audio/Video/PDF Resources
+function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VIDEO' | 'PDF'; t: any }) {
+  const isPdf = type === 'PDF';
+  const isAudio = type === 'AUDIO';
+  const isVideo = type === 'VIDEO';
+
+  const getYoutubeId = (url: string) => {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|v=)([^#&?]{11})/);
+    return m ? m[1] : null;
+  };
+
+  const ytId = isVideo ? getYoutubeId(item.url) : null;
+  const coverUrl = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null;
+
+  return (
+    <div className="glass-premium shrink-0 w-[280px] md:w-[310px] overflow-hidden group hover:bg-slate-900/60 transition-all duration-500 flex flex-col justify-between border border-white/5">
+      <div>
+        {/* Cover thumbnail wrapper */}
+        <div className="aspect-[16/10] bg-slate-950/80 relative overflow-hidden flex items-center justify-center">
+          {isVideo && coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
+            />
+          ) : isAudio ? (
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/40 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/20">AUDIOBOOK</span>
+                <Headphones className="w-5 h-5 text-emerald-500/60" />
+              </div>
+              <div className="flex items-center gap-1">
+                <Music className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <span className="text-[10px] text-white/40 tracking-wider">Islamic Science Lecture</span>
+              </div>
+            </div>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-950/30 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20">DOCUMENT</span>
+                <FileText className="w-5 h-5 text-amber-500/60" />
+              </div>
+              <div className="flex items-center gap-1">
+                <Award className="w-4 h-4 text-amber-400" />
+                <span className="text-[10px] text-white/40 tracking-wider">Reference & Syllabus Notes</span>
+              </div>
+            </div>
+          )}
+
+          {/* Hover overlay with streaming options */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {isAudio && (
+              <>
+                <Link
+                  to="/audio"
+                  className="w-11 h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
+                  title={t('home.listen')}
+                >
+                  <Play className="w-5 h-5 fill-white pl-0.5" />
+                </Link>
+                <a
+                  href={item.url}
+                  download
+                  className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/10 transition-transform active:scale-95"
+                  title={t('home.download')}
+                >
+                  <Download className="w-5 h-5" />
+                </a>
+              </>
+            )}
+
+            {isVideo && (
+              <Link
+                to="/videos"
+                className="w-12 h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
+                title={t('home.listen')}
+              >
+                <Play className="w-6 h-6 fill-white pl-0.5" />
+              </Link>
+            )}
+
+            {isPdf && (
+              <>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-11 h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
+                  title="Read Online"
+                >
+                  <BookOpen className="w-5 h-5" />
+                </a>
+                <a
+                  href={item.url}
+                  download
+                  className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/10 transition-transform active:scale-95"
+                  title={t('home.download')}
+                >
+                  <Download className="w-5 h-5" />
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Info panel */}
+        <div className="p-5 space-y-3">
+          <div className="flex flex-wrap gap-1.5">
+            <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] font-semibold border ${CAT_COLORS[item.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
+              {item.category}
+            </span>
+            {item.collection && (() => {
+              const col = getCollectionBySlug(item.collection);
+              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
+              return (
+                <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] font-semibold border ${colColor}`}>
+                  {col?.icon} {col?.name || item.collection}
+                </span>
+              );
+            })()}
+          </div>
+
+          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors duration-300">
+            {item.title}
+          </h3>
+        </div>
+      </div>
+
+      {/* Footer stats row */}
+      <div className="p-5 pt-0 border-t border-white/5 flex items-center justify-between text-[11px] text-white/40 mt-3">
+        <span className="flex items-center gap-1">
+          <Eye className="w-3.5 h-3.5 opacity-60" />
+          {item.views || 0} views
+        </span>
+        <span className="font-semibold text-white/30 tracking-wider">
+          {isPdf ? item.sizeHuman || 'PDF' : isAudio ? 'AUDIO' : 'VIDEO'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   useSEO({
     title: 'Home',
@@ -133,7 +352,7 @@ export default function Home() {
     keywords: 'Sheikh Muhammed Zabuur, Iman Chercher College, Islamic learning, online Islamic education, learn Quran, Aqeedah, Tafsir, Hadith, Fiqh, Islamic courses online',
   });
 
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { settings } = useAppearance();
   const [audios, setAudios] = useState<Resource[]>([]);
   const [videos, setVideos] = useState<Resource[]>([]);
@@ -143,6 +362,14 @@ export default function Home() {
   const [stats, setStats] = useState<ResourceStats>({ audio: 0, video: 0, pdf: 0, image: 0, total: 0 });
   const [collectionStats, setCollectionStats] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
+
+  // Gallery lightbox state
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  // Horizontal sliders refs
+  const audioSliderRef = useRef<HTMLDivElement>(null);
+  const videoSliderRef = useRef<HTMLDivElement>(null);
+  const pdfSliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Promise.all([
@@ -167,47 +394,142 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  const getYoutubeId = (url: string) => {
-    if (!url) return null;
-    const m = url.match(/(?:youtu\.be\/|v=)([^#&?]{11})/);
-    return m ? m[1] : null;
+  const slideLeft = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
   };
 
-  const formatDuration = (seconds?: number) => {
-    if (!seconds) return '—';
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, '0')}`;
+  const slideRight = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
   };
+
+  // Bespoke Prayer Countdown calculations inside Hero
+  const [nextPrayerIndex, setNextPrayerIndex] = useState(getNextPrayerIndex());
+  const [currentPrayerIndex, setCurrentPrayerIndex] = useState(getCurrentPrayerIndex());
+  const [hijriDateString, setHijriDateString] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNextPrayerIndex(getNextPrayerIndex());
+      setCurrentPrayerIndex(getCurrentPrayerIndex());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+    try {
+      const options: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        calendar: 'islamic',
+      };
+      const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', options);
+      setHijriDateString(formatter.format(now));
+    } catch {
+      setHijriDateString('');
+    }
+  }, []);
+
+  const nextPrayer = PRAYER_TIMES[nextPrayerIndex];
+  const NextIcon = nextPrayer.icon;
+
+  const prayerKeyMap: Record<string, TranslationKey> = {
+    Fajr: 'prayer_times.fajr',
+    Dhuhr: 'prayer_times.dhuhr',
+    Asr: 'prayer_times.asr',
+    Maghrib: 'prayer_times.maghrib',
+    Isha: 'prayer_times.isha',
+  };
+
+  const remainingMinutes = (() => {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const [h, m] = nextPrayer.time.split(':').map(Number);
+    let prayerMinutes = h * 60 + m;
+    let diff = prayerMinutes - currentMinutes;
+    if (diff < 0) {
+      // wraps to next day Fajr
+      const [fajrH, fajrM] = PRAYER_TIMES[0].time.split(':').map(Number);
+      prayerMinutes = (fajrH + 24) * 60 + fajrM;
+      diff = prayerMinutes - currentMinutes;
+    }
+    return diff;
+  })();
+
+  const hoursLeft = Math.floor(remainingMinutes / 60);
+  const minutesLeft = remainingMinutes % 60;
 
   return (
-    <div className="min-h-screen text-white bg-slate-950 overflow-x-hidden">
-      {/* ── HERO ── */}
-      <section
-        className="relative min-h-[92vh] flex items-center overflow-hidden"
-        style={{
-          backgroundImage: `url("${settings.backgroundImage}")`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed',
-        }}
-      >
-        {/* Modern decorative layers */}
-        <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
-        <div className="absolute inset-0 z-0 hero-overlay" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[150px] pointer-events-none" />
+    <div className="min-h-screen text-white bg-[#050505] overflow-x-hidden relative">
+      {/* ── GLOBAL BACKDROP SYSTEM ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Animated grid backdrop */}
+        <div 
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), 
+              linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+          }}
+        />
+        
+        {/* Floating blurred Emerald & Gold spheres */}
+        <motion.div 
+          animate={{
+            y: [0, -35, 0],
+            x: [0, 15, 0],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[8%] left-[-15%] w-[450px] h-[450px] bg-emerald-700/10 rounded-full blur-[130px]"
+        />
+        <motion.div 
+          animate={{
+            y: [0, 45, 0],
+            x: [0, -25, 0],
+            scale: [1, 1.03, 1],
+          }}
+          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-[25%] right-[-15%] w-[550px] h-[550px] bg-emerald-600/10 rounded-full blur-[150px]"
+        />
+        <motion.div 
+          animate={{
+            y: [0, -50, 0],
+            x: [0, 30, 0],
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute top-[12%] right-[10%] w-[320px] h-[320px] bg-amber-500/5 rounded-full blur-[110px]"
+        />
+        <motion.div 
+          animate={{
+            y: [0, 25, 0],
+            x: [0, -15, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute bottom-[8%] left-[10%] w-[280px] h-[280px] bg-amber-600/5 rounded-full blur-[90px]"
+        />
+      </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 w-full">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
+      {/* ── HERO SECTION ── */}
+      <section className="relative min-h-[95vh] flex items-center pt-28 pb-16 z-10 px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
-            {/* Left Column: Heading, description, key actions */}
-            <div className="lg:col-span-7 space-y-8">
+            {/* Left Column: Premium Headline & CTA */}
+            <div className="lg:col-span-7 space-y-8 flex flex-col justify-center">
               <div className="flex flex-wrap items-center gap-3">
                 {liveState.isActive && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-red-500/20 transition-all shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-red-500/20 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)]"
                     onClick={() => window.location.href = '/live'}
                   >
                     <span className="relative flex h-2 w-2">
@@ -229,106 +551,260 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15]"
-              >
-                <span className="block text-white mb-2">{t('hero.title_line1')}</span>
-                <span className="block bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">{t('hero.title_line2')}</span>
-                <span className="block text-2xl font-bold text-white/50 mt-4 tracking-normal">
-                  {t('home.platform_name')}
-                </span>
-              </motion.h1>
+              <div className="space-y-4">
+                <motion.h1
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.12] text-white"
+                >
+                  Learn Authentic <br className="hidden sm:inline" />
+                  <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-300">
+                    Islamic Knowledge
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: '100%' }}
+                      transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
+                      className="absolute bottom-1 left-0 h-[4px] bg-gradient-to-r from-emerald-500 to-amber-400 rounded-full"
+                    />
+                  </span> <br />
+                  From <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 bg-clip-text text-transparent font-serif italic">Sheikh Muhammed Zabuur</span>
+                </motion.h1>
+                
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-white/60 leading-relaxed text-base md:text-lg max-w-[650px]"
+                >
+                  {t('home.hero_desc_alt')}
+                </motion.p>
+              </div>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-lg text-white/60 leading-relaxed max-w-xl"
-              >
-                {t('home.hero_desc_alt')}
-              </motion.p>
-
+              {/* Action buttons with glow effects */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-wrap items-center gap-3 pt-2"
+                transition={{ delay: 0.4 }}
+                className="flex flex-wrap items-center gap-4 pt-2"
               >
-                <Link to="/audio" className="btn-icc gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide">
-                  <Music className="w-4.5 h-4.5" /> {t('home.listen_to_audio')}
+                <Link 
+                  to="/categories" 
+                  className="btn-icc px-8 py-4 text-sm font-bold tracking-wide shadow-[0_0_30px_rgba(16,185,129,0.25)] hover:shadow-[0_0_35px_rgba(16,185,129,0.45)] hover:scale-[1.03] active:scale-100 transition-all duration-300"
+                >
+                  <BookOpen className="w-4.5 h-4.5" />
+                  {t('home.start_learning')}
                 </Link>
-                <Link to="/videos" className="btn-icc gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide bg-gradient-to-r from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 shadow-[0_4px_20px_rgba(20,184,166,0.2)]">
-                  <Video className="w-4.5 h-4.5" /> {t('home.watch_videos')}
-                </Link>
-                <Link to="/pdfs" className="btn-outline gap-2 px-6 py-3.5 text-sm font-semibold border-white/10 hover:border-emerald-500/30">
-                  <FileText className="w-4.5 h-4.5" /> {t('home.read_pdfs')}
+
+                <Link 
+                  to="/audio" 
+                  className="btn-outline px-8 py-4 text-sm font-bold tracking-wide border-white/10 hover:border-emerald-500/40 hover:bg-emerald-500/5 hover:scale-[1.02] active:scale-100 transition-all duration-300"
+                >
+                  <Library className="w-4.5 h-4.5 text-emerald-400" />
+                  Browse Resources
                 </Link>
               </motion.div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
-                <CounterStat value={stats.audio} label={t('home.audio_lectures_stat')} icon={Music} />
-                <CounterStat value={stats.video} label={t('home.video_classes_stat')} icon={Video} />
-                <CounterStat value={stats.pdf} label={t('home.pdf_books_stat')} icon={FileText} />
-                <CounterStat value={stats.total} label="Resources" icon={Library} />
-              </div>
+              {/* Trust Indicators */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="grid grid-cols-2 gap-y-3 gap-x-6 pt-6 max-w-lg border-t border-white/5"
+              >
+                {[
+                  'Verified Scholar',
+                  'Authentic Teachings',
+                  'Thousands of Students',
+                  'Free Learning Resources'
+                ].map((indicator) => (
+                  <div key={indicator} className="flex items-center gap-2 text-white/50 text-xs font-medium">
+                    <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>{indicator}</span>
+                  </div>
+                ))}
+              </motion.div>
             </div>
 
-            {/* Right Column: Interactive components & Profile widget */}
-            <div className="lg:col-span-5 space-y-6">
-              {/* Sheikh Masterclass Card */}
+            {/* Right Column: Scholar Frame + Floating Cards + Live Prayer Widget */}
+            <div className="lg:col-span-5 space-y-8 flex flex-col justify-center relative">
+              
+              {/* Scholar frame container */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative group hidden lg:block rounded-3xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.4)] border border-white/10 glow-icc"
+                transition={{ duration: 0.8 }}
+                className="relative rounded-3xl overflow-hidden border border-amber-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-900 group"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-10" />
+                {/* Visual accent bubbles behind/over portrait */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10 opacity-70" />
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none z-10" />
+
                 <img
                   src="/images/sheikh-zabuur.jpg"
-                  alt="Sheikh Mohammed Zabuur"
-                  className="w-full h-[340px] object-cover group-hover:scale-105 transition-transform duration-700"
+                  alt="Sheikh Muhammed Zabuur"
+                  className="w-full h-[360px] md:h-[400px] object-cover group-hover:scale-[1.03] transition-transform duration-700"
                 />
-                
-                {/* Visual accent bubbles */}
-                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all" />
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/30 transition-all" />
 
-                {/* Verified scholar badge */}
-                <div className="absolute top-4 right-4 z-20 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md shadow-emerald-500/20">
+                {/* Floating badge */}
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-4 right-4 z-20 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-emerald-400/20"
+                >
                   <CheckCircle className="w-3.5 h-3.5 fill-white text-emerald-500" />
                   VERIFIED SCHOLAR
+                </motion.div>
+
+                {/* Info row */}
+                <div className="absolute bottom-6 left-6 right-6 z-20">
+                  <h3 className="text-xl font-extrabold text-white tracking-wide">Sheikh Mohammed Zabuur</h3>
+                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1">Scholar & Islamic Educator</p>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                  <p className="text-white font-extrabold text-xl tracking-wide">Sheikh Mohammed Zabuur</p>
-                  <p className="text-emerald-400 font-semibold text-xs mt-0.5 tracking-wider uppercase">Senior Islamic Lecturer</p>
-                </div>
+                {/* Overlay Mini Cards (Gently floating) */}
+                {/* Card 1: Students count */}
+                <motion.div 
+                  animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-12 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-emerald-500/30 transition-all cursor-default"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/50 leading-none">Students Joined</p>
+                    <p className="text-xs font-extrabold text-white mt-1">10,000+</p>
+                  </div>
+                </motion.div>
+
+                {/* Card 2: Resources available */}
+                <motion.div 
+                  animate={{ y: [0, 8, 0], x: [0, -4, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  className="absolute top-1/2 -right-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-amber-500/30 transition-all cursor-default"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                    <Library className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/50 leading-none">Resources</p>
+                    <p className="text-xs font-extrabold text-white mt-1">500+ Lessons</p>
+                  </div>
+                </motion.div>
+
+                {/* Card 3: Years teaching */}
+                <motion.div 
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  className="absolute bottom-16 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-emerald-500/30 transition-all cursor-default"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/50 leading-none">Years Active</p>
+                    <p className="text-xs font-extrabold text-white mt-1">15+ Years</p>
+                  </div>
+                </motion.div>
               </motion.div>
 
-              {/* Next Prayer dashboard block */}
+              {/* Live Prayer Countdown Widget (Premium glassmorphic dashboard element) */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.1)] transition-all"
+                transition={{ delay: 0.2 }}
+                className="glass-premium p-5 relative overflow-hidden group border border-white/15 shadow-2xl"
               >
-                <PrayerTimesWidget />
+                {/* Glow boarder & radial overlay */}
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
+                
+                <div className="flex items-center justify-between mb-4">
+                  {hijriDateString && (
+                    <div className="flex items-center gap-1.5 text-[10px] text-white/50 bg-white/5 px-2.5 py-1 rounded-full">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span>{hijriDateString}</span>
+                    </div>
+                  )}
+                  <span className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full animate-pulse">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    PRAYER LOGIC LIVE
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+                      <Clock className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-white/40 tracking-wider uppercase font-semibold">{t('prayer_times.next_prayer')}</p>
+                      <p className="text-sm font-bold text-white mt-0.5">{t(prayerKeyMap[nextPrayer.name])}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-extrabold text-white">{nextPrayer.time}</p>
+                    <p className="text-[10px] text-white/50 mt-0.5">
+                      {t('prayer_times.time_left', { hours: hoursLeft, minutes: minutesLeft })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-5 gap-1.5">
+                  {PRAYER_TIMES.map((prayer, i) => {
+                    const Icon = prayer.icon;
+                    const isNext = i === nextPrayerIndex;
+                    const isCurrent = i === currentPrayerIndex;
+                    const isPast = i < currentPrayerIndex || (currentPrayerIndex === -1 && i < nextPrayerIndex);
+
+                    return (
+                      <div
+                        key={prayer.name}
+                        className={`text-center py-2 px-1 rounded-xl transition-all duration-300 border ${
+                          isNext
+                            ? 'bg-amber-500/10 border-amber-500/30 shadow-md shadow-amber-500/5'
+                            : isCurrent
+                            ? 'bg-emerald-500/10 border-emerald-500/20'
+                            : 'bg-white/5 border-transparent hover:bg-white/10'
+                        }`}
+                      >
+                        <Icon
+                          className={`w-3.5 h-3.5 mx-auto mb-1.5 ${
+                            isNext ? 'text-amber-400' : isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/40'
+                          }`}
+                        />
+                        <p className={`text-[9px] font-bold ${
+                          isNext ? 'text-amber-400' : isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/40'
+                        }`}>
+                          {t(prayerKeyMap[prayer.name])}
+                        </p>
+                        <p className={`text-[8px] mt-0.5 ${
+                          isNext ? 'text-amber-400/70' : isPast ? 'text-white/10' : 'text-white/30'
+                        }`}>
+                          {prayer.time}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── TRUST/VALUE PROPOSITION ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-y border-white/5 relative">
+      {/* ── TRUST & VALUE PROPOSITION ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              Why Choose Us
+              CORE PRINCIPLES
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Authentic Islamic Education
+              Why Students Trust Sheikh Muhammed Zabuur
             </h2>
-            <p className="text-base text-white/50 max-w-xl mx-auto">
-              Learn from authentic sources with structured curriculum designed for all levels
+            <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
+              We focus on building a pure, structured pathway of learning directly from classical traditions.
             </p>
           </div>
 
@@ -339,15 +815,19 @@ export default function Home() {
                 <motion.div
                   key={feature.label}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.08 }}
-                  className="glass-premium p-6 flex flex-col items-center text-center group"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ delay: idx * 0.08, duration: 0.6 }}
+                  className="glass-premium p-7 flex flex-col items-start text-left group border border-white/5 hover:border-emerald-500/30 hover:-translate-y-1.5 transition-all duration-300"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/5 text-emerald-400 border border-emerald-500/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-all duration-300">
-                    <Icon className="w-6 h-6" />
+                  {/* Subtle float particle effect inside the card */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all duration-300">
+                    <Icon className="w-5.5 h-5.5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{feature.label}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-base font-bold text-white mb-2 tracking-wide group-hover:text-emerald-400 transition-colors duration-300">{feature.label}</h3>
+                  <p className="text-xs text-white/50 leading-relaxed">{feature.desc}</p>
                 </motion.div>
               );
             })}
@@ -355,285 +835,292 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── LEARNING PATHS ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative">
+      {/* ── STATISTICS SECTION ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+            <ScrollCounterStat value={stats.audio || 450} label="Audio Lessons" icon={Music} suffix="+" />
+            <ScrollCounterStat value={stats.video || 150} label="Video Classes" icon={Video} suffix="+" />
+            <ScrollCounterStat value={stats.pdf || 200} label="PDF Books & Notes" icon={FileText} suffix="+" />
+            <ScrollCounterStat value={10} label="Structured tracks" icon={BookOpenCheck} suffix="" />
+            <ScrollCounterStat value={10000} label="Students Enrolled" icon={Users} suffix="+" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── LEARNING TRACKS (ROADMAP) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-              Learning Paths
+              ROADMAP
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Featured Learning Tracks
+              Curated Learning Roadmaps
             </h2>
-            <p className="text-base text-white/50 max-w-xl mx-auto">
-              Choose your path and begin your journey of authentic Islamic knowledge
+            <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
+              Follow step-by-step pathways designed by Sheikh Muhammed Zabuur to acquire solid foundations.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {TRACKS.map((track, idx) => (
               <motion.div
                 key={track.name}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.04 }}
-                className="group relative overflow-hidden rounded-3xl border border-white/5 hover:border-emerald-500/20 bg-slate-900/40 hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-[0_15px_35px_rgba(16,185,129,0.05)]"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: idx * 0.05, duration: 0.6 }}
+                className={`group relative overflow-hidden rounded-3xl border transition-all duration-500 cursor-pointer shadow-lg ${
+                  track.featured 
+                    ? 'border-emerald-500/30 bg-slate-900/60 hover:bg-slate-900/80 md:col-span-2 lg:col-span-3 p-8 flex flex-col md:flex-row md:items-center justify-between gap-6' 
+                    : 'border-white/5 hover:border-emerald-500/20 bg-[#0B0B0B]/80 hover:bg-slate-900/80 p-6'
+                }`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-0 group-hover:opacity-[0.07] transition-opacity duration-500`} />
-                <div className="p-6">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-emerald-500/10 transition-all duration-500 mb-4">
-                    {track.icon}
+                {/* Colored accent shadows */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-500`} />
+                
+                {track.featured ? (
+                  // Large Featured track layout
+                  <>
+                    <div className="space-y-4 flex-1">
+                      <div className="flex items-center gap-3">
+                        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
+                          {track.icon}
+                        </div>
+                        <div>
+                          <span className="text-[9px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">RECOMMENDED STARTING POINT</span>
+                          <h3 className="text-xl font-extrabold text-white mt-1 group-hover:text-emerald-400 transition-colors">{track.name}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm text-white/60 leading-relaxed max-w-xl">{track.desc} — Learn the core fundamentals of Tawheed, the pillars of faith, and belief structures.</p>
+                      
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-white/40 pt-2">
+                        <span className="flex items-center gap-1"><BookOpen className="w-4 h-4 text-emerald-400" /> {track.lessons} lessons</span>
+                        <span className="text-white/10">•</span>
+                        <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {track.duration} duration</span>
+                        <span className="text-white/10">•</span>
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">{track.difficulty}</span>
+                      </div>
+                    </div>
+
+                    <div className="shrink-0 flex flex-col justify-center items-start md:items-end gap-3 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6">
+                      <div className="space-y-1 text-left md:text-right">
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Roadmap Progress</p>
+                        <p className="text-xs text-white/50">4.8 rating • 3.2K active students</p>
+                      </div>
+                      <div className="w-full md:w-40 h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <div className="w-1/3 h-full bg-emerald-500 rounded-full" />
+                      </div>
+                      <Link to="/categories" className="btn-icc py-2.5 px-5 text-xs font-bold gap-1 mt-2">
+                        View Track <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  // Regular tracks
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-500/10 transition-all">
+                        {track.icon}
+                      </div>
+                      <span className="px-2 py-0.5 rounded text-[9px] bg-white/5 text-white/50 border border-white/10 font-bold">{track.difficulty}</span>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-base font-bold text-white group-hover:text-emerald-400 transition-colors duration-300">{track.name}</h3>
+                      <p className="text-xs text-white/40 mt-1.5 leading-relaxed line-clamp-2">{track.desc}</p>
+                    </div>
+
+                    {/* Progress representation */}
+                    <div className="space-y-1.5 pt-2">
+                      <div className="flex justify-between items-center text-[10px] text-white/30">
+                        <span>{track.lessons} lessons</span>
+                        <span>{track.duration}</span>
+                      </div>
+                      <div className="w-full h-1 rounded-full bg-white/5 overflow-hidden">
+                        <div className="w-0 h-full bg-emerald-500" />
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">{track.name}</h3>
-                  <p className="text-xs text-white/40 mt-2 leading-relaxed">{track.desc}</p>
-                </div>
+                )}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── MEDIA: LATEST AUDIO LECTURES ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
-                <Headphones className="w-3.5 h-3.5" /> AUDIO LECTURE CATALOG
-              </span>
-              <h2 className="text-3xl font-extrabold text-white tracking-tight">{t('home.latest_audio')}</h2>
+      {/* ── RESOURCE SHOWCASE (STREAMING SLIDERS) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
+        <div className="max-w-7xl mx-auto space-y-20">
+          
+          {/* Slider 1: Audio Lectures */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
+                  <Headphones className="w-3.5 h-3.5 text-emerald-400" />
+                  AUDIO LIBRARY
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                  {t('home.latest_audio')}
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link to="/audio" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                  {t('common.view_all')}
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+                <div className="hidden sm:flex items-center gap-1.5">
+                  <button 
+                    onClick={() => slideLeft(audioSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                  </button>
+                  <button 
+                    onClick={() => slideRight(audioSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <Link to="/audio" className="flex items-center gap-1.5 text-sm text-emerald-400 hover:text-emerald-300 font-semibold transition-colors group">
-              {t('common.view_all')} 
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {loading
-              ? [1,2,3,4].map(i => <SkeletonCard key={i} />)
-              : audios.length === 0
-                ? <p className="text-white/40 text-sm col-span-4 py-12 text-center glass-premium">{t('home.no_audio')}</p>
-                : audios.slice(0, 4).map((audio, idx) => (
-                    <motion.div
-                      key={audio.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.03 }}
-                      className="glass-premium p-5 flex flex-col justify-between gap-5 group relative hover:bg-slate-900/50"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                            <Music className="w-4.5 h-4.5" />
-                          </div>
-                          <span className="text-[10px] text-white/30 font-medium">
-                            {audio.sizeHuman}
-                          </span>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-1.5">
-                            <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${CAT_COLORS[audio.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                              {audio.category}
-                            </span>
-                            {audio.collection && (() => {
-                              const col = getCollectionBySlug(audio.collection);
-                              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
-                              return (
-                                <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${colColor}`}>
-                                  {col?.icon} {col?.name || audio.collection}
-                                </span>
-                              );
-                            })()}
-                          </div>
-
-                          <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-emerald-400 transition-colors leading-snug">
-                            {audio.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-white/40 mt-2">
-                        <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{audio.views} views</span>
-                        <Link to="/audio" className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold">
-                          <Play className="w-3.5 h-3.5" /> {t('home.listen')}
-                        </Link>
-                      </div>
-                    </motion.div>
-                  ))
-            }
-          </div>
-        </div>
-      </section>
-
-      {/* ── MEDIA: LATEST VIDEOS ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-y border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold mb-3">
-                <Video className="w-3.5 h-3.5" /> CLASS VIDEO STREAM
-              </span>
-              <h2 className="text-3xl font-extrabold text-white tracking-tight">{t('home.latest_video')}</h2>
+            {/* Slider Content */}
+            <div 
+              ref={audioSliderRef}
+              className="flex gap-5 overflow-x-auto pb-4 pt-1 scrollbar-none snap-x snap-mandatory"
+            >
+              {loading ? (
+                [1, 2, 3, 4].map(i => <SkeletonCard key={i} />)
+              ) : audios.length === 0 ? (
+                <p className="text-white/40 text-sm py-12 text-center w-full glass-premium">{t('home.no_audio')}</p>
+              ) : (
+                audios.map(item => (
+                  <div key={item.id} className="snap-start">
+                    <StreamingCard item={item} type="AUDIO" t={t} />
+                  </div>
+                ))
+              )}
             </div>
-            <Link to="/videos" className="flex items-center gap-1.5 text-sm text-emerald-400 hover:text-emerald-300 font-semibold transition-colors group">
-              {t('common.view_all')} 
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {loading
-              ? [1,2,3,4].map(i => <SkeletonCard key={i} />)
-              : videos.length === 0
-                ? <p className="text-white/40 text-sm col-span-4 py-12 text-center glass-premium">{t('home.no_video')}</p>
-                : videos.slice(0, 4).map((video, idx) => {
-                    const ytId = getYoutubeId(video.url);
-                    return (
-                      <motion.div
-                        key={video.id}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.03 }}
-                        className="glass-premium overflow-hidden group hover:bg-slate-900/50 flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="aspect-video bg-slate-950 relative overflow-hidden">
-                            {ytId ? (
-                              <img
-                                src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
-                                alt={video.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <Video className="w-8 h-8 text-purple-400/40" />
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                                <Play className="w-5 h-5 text-white pl-0.5" />
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="p-5 space-y-3">
-                            <div className="flex flex-wrap gap-1.5">
-                              <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${CAT_COLORS[video.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                                {video.category}
-                              </span>
-                              {video.collection && (() => {
-                                const col = getCollectionBySlug(video.collection);
-                                const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
-                                return (
-                                  <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${colColor}`}>
-                                    {col?.icon} {col?.name || video.collection}
-                                  </span>
-                                );
-                              })()}
-                            </div>
-                            
-                            <h3 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug">
-                              {video.title}
-                            </h3>
-                          </div>
-                        </div>
-
-                        <div className="p-5 pt-0 border-t border-white/5 flex items-center justify-between text-xs text-white/40 mt-3">
-                          <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{video.views} views</span>
-                          <span className="text-[10px] text-white/30 font-medium">Video</span>
-                        </div>
-                      </motion.div>
-                    );
-                  })
-            }
-          </div>
-        </div>
-      </section>
-
-      {/* ── MEDIA: LATEST PDFs ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold mb-3">
-                <FileText className="w-3.5 h-3.5" /> LITERARY LIBRARY
-              </span>
-              <h2 className="text-3xl font-extrabold text-white tracking-tight">{t('home.pdf_books')}</h2>
+          {/* Slider 2: Video Classes */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold mb-3">
+                  <Video className="w-3.5 h-3.5 text-purple-400" />
+                  CLASS RECORDINGS
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                  {t('home.latest_video')}
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link to="/videos" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                  {t('common.view_all')}
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+                <div className="hidden sm:flex items-center gap-1.5">
+                  <button 
+                    onClick={() => slideLeft(videoSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                  </button>
+                  <button 
+                    onClick={() => slideRight(videoSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <Link to="/pdfs" className="flex items-center gap-1.5 text-sm text-emerald-400 hover:text-emerald-300 font-semibold transition-colors group">
-              {t('common.view_all')} 
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+
+            {/* Slider Content */}
+            <div 
+              ref={videoSliderRef}
+              className="flex gap-5 overflow-x-auto pb-4 pt-1 scrollbar-none snap-x snap-mandatory"
+            >
+              {loading ? (
+                [1, 2, 3, 4].map(i => <SkeletonCard key={i} />)
+              ) : videos.length === 0 ? (
+                <p className="text-white/40 text-sm py-12 text-center w-full glass-premium">{t('home.no_video')}</p>
+              ) : (
+                videos.map(item => (
+                  <div key={item.id} className="snap-start">
+                    <StreamingCard item={item} type="VIDEO" t={t} />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {loading
-              ? [1,2,3,4].map(i => <SkeletonCard key={i} />)
-              : pdfs.length === 0
-                ? <p className="text-white/40 text-sm col-span-4 py-12 text-center glass-premium">{t('home.no_pdfs')}</p>
-                : pdfs.slice(0, 4).map((pdf, idx) => (
-                    <motion.div
-                      key={pdf.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.03 }}
-                      className="glass-premium p-5 flex flex-col justify-between gap-5 group hover:bg-slate-900/50"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="w-10 h-10 rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
-                            <FileText className="w-4.5 h-4.5" />
-                          </div>
-                          <span className="text-[10px] text-white/30 font-medium">PDF Document</span>
-                        </div>
+          {/* Slider 3: PDF Books */}
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold mb-3">
+                  <FileText className="w-3.5 h-3.5 text-red-400" />
+                  LITERARY LIBRARY
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                  {t('home.pdf_books')}
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link to="/pdfs" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                  {t('common.view_all')}
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+                <div className="hidden sm:flex items-center gap-1.5">
+                  <button 
+                    onClick={() => slideLeft(pdfSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                  </button>
+                  <button 
+                    onClick={() => slideRight(pdfSliderRef)}
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-1.5">
-                            <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${CAT_COLORS[pdf.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                              {pdf.category}
-                            </span>
-                            {pdf.collection && (() => {
-                              const col = getCollectionBySlug(pdf.collection);
-                              const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
-                              return (
-                                <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${colColor}`}>
-                                  {col?.icon} {col?.name || pdf.collection}
-                                </span>
-                              );
-                            })()}
-                          </div>
-
-                          <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-red-400 transition-colors leading-snug">
-                            {pdf.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-white/40 mt-2">
-                        <span>{pdf.sizeHuman || '—'}</span>
-                        <a
-                          href={pdf.url}
-                          download
-                          className="flex items-center gap-1.5 text-red-400 hover:text-red-300 font-bold"
-                        >
-                          <Download className="w-3.5 h-3.5" /> {t('home.download')}
-                        </a>
-                      </div>
-                    </motion.div>
-                  ))
-            }
+            {/* Slider Content */}
+            <div 
+              ref={pdfSliderRef}
+              className="flex gap-5 overflow-x-auto pb-4 pt-1 scrollbar-none snap-x snap-mandatory"
+            >
+              {loading ? (
+                [1, 2, 3, 4].map(i => <SkeletonCard key={i} />)
+              ) : pdfs.length === 0 ? (
+                <p className="text-white/40 text-sm py-12 text-center w-full glass-premium">{t('home.no_pdfs')}</p>
+              ) : (
+                pdfs.map(item => (
+                  <div key={item.id} className="snap-start">
+                    <StreamingCard item={item} type="PDF" t={t} />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
+
         </div>
       </section>
 
       {/* ── LIVE BROADCAST CTA ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-y border-white/5 relative overflow-hidden">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative overflow-hidden z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="glass-premium p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="glass-premium p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
             <div className="flex flex-col md:flex-row items-start gap-6">
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
                 liveState.isActive 
@@ -642,11 +1129,11 @@ export default function Home() {
               }`}>
                 <Radio className="w-8 h-8" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <div className="flex items-center gap-3">
                   <h3 className="text-2xl font-extrabold text-white">Live Broadcasting</h3>
                   {liveState.isActive && (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold shadow-[0_0_10px_rgba(239,68,68,0.15)]">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
@@ -665,10 +1152,10 @@ export default function Home() {
 
             <Link
               to="/live"
-              className={`px-8 py-3.5 text-sm rounded-xl font-bold shrink-0 whitespace-nowrap flex items-center gap-2 transition-all ${
+              className={`px-8 py-3.5 text-sm rounded-xl font-bold shrink-0 whitespace-nowrap flex items-center gap-2 transition-all duration-300 ${
                 liveState.isActive
-                  ? 'bg-gradient-to-r from-red-500 to-red-700 text-white hover:from-red-600 hover:to-red-800 shadow-lg shadow-red-500/30'
-                  : 'btn-icc'
+                  ? 'bg-gradient-to-r from-red-500 to-red-700 text-white hover:from-red-600 hover:to-red-800 shadow-lg shadow-red-500/30 hover:scale-[1.03]'
+                  : 'btn-icc hover:scale-[1.03]'
               }`}
             >
               <Radio className="w-4.5 h-4.5" />
@@ -679,120 +1166,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FEATURED PORTAL ── */}
-      {featured.length > 0 && (
-        <section className="py-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-3">
-                  <Star className="w-3.5 h-3.5" /> CURATED CONTENT
-                </span>
-                <h2 className="text-3xl font-extrabold text-white tracking-tight">Featured Content</h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-              {featured.slice(0, 4).map((item, idx) => {
-                const isPdf = item.resourceType === 'PDF';
-                const isAudio = item.resourceType === 'AUDIO';
-                return (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.04 }}
-                    className="glass-premium p-5 flex flex-col justify-between gap-5 group hover:bg-slate-900/50"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border ${
-                          isPdf ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                          isAudio ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                          'bg-purple-500/10 text-purple-400 border-purple-500/20'
-                        }`}>
-                          {isPdf ? <FileText className="w-4.5 h-4.5" /> : isAudio ? <Music className="w-4.5 h-4.5" /> : <Video className="w-4.5 h-4.5" />}
-                        </div>
-                        <span className="text-[10px] text-white/30 font-medium">Featured</span>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap gap-1.5">
-                          <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${CAT_COLORS[item.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
-                            {item.category}
-                          </span>
-                          {item.collection && (() => {
-                            const col = getCollectionBySlug(item.collection);
-                            const colColor = col ? (COLLECTION_COLORS[col.slug] || 'bg-white/5 text-white/50 border-white/10') : 'bg-white/5 text-white/50 border-white/10';
-                            return (
-                              <span className={`inline-block px-2.5 py-0.5 rounded-lg text-[9px] font-semibold border ${colColor}`}>
-                                {col?.icon} {col?.name || item.collection}
-                              </span>
-                            );
-                          })()}
-                        </div>
-
-                        <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-emerald-400 transition-colors leading-snug">
-                          {item.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-white/40 mt-2">
-                      <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{item.views} views</span>
-                      <Link to={isPdf ? '/pdfs' : isAudio ? '/audio' : '/videos'} className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold">
-                        {isPdf ? <Download className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                        {isPdf ? t('home.download') : t('home.listen')}
-                      </Link>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ── TELEGRAM CHANNELS ── */}
       <TelegramSection />
 
-      {/* ── TESTIMONIALS MASONRY ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-y border-white/5">
+      {/* ── TESTIMONIALS MASONRY GRID ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              Testimonials
+              TESTIMONIALS
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              What Students Say
+              What Students Say Worldwide
             </h2>
-            <p className="text-base text-white/50 max-w-xl mx-auto">
-              Hear from our global community of learners
+            <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
+              Read how this platform empowers seekers of authentic knowledge globally.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Masonry Columns Layout */}
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
             {TESTIMONIALS.map((testimonial, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.08 }}
-                className="glass-premium p-6 flex flex-col justify-between gap-6 hover:bg-slate-900/40 hover:-translate-y-1 transition-all duration-300 shadow-md"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: idx * 0.05, duration: 0.6 }}
+                className="break-inside-avoid glass-premium p-6 flex flex-col justify-between gap-6 border border-white/5 hover:border-emerald-500/20 transition-all duration-300 group"
               >
-                <div className="space-y-4">
+                <div className="space-y-4 text-left">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-transparent" />
+                    ))}
+                  </div>
                   <Quote className="w-8 h-8 text-emerald-500/10 shrink-0" />
-                  <p className="text-sm text-white/70 italic leading-relaxed">
+                  <p className="text-sm text-white/75 italic leading-relaxed">
                     "{testimonial.text}"
                   </p>
                 </div>
-                <div className="flex items-center gap-3 pt-4 border-t border-white/5 mt-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-sm font-extrabold text-emerald-400 uppercase">
-                    {testimonial.name[0]}
+                <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                  <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-400 uppercase">
+                    {testimonial.initial}
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-white">{testimonial.name}</p>
-                    <p className="text-xs text-white/40">{testimonial.country}</p>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white leading-none">{testimonial.name}</p>
+                    <p className="text-[10px] text-white/40 mt-1">{testimonial.country}</p>
                   </div>
                 </div>
               </motion.div>
@@ -801,39 +1221,84 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── ABOUT SHEIKH BIOGRAPHY ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/5 to-transparent pointer-events-none" />
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-12 gap-12 items-center">
+      {/* ── ABOUT SHEIKH SECTION (SPLIT LAYOUT WITH TIMELINE) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
-            <div className="md:col-span-7 space-y-6">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-                {t('home.about_sheikh')}
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
-                A Dedicated Path to Propagating Authentic Sunnah
-              </h2>
-              <p className="text-base text-white/60 leading-relaxed">
-                {t('home.about_desc')}
-              </p>
-              <div className="pt-4">
-                <Link to="/about" className="btn-icc px-8 py-3.5 text-sm shrink-0 whitespace-nowrap flex items-center gap-2">
-                  {t('home.read_biography')} <ArrowRight className="w-4 h-4" />
-                </Link>
+            {/* Left Column: Framed Portrait & Islamic Accents */}
+            <div className="lg:col-span-5 relative group">
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-emerald-500 to-amber-500 opacity-20 blur-xl group-hover:opacity-35 transition-all duration-500 pointer-events-none" />
+              <div className="relative rounded-3xl overflow-hidden border border-amber-400/30 p-2 bg-slate-950/80 shadow-2xl">
+                {/* Decorative Islamic Geometric corner vectors */}
+                <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-400/40 z-10 pointer-events-none" />
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-400/40 z-10 pointer-events-none" />
+                
+                <img
+                  src="/images/sheikh-zabuur.jpg"
+                  alt="Sheikh Muhammed Zabuur Biography"
+                  className="w-full h-[400px] object-cover rounded-2xl group-hover:scale-[1.01] transition-transform duration-500"
+                />
               </div>
             </div>
 
-            <div className="md:col-span-5 relative group">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500 to-amber-500 opacity-20 blur-lg group-hover:opacity-35 transition-all" />
-              <div className="relative glass-premium p-8 md:p-10 text-center space-y-6 bg-slate-950/80">
-                <Quote className="w-12 h-12 text-amber-500/20 mx-auto" />
-                <p className="font-quran text-2xl md:text-3xl text-amber-400/80 leading-loose" dir="rtl">
-                  طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ
-                </p>
-                <p className="text-xs text-white/40 tracking-wider max-w-xs mx-auto leading-relaxed">
-                  "Seeking knowledge is a mandatory obligation upon every Muslim."
-                </p>
+            {/* Right Column: Biography Content, Quotes & Timeline */}
+            <div className="lg:col-span-7 space-y-8 text-left">
+              <div className="space-y-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+                  {t('home.about_sheikh')}
+                </span>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                  A Dedicated Path to Propagating <br /> Authentic Sunnah
+                </h2>
+              </div>
+
+              {/* Biography quoting */}
+              <div className="relative pl-6 border-l-2 border-emerald-500/30 italic text-white/70 text-sm leading-relaxed max-w-2xl">
+                <Quote className="absolute -left-3 -top-3 w-6 h-6 text-emerald-500/10 fill-emerald-500/5 rotate-180" />
+                "{t('home.about_desc')}"
+              </div>
+
+              {/* Timeline milestones */}
+              <div className="space-y-5">
+                <h4 className="text-xs uppercase tracking-widest font-extrabold text-amber-400">Teaching Timeline</h4>
+                <div className="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
+                  
+                  {/* Item 1 */}
+                  <div className="relative pl-7 flex gap-4 items-start">
+                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
+                    <div>
+                      <p className="text-xs font-bold text-white">Islamic Sciences Education</p>
+                      <p className="text-[11px] text-white/40">Acquired deep classical knowledge under reputable scholars, specializing in Aqeedah & Fiqh.</p>
+                    </div>
+                  </div>
+
+                  {/* Item 2 */}
+                  <div className="relative pl-7 flex gap-4 items-start">
+                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-amber-500 ring-4 ring-amber-500/10" />
+                    <div>
+                      <p className="text-xs font-bold text-white">Teaching Journey</p>
+                      <p className="text-[11px] text-white/40">Taught standard curriculum across colleges and masaajidh, establishing structures for local and online classes.</p>
+                    </div>
+                  </div>
+
+                  {/* Item 3 */}
+                  <div className="relative pl-7 flex gap-4 items-start">
+                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
+                    <div>
+                      <p className="text-xs font-bold text-white">Founder of Iman Chercher College</p>
+                      <p className="text-[11px] text-white/40">Formed the digital learning college portal to extend authentic, free multi-language education worldwide.</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link to="/about" className="btn-icc px-8 py-3.5 text-sm font-bold gap-2 hover:scale-[1.03] duration-300">
+                  {t('home.read_biography')} 
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
 
@@ -841,30 +1306,204 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── NEWSLETTER SIGNUP BANNER ── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-t border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent pointer-events-none" />
-        <div className="max-w-3xl mx-auto text-center space-y-6 relative z-10">
+      {/* ── SOCIAL PRESENCE SECTION (FLOATING SOCIAL BAR) ── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="space-y-2">
+            <h3 className="text-lg font-bold text-white tracking-wide">Connect & Follow Sheikh Muhammed Zabuur</h3>
+            <p className="text-xs text-white/45">Stay connected for weekly lessons, daily reminders, and live broadcasts.</p>
+          </div>
+
+          <div className="flex flex-wrap justify-center items-center gap-4">
+            <a 
+              href="https://youtube.com/@sheikhmahammadzabuur-b7f" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#FF0000]/10 border border-white/10 hover:border-[#FF0000]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#FF0000]/5"
+            >
+              <YoutubeIcon className="w-5 h-5 text-[#FF0000]" />
+              YouTube
+            </a>
+            <a 
+              href="https://t.me/sheikhmohammedzabuur" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#229ED9]/10 border border-white/10 hover:border-[#229ED9]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#229ED9]/5"
+            >
+              <TelegramIcon className="w-5 h-5 text-[#229ED9]" />
+              Telegram
+            </a>
+            <a 
+              href="https://facebook.com/profile.php?id=61555767907866" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#1877F2]/10 border border-white/10 hover:border-[#1877F2]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#1877F2]/5"
+            >
+              <FacebookIcon className="w-5 h-5 text-[#1877F2]" />
+              Facebook
+            </a>
+            <a 
+              href="https://www.tiktok.com/@sheikh.mahammad.z" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md"
+            >
+              <TiktokIcon className="w-4 h-4 text-white" />
+              TikTok
+            </a>
+            <Link 
+              to="/about"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-emerald-500/10 border border-white/10 hover:border-emerald-500/40 text-xs font-bold text-white/80 hover:text-emerald-400 transition-all hover:-translate-y-1 shadow-md"
+            >
+              <Globe className="w-4 h-4 text-emerald-400" />
+              Official Bio
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── GALLERY SECTION (INTERACTIVE LIGHTBOX) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 space-y-4">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+              MEDIA showcase
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+              Visual Learning Showcase
+            </h2>
+            <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
+              Explore photo captures from lectures, events, and college modules. Click to view.
+            </p>
+          </div>
+
+          {/* Gallery grid layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[240px]">
+            {GALLERY_IMAGES.map((img, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                onClick={() => setActiveImage(img.url)}
+                className={`relative overflow-hidden rounded-3xl border border-white/15 cursor-pointer group bg-slate-900 ${
+                  img.size === 'large' ? 'sm:col-span-2 lg:col-span-2 lg:row-span-2' : ''
+                }`}
+              >
+                <img 
+                  src={img.url} 
+                  alt={img.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                  <h4 className="text-sm font-bold text-white tracking-wide">{img.title}</h4>
+                  <p className="text-[11px] text-emerald-400 font-semibold mt-1">Click to expand</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Lightbox Modal */}
+          <AnimatePresence>
+            {activeImage && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+              >
+                <button 
+                  onClick={() => setActiveImage(null)}
+                  className="absolute top-6 right-6 p-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white transition-all active:scale-95"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                <motion.img 
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.95 }}
+                  src={activeImage} 
+                  alt="Expanded Showcase" 
+                  className="max-w-full max-h-[85vh] rounded-2xl object-contain border border-white/10 shadow-2xl"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+        </div>
+      </section>
+
+      {/* ── NEWSLETTER SECTION (REDESIGNED COMPLETE) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden bg-slate-950">
+        
+        {/* Background gradient overlays */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30 pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            Newsletter
+            NEWSLETTER
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Stay Updated</h2>
-          <p className="text-base text-white/50 max-w-md mx-auto leading-relaxed">
-            Subscribe to receive notifications about new lessons, live streams, and Islamic reminders.
+          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-none">
+            {t('footer.stay_updated')}
+          </h2>
+          <p className="text-sm md:text-base text-white/50 max-w-md mx-auto leading-relaxed">
+            {t('footer.newsletter_desc_alt')}
           </p>
-          
+
           <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto pt-4" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all text-sm"
+              placeholder={t('footer.email_placeholder_alt')}
+              className="flex-1 px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all duration-300 text-sm shadow-inner"
             />
-            <button type="submit" className="btn-icc px-8 py-3 whitespace-nowrap font-bold">
-              Subscribe
+            <button 
+              type="submit" 
+              className="btn-icc px-8 py-3.5 whitespace-nowrap font-bold text-sm bg-gradient-to-r from-emerald-500 via-emerald-600 to-amber-500 border border-emerald-400/20 hover:scale-[1.03] active:scale-100 transition-all duration-300"
+            >
+              {t('footer.subscribe')}
             </button>
           </form>
+
+          <p className="text-[11px] text-white/40 tracking-wide">
+            ✓ No spam. Only beneficial Islamic content.
+          </p>
         </div>
       </section>
     </div>
+  );
+}
+
+// Inline Social Icon SVGs to bypass import issue
+function YoutubeIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  );
+}
+
+function TelegramIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/>
+    </svg>
+  );
+}
+
+function FacebookIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
+    </svg>
+  );
+}
+
+function TiktokIcon(props: any) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+    </svg>
   );
 }
