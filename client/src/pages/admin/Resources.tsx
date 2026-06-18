@@ -5,11 +5,11 @@ import {
   Upload, X, CheckCircle, AlertCircle, Edit3, Save,
   MoveRight, Wand2, Star, Globe, Globe2, ChevronDown, ChevronUp,
 } from 'lucide-react';
-import { admin, teachers, books } from '../../lib/api';
+import { admin, books } from '../../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from '../../i18n';
-import type { Teacher, Book } from '../../types';
+import type { Book } from '../../types';
 import { useResponsive } from '../../hooks/useResponsive';
 
 interface ResourceItem {
@@ -27,9 +27,7 @@ interface ResourceItem {
   collection?: string;
   createdAt: string;
   featured: boolean;
-  teacherId?: number | null;
   bookId?: number | null;
-  teacher?: { id: number; name: string; slug?: string } | null;
   book?: { id: number; title: string; slug?: string } | null;
 }
 
@@ -75,7 +73,6 @@ export default function AdminResources() {
   const { t } = useTranslation();
   const { isMobile } = useResponsive();
   const [resources, setResources] = useState<ResourceItem[]>([]);
-  const [teacherList, setTeacherList] = useState<Teacher[]>([]);
   const [bookList, setBookList] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -110,7 +107,6 @@ export default function AdminResources() {
   const [uploadResourceType, setUploadResourceType] = useState('PDF');
   const [uploadLanguage, setUploadLanguage] = useState('en');
   const [uploadFeatured, setUploadFeatured] = useState(false);
-  const [uploadTeacherId, setUploadTeacherId] = useState<string>('');
   const [uploadBookId, setUploadBookId] = useState<string>('');
   const [uploadCollection, setUploadCollection] = useState('');
   const [uploadError, setUploadError] = useState('');
@@ -211,12 +207,10 @@ export default function AdminResources() {
     setLoading(true);
     Promise.all([
       admin.resources.getAll(),
-      teachers.getAll(),
       books.getAll(),
     ])
-      .then(([res, teachersRes, booksRes]) => {
+      .then(([res, booksRes]) => {
         setResources(Array.isArray(res.data) ? res.data : res.data?.items ?? []);
-        setTeacherList(teachersRes.data as Teacher[]);
         setBookList(booksRes.data as Book[]);
       })
       .catch(() => {})
@@ -230,7 +224,6 @@ export default function AdminResources() {
       f.name.toLowerCase().includes(search.toLowerCase()) ||
       f.title?.toLowerCase().includes(search.toLowerCase()) ||
       f.category?.toLowerCase().includes(search.toLowerCase()) ||
-      f.teacher?.name?.toLowerCase().includes(search.toLowerCase()) ||
       f.book?.title?.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === 'all' || f.resourceType === filterType.toUpperCase();
     return matchSearch && matchType;
@@ -264,7 +257,6 @@ export default function AdminResources() {
         category: editTarget.category,
         language: editTarget.language,
         featured: editTarget.featured,
-        teacherId: editTarget.teacherId || null,
         bookId: editTarget.bookId || null,
         resourceType: editTarget.resourceType,
         collection: (editTarget as any).collection || '',
@@ -382,7 +374,7 @@ export default function AdminResources() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search resources by name, title, category, teacher, or book..."
+          placeholder="Search resources by name, title, category, or book..."
           className="input-field ps-10"
         />
       </div>
@@ -567,10 +559,6 @@ export default function AdminResources() {
                         </div>
                       )}
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">Teacher</span>
-                        <span className="text-gray-900 dark:text-gray-100">{file.teacher?.name || '-'}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-500 dark:text-gray-400">Book</span>
                         <span className="text-gray-900 dark:text-gray-100">{file.book?.title || '-'}</span>
                       </div>
@@ -643,7 +631,6 @@ export default function AdminResources() {
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Type</th>
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Collection</th>
-                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Teacher</th>
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Book</th>
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
                   <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Date</th>
@@ -707,9 +694,6 @@ export default function AdminResources() {
                         })() : (
                           <span className="text-xs text-gray-400">-</span>
                         )}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 max-w-[140px] truncate">
-                        {file.teacher?.name || '-'}
                       </td>
                       <td className="px-4 py-3 text-gray-500 max-w-[140px] truncate">
                         {file.book?.title || '-'}
@@ -940,15 +924,6 @@ export default function AdminResources() {
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Feature on Homepage</label>
                 </div>
 
-                {/* Teacher - auto-assigned */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teacher</label>
-                  <div className="input-field w-full flex items-center gap-2 text-sm text-icc-400">
-                    <CheckCircle className="w-4 h-4 text-icc-500" />
-                    Auto-assigned: Sheikh Mohammed Zabuur
-                  </div>
-                </div>
-
                 {/* Book */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Book</label>
@@ -1151,15 +1126,6 @@ export default function AdminResources() {
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Featured on Homepage</label>
                 </div>
 
-                {/* Teacher - auto-assigned */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teacher</label>
-                  <div className="input-field w-full flex items-center gap-2 text-sm text-icc-400">
-                    <CheckCircle className="w-4 h-4 text-icc-500" />
-                    Sheikh Mohammed Zabuur
-                  </div>
-                </div>
-
                 {/* Book */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Book</label>
@@ -1245,7 +1211,7 @@ export default function AdminResources() {
                     );
                   } else if (pType === 'VIDEO' || previewUrl.includes('/videos/')) {
                     return (
-                      <video controls className="w-full h-full object-contain bg-black">
+                      <video controls playsInline className="w-full h-full object-contain bg-black">
                         <source src={previewUrl} />
                       </video>
                     );
@@ -1435,7 +1401,7 @@ export default function AdminResources() {
                               </div>
                               <div className="text-xs text-gray-400 mt-0.5">
                                 #{item.id} · {item.fileUrl?.split('/').pop()} · {item.downloads} downloads · {item.views} views
-                                {item.teacher?.name && ` · ${item.teacher.name}`}
+
                               </div>
                             </div>
                             <div className="flex items-center gap-2 ml-4 shrink-0">

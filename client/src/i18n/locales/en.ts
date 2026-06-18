@@ -1037,6 +1037,7 @@ export const en = {
     group_communication: "Communication",
     group_analytics: "Analytics",
     group_system: "System",
+    group_profile: "Profile",
     // Nav items
     audio_lectures: "Audio Lectures",
     video_lectures: "Video Lectures",
@@ -1049,6 +1050,8 @@ export const en = {
     roles: "Roles",
     permissions: "Permissions",
     homepage: "Homepage",
+    scholar_profile: "Scholar Profile",
+    site_settings: "Site Settings",
     navigation: "Navigation Menu",
     footer: "Footer Settings",
     announcements: "Announcements",

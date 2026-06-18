@@ -79,6 +79,8 @@ const navGroups: NavGroup[] = [
       { href: '/admin/appearance', labelKey: 'admin.appearance', icon: Palette },
       { href: '/admin/navigation', labelKey: 'admin.navigation', icon: Navigation },
       { href: '/admin/footer', labelKey: 'admin.footer', icon: FileText },
+      { href: '/admin/scholar', labelKey: 'admin.scholar_profile', icon: UserCheck },
+      { href: '/admin/site-settings', labelKey: 'admin.site_settings', icon: HiCog },
     ],
   },
   {

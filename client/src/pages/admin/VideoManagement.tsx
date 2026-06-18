@@ -746,7 +746,7 @@ export default function VideoManagement() {
                     title="Video preview"
                   />
                 ) : (
-                  <video controls className="w-full h-full object-contain" autoPlay>
+                  <video controls playsInline className="w-full h-full object-contain" autoPlay>
                     <source src={previewUrl} />
                   </video>
                 )}

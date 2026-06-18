@@ -59,11 +59,6 @@ export const users = {
   getStats: () => api.get('/users/stats'),
 };
 
-export const teachers = {
-  getAll: () => api.get('/teachers'),
-  getBySlug: (slug: string) => api.get(`/teachers/${slug}`),
-};
-
 export const books = {
   getAll: () => api.get('/books'),
   getBySlug: (slug: string) => api.get(`/books/${slug}`),
@@ -174,12 +169,6 @@ export const admin = {
     update: (id: number, data: any) => api.put(`/admin/lessons/${id}`, data),
     delete: (id: number) => api.delete(`/admin/lessons/${id}`),
   },
-  teachers: {
-    getAll: (params?: any) => api.get('/admin/teachers', { params }),
-    create: (data: any) => api.post('/admin/teachers', data),
-    update: (id: number, data: any) => api.put(`/admin/teachers/${id}`, data),
-    delete: (id: number) => api.delete(`/admin/teachers/${id}`),
-  },
   books: {
     getAll: (params?: any) => api.get('/admin/books', { params }),
     create: (data: any) => api.post('/admin/books', data),
@@ -263,9 +252,7 @@ export const courses = {
   getBySlug: (slug: string) => api.get(`/courses/${slug}`),
   getMyEnrollments: () => api.get('/courses/my-enrollments'),
   enroll: (courseId: number) => api.post(`/courses/${courseId}/enroll`),
-  create: (data: any) => api.post('/admin/courses', data),
   update: (id: number, data: any) => api.put(`/admin/courses/${id}`, data),
-  createModule: (courseId: number, data: any) => api.post(`/admin/courses/${courseId}/modules`, data),
 };
 
 export const levels = {
@@ -274,15 +261,13 @@ export const levels = {
   getLessons: (slug: string) => api.get(`/levels/${slug}/lessons`),
 };
 
-export const tasks = {
-  getAll: () => api.get('/tasks'),
+export const scholarProfile = {
+  get: () => api.get('/scholar'),
+  update: (data: any) => api.put('/scholar', data),
 };
 
-export const assignments = {
-  getMySubmissions: () => api.get('/assignments/my-submissions'),
-};
-
-export const certificates = {
-  getMyCertificates: () => api.get('/certificates/my'),
+export const siteSettings = {
+  get: () => api.get('/site-settings'),
+  update: (data: any) => api.put('/site-settings', data),
 };
 

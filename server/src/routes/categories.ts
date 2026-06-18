@@ -37,7 +37,6 @@ router.get('/:slug', async (req: Request, res: Response) => {
         lessons: {
           take: 50,
           orderBy: { createdAt: 'desc' },
-          include: { teacher: { select: { id: true, name: true, image: true } } },
         },
         _count: { select: { lessons: true, books: true } },
       },

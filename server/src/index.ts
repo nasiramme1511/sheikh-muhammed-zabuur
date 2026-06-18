@@ -7,7 +7,6 @@ import prisma from './lib/prisma';
 import { authLimiter, apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
-import teacherRoutes from './routes/teachers';
 import lessonRoutes from './routes/lessons';
 import bookRoutes from './routes/books';
 import bookmarkRoutes from './routes/bookmarks';
@@ -22,11 +21,10 @@ import aiRoutes from './routes/ai';
 import newsletterRoutes from './routes/newsletter';
 import resourcesRoutes from './routes/resources';
 import courseRoutes from './routes/courses';
-import assignmentRoutes from './routes/assignments';
-import tasksRoutes from './routes/tasks';
-import certificatesRoutes from './routes/certificates';
 import notificationsRoutes from './routes/notifications';
 import analyticsRoutes from './routes/analytics';
+import scholarRoutes from './routes/scholar';
+import siteSettingsRoutes from './routes/siteSettings';
 import liveRoutes from './routes/live';
 import dashboardRoutes from './routes/dashboard';
 import importRoutes from './routes/import';
@@ -145,18 +143,6 @@ async function repairResourceTypes() {
 
 // ── Sync on-disk files → DB Resource records ──────────────────
 async function syncUploadsToDb() {
-  // Ensure Sheikh Mohammed Zabuur teacher exists
-  let sheikhId: number | null = null;
-  try {
-    let sheikh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
-    if (!sheikh) {
-      sheikh = await prisma.teacher.create({
-        data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
-      });
-    }
-    sheikhId = sheikh.id;
-  } catch {}
-
   const subdirs = ['pdfs', 'audio', 'images', 'videos'];
   for (const sub of subdirs) {
     const dir = path.join(UPLOAD_DIR, sub);
@@ -181,7 +167,6 @@ async function syncUploadsToDb() {
           category: deriveCategory(file),
           collection: deriveCollection(file),
           language: /[\u0600-\u06FF]/.test(file) ? 'ar' : 'en',
-          teacherId: sheikhId,
         },
       });
       // silent
@@ -201,7 +186,23 @@ const allowedOrigins = process.env.CORS_ORIGINS
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
+  acceptRanges: true,
+  cacheControl: true,
+  maxAge: '7d',
+  setHeaders: (res, filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    const audioExts = ['.mp3', '.wav', '.m4a', '.ogg', '.aac'];
+    const videoExts = ['.mp4', '.webm', '.mov', '.mkv'];
+    if (audioExts.includes(ext)) {
+      res.setHeader('Content-Type', `audio/${ext.slice(1)}`);
+      res.setHeader('Accept-Ranges', 'bytes');
+    } else if (videoExts.includes(ext)) {
+      res.setHeader('Content-Type', `video/${ext.slice(1)}`);
+      res.setHeader('Accept-Ranges', 'bytes');
+    }
+  },
+}));
 
 // Security headers
 app.use((_, res, next) => {
@@ -211,7 +212,7 @@ app.use((_, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' https:; frame-ancestors 'none';");
   next();
 });
 
@@ -223,7 +224,6 @@ app.use('/api', apiLimiter);
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/teachers', teacherRoutes);
 app.use('/api/levels', levelRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/books', bookRoutes);
@@ -238,9 +238,6 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/resources', resourcesRoutes);
 app.use('/api/courses', courseRoutes);
-app.use('/api/assignments', assignmentRoutes);
-app.use('/api/tasks', tasksRoutes);
-app.use('/api/certificates', certificatesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/live', liveRoutes);
@@ -250,6 +247,8 @@ app.use('/api/resource-categories', resourceCategoryRoutes);
 app.use('/api/appearance', appearanceRoutes);
 app.use('/api/download', downloadRoutes);
 app.use('/api/admin/settings', settingsRoutes);
+app.use('/api/scholar', scholarRoutes);
+app.use('/api/site-settings', siteSettingsRoutes);
 
 // Serve client static files
 const CLIENT_DIST = path.join(__dirname, '../../client/dist');

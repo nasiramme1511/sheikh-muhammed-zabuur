@@ -99,7 +99,6 @@ router.get('/bookmarks', async (req: AuthRequest, res: Response) => {
       include: {
         lesson: {
           include: {
-            teacher: { select: { id: true, name: true, image: true } },
             category: { select: { id: true, name: true, slug: true } },
           },
         },
@@ -181,7 +180,6 @@ router.get('/recommended', async (req: AuthRequest, res: Response) => {
       orderBy: { createdAt: 'desc' },
       take: 6,
       include: {
-        teacher: { select: { id: true, name: true, image: true } },
         category: { select: { id: true, name: true, slug: true } },
       },
     });

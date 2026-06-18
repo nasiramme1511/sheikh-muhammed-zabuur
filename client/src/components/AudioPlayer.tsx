@@ -44,9 +44,8 @@ export default function AudioPlayer({ audioUrl, lessonId, initialPosition = 0, o
     if (playing) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {});
     }
-    setPlaying(!playing);
   }, [playing]);
 
   const handleTimeUpdate = () => {
@@ -136,6 +135,8 @@ export default function AudioPlayer({ audioUrl, lessonId, initialPosition = 0, o
         src={audioUrl}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoaded}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
         onEnded={() => {
           setPlaying(false);
           if (user) progressApi.update(lessonId, duration, true).catch(() => {});

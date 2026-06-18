@@ -19,10 +19,7 @@ router.post('/register', validate(registerSchema), async (req: Request, res: Res
         email,
         password: hashed,
         name,
-        role: 'STUDENT',
-        student: {
-          create: {}
-        }
+        role: 'USER',
       },
       select: { id: true, email: true, name: true, role: true },
     });
@@ -38,7 +35,6 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { student: true, teacher: true }
     });
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials' });
@@ -46,11 +42,6 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(400).json({ error: 'Invalid credentials' });
-    }
-    // Lazy creation of student profile if missing
-    if (user.role === 'STUDENT' && !user.student) {
-      const newStudent = await prisma.student.create({ data: { userId: user.id } });
-      user.student = newStudent;
     }
     const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
     const { password: _, ...userData } = user;
@@ -61,4 +52,3 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
 });
 
 export default router;
-

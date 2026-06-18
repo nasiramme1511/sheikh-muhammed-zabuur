@@ -57,19 +57,6 @@ export default function CategoryDetail() {
         </div>
       </div>
 
-      {category.lessons && category.lessons.filter((l, i, a) => a.findIndex((x) => x.teacher?.id === l.teacher?.id) === i).length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">{t('category_detail.teachers')}</h2>
-          <div className="flex flex-wrap gap-2">
-            {category.lessons.filter((l, i, a) => a.findIndex((x) => x.teacher?.id === l.teacher?.id) === i).map((l) => l.teacher && (
-              <Link key={l.teacher.id} to={`/teachers/${l.teacher.slug}`} className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-sm hover:bg-primary-100 dark:hover:bg-primary-900/50 hover:text-primary-600 transition-colors">
-                {l.teacher.name}
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
       {category.books && category.books.length > 0 && (
         <section className="mb-8">
           <h2 className="text-lg font-semibold mb-4">{t('category_detail.books')}</h2>

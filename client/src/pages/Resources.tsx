@@ -6,8 +6,8 @@ import {
   Library, Maximize2, Users, BookMarked, Grid3X3, Type, DownloadCloud,
   TrendingUp, Clock, BarChart3, File,
 } from 'lucide-react';
-import { resources as resourcesApi, teachers, books } from '../lib/api';
-import type { Resource, Teacher, Book } from '../types';
+import { resources as resourcesApi, books } from '../lib/api';
+import type { Resource, Book } from '../types';
 import { useTranslation } from '../i18n';
 
 const ITEMS_PER_PAGE = 20;
@@ -173,14 +173,12 @@ export default function Resources() {
   const [allResources, setAllResources] = useState<Resource[]>([]);
   const [popularResources, setPopularResources] = useState<Resource[]>([]);
   const [recentResources, setRecentResources] = useState<Resource[]>([]);
-  const [teacherList, setTeacherList] = useState<Teacher[]>([]);
   const [bookList, setBookList] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
   const [error, setError] = useState('');
 
   const [search, setSearch] = useState('');
-  const [selectedTeacher, setSelectedTeacher] = useState<string>('All Teachers');
   const [selectedBook, setSelectedBook] = useState<string>('All Books');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedType, setSelectedType] = useState('All Types');
@@ -190,14 +188,12 @@ export default function Resources() {
   useEffect(() => {
     Promise.all([
       resourcesApi.getAll({}),
-      teachers.getAll(),
       books.getAll(),
       resourcesApi.getPopular(),
       resourcesApi.getRecent(),
     ])
-      .then(([resData, teachersRes, booksRes, popularRes, recentRes]) => {
+      .then(([resData, booksRes, popularRes, recentRes]) => {
         setAllResources(resData.data as Resource[]);
-        setTeacherList(teachersRes.data as Teacher[]);
         setBookList(booksRes.data as Book[]);
         setPopularResources(popularRes.data as Resource[]);
         setRecentResources(recentRes.data as Resource[]);
@@ -214,11 +210,7 @@ export default function Resources() {
       const matchesSearch = !search ||
         r.title.toLowerCase().includes(search.toLowerCase()) ||
         r.description?.toLowerCase().includes(search.toLowerCase()) ||
-        r.teacher?.name?.toLowerCase().includes(search.toLowerCase()) ||
         r.book?.title?.toLowerCase().includes(search.toLowerCase());
-
-      const matchesTeacher = selectedTeacher === 'All Teachers' ||
-        (r.teacher && (r.teacher.name === selectedTeacher || String(r.teacher.id) === selectedTeacher));
 
       const matchesBook = selectedBook === 'All Books' ||
         (r.book && (r.book.title === selectedBook || String(r.book.id) === selectedBook));
@@ -227,9 +219,9 @@ export default function Resources() {
 
       const matchesType = selectedType === 'All Types' || r.resourceType === selectedType;
 
-      return matchesSearch && matchesTeacher && matchesBook && matchesCategory && matchesType;
+      return matchesSearch && matchesBook && matchesCategory && matchesType;
     });
-  }, [allResources, search, selectedTeacher, selectedBook, selectedCategory, selectedType]);
+  }, [allResources, search, selectedBook, selectedCategory, selectedType]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -398,7 +390,6 @@ export default function Resources() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-white/80 truncate">{r.title}</p>
                               <p className="text-xs text-white/30 truncate">
-                                {r.teacher?.name && <>{r.teacher.name} · </>}
                                 {r.downloads} downloads
                               </p>
                             </div>
@@ -445,7 +436,6 @@ export default function Resources() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-white/80 truncate">{r.title}</p>
                               <p className="text-xs text-white/30 truncate">
-                                {r.teacher?.name && <>{r.teacher.name} · </>}
                                 {new Date(r.createdAt).toLocaleDateString()}
                               </p>
                             </div>
@@ -471,23 +461,7 @@ export default function Resources() {
               <SlidersHorizontal className="w-4 h-4" />
               <span>{t('resources.filters')}</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {/* Teacher Dropdown */}
-              <div className="relative">
-                <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none z-10" />
-                <select
-                  value={selectedTeacher}
-                  onChange={(e) => handleFilterChange(setSelectedTeacher)(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm appearance-none cursor-pointer focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all"
-                  aria-label="Filter by teacher"
-                >
-                  <option value="All Teachers">All Teachers</option>
-                  {teacherList.map((t) => (
-                    <option key={t.id} value={t.name}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {/* Book Dropdown */}
               <div className="relative">
                 <BookMarked className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none z-10" />
@@ -716,14 +690,8 @@ function ResourceCard({ resource, onPreview, onDownload }: ResourceCardProps) {
           </h3>
         </div>
 
-        {/* Teacher & Book */}
+        {/* Book */}
         <div className="space-y-1">
-          {resource.teacher && (
-            <div className="flex items-center gap-1.5 text-xs text-white/40">
-              <Users className="w-3 h-3" />
-              <span className="truncate">{resource.teacher.name}</span>
-            </div>
-          )}
           {resource.book && (
             <div className="flex items-center gap-1.5 text-xs text-white/40">
               <BookMarked className="w-3 h-3" />

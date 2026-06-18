@@ -526,6 +526,7 @@ export default function VideoLibrary() {
                     src={activeVideo.url}
                     controls
                     autoPlay
+                    playsInline
                     className="w-full h-full object-contain"
                   />
                 )}

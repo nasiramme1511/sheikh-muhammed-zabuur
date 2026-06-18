@@ -22,7 +22,7 @@ router.get('/me', async (req: AuthRequest, res: Response) => {
 router.get('/stats', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const [bookmarkCount, completedCount, progressCount, recentActivity, enrollments, pendingTasks, certificates, streak] = await Promise.all([
+    const [bookmarkCount, completedCount, progressCount, recentActivity, streak] = await Promise.all([
       prisma.bookmark.count({ where: { userId } }),
       prisma.userProgress.count({ where: { userId, completed: true } }),
       prisma.userProgress.count({ where: { userId } }),
@@ -30,15 +30,6 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
         where: { userId },
         orderBy: { createdAt: 'desc' },
         take: 20,
-      }),
-      prisma.enrollment.count({
-        where: { student: { userId } },
-      }),
-      prisma.task.count({
-        where: { userId, status: 'PENDING' },
-      }),
-      prisma.certificate.count({
-        where: { student: { userId } },
       }),
       prisma.usageLog.count({
         where: {
@@ -52,9 +43,6 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
       completedCount,
       inProgressCount: progressCount - completedCount,
       recentActivity,
-      enrollments,
-      pendingTasks,
-      certificates,
       streak,
     });
   } catch {

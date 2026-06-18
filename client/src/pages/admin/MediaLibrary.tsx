@@ -395,7 +395,7 @@ export default function MediaLibrary() {
                 <audio controls className="w-full" src={previewItem.url} />
               )}
               {previewItem.resourceType === 'VIDEO' && (
-                <video controls className="w-full max-h-[60vh] rounded-xl" src={previewItem.url} />
+                <video controls playsInline className="w-full max-h-[60vh] rounded-xl" src={previewItem.url} />
               )}
               {previewItem.resourceType === 'PDF' && (
                 <iframe src={previewItem.url} className="w-full h-[60vh] rounded-xl" />

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { HiPlus, HiFilter, HiUpload } from 'react-icons/hi';
 import { Loader2 } from 'lucide-react';
-import { admin, categories as catApi, teachers as teachersApi, books as booksApi } from '../../lib/api';
-import { Lesson, Category, Teacher, Book } from '../../types';
+import { admin, categories as catApi, books as booksApi } from '../../lib/api';
+import { Lesson, Category, Book } from '../../types';
 import { AdminTable, AdminModal, ConfirmDeleteModal, LocalizedFields, useAdminCrud } from '../../components/admin';
 import { slugify, renderActions, formatDuration, StatusBadge } from '../../components/admin/helpers';
 
@@ -22,7 +22,6 @@ interface FormData {
   duration: number;
   episodeNumber: number;
   categoryId: number | '';
-  teacherId: number | '';
   bookId: number | '';
   isBeginner: boolean;
   published: boolean;
@@ -84,7 +83,7 @@ const emptyForm: FormData = {
   description: '', descriptionAmharic: '', descriptionArabic: '', descriptionOromic: '',
   audioUrl: '', videoUrl: '', pdfUrl: '',
   duration: 0, episodeNumber: 0,
-  categoryId: '', teacherId: '', bookId: '',
+  categoryId: '', bookId: '',
   isBeginner: false, published: true,
 };
 
@@ -104,7 +103,6 @@ const ITEM_MAPPER = (item: Lesson): FormData => ({
   duration: item.duration ?? 0,
   episodeNumber: item.episodeNumber ?? 0,
   categoryId: item.categoryId ?? '',
-  teacherId: item.teacherId ?? '',
   bookId: item.bookId ?? '',
   isBeginner: item.isBeginner,
   published: item.published,
@@ -114,15 +112,12 @@ export default function AdminLessons() {
   const crud = useAdminCrud<Lesson>(admin.lessons, 'lessons', emptyForm);
   const [localForm, setLocalForm] = useState<FormData>(emptyForm);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [filterCategory, setFilterCategory] = useState('');
-  const [filterTeacher, setFilterTeacher] = useState('');
   const [filterPublished, setFilterPublished] = useState('');
 
   useEffect(() => {
     catApi.getAll().then((r) => setCategories(r.data)).catch(() => {});
-    teachersApi.getAll().then((r) => setTeachers(r.data)).catch(() => {});
     booksApi.getAll().then((r) => setBooks(r.data)).catch(() => {});
   }, []);
 
@@ -131,7 +126,6 @@ export default function AdminLessons() {
     crud.setLoading(true);
     const params: any = { search: crud.search, page: crud.page, limit: 10 };
     if (filterCategory) params.categoryId = filterCategory;
-    if (filterTeacher) params.teacherId = filterTeacher;
     if (filterPublished !== '') params.published = filterPublished;
     admin.lessons.getAll(params)
       .then((res) => {
@@ -142,7 +136,7 @@ export default function AdminLessons() {
       .finally(() => crud.setLoading(false));
   };
 
-  useEffect(() => { loadWithFilters(); }, [crud.search, crud.page, filterCategory, filterTeacher, filterPublished]);
+  useEffect(() => { loadWithFilters(); }, [crud.search, crud.page, filterCategory, filterPublished]);
 
   const handleFormChange = (key: string, value: any) => {
     setLocalForm(prev => ({
@@ -166,14 +160,11 @@ export default function AdminLessons() {
     crud.handleSave(e, () => ({
       ...localForm,
       categoryId: localForm.categoryId || null,
-      teacherId: localForm.teacherId || null,
-      bookId: localForm.bookId || null,
     }));
   };
 
   const columns = [
     { key: 'title', header: 'Title', render: (item: Lesson) => <span className="font-medium max-w-[200px] truncate block">{item.title}</span> },
-    { key: 'teacher', header: 'Teacher', render: (item: Lesson) => <span className="text-gray-500">{item.teacher?.name || '-'}</span> },
     { key: 'category', header: 'Category', render: (item: Lesson) => <span className="text-gray-500">{item.category?.name || '-'}</span> },
     { key: 'duration', header: 'Duration', render: (item: Lesson) => formatDuration(item.duration) },
     { key: 'episode', header: 'Ep.', render: (item: Lesson) => item.episodeNumber || '-' },
@@ -188,10 +179,6 @@ export default function AdminLessons() {
       <select value={filterCategory} onChange={(e) => { setFilterCategory(e.target.value); crud.setPage(1); }} className="input-field py-2 text-sm w-auto">
         <option value="">All Categories</option>
         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-      </select>
-      <select value={filterTeacher} onChange={(e) => { setFilterTeacher(e.target.value); crud.setPage(1); }} className="input-field py-2 text-sm w-auto">
-        <option value="">All Teachers</option>
-        {teachers.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
       </select>
       <select value={filterPublished} onChange={(e) => { setFilterPublished(e.target.value); crud.setPage(1); }} className="input-field py-2 text-sm w-auto">
         <option value="">All Status</option>
@@ -253,13 +240,6 @@ export default function AdminLessons() {
               <select value={localForm.categoryId} onChange={(e) => handleFormChange('categoryId', e.target.value ? parseInt(e.target.value) : '')} className="input-field">
                 <option value="">None</option>
                 {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Teacher</label>
-              <select value={localForm.teacherId} onChange={(e) => handleFormChange('teacherId', e.target.value ? parseInt(e.target.value) : '')} className="input-field">
-                <option value="">None</option>
-                {teachers.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
             <div>

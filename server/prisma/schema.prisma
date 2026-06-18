@@ -18,37 +18,54 @@ model User {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  bookmarks       Bookmark[]
-  progress        UserProgress[]
-  schedules       Schedule[]
-  usageLogs       UsageLog[]
-  notifications   Notification[]
-  quizAttempts    QuizAttempt[]
-  chatMessages    ChatMessage[]
-  student         Student?
-  teacher         Teacher?
-  lessonProgress  LessonProgress[]
-  tasks           Task[]
+  bookmarks     Bookmark[]
+  progress      UserProgress[]
+  schedules     Schedule[]
+  usageLogs     UsageLog[]
+  notifications Notification[]
+  chatMessages  ChatMessage[]
+
+  @@index([role])
 }
 
 enum Role {
   USER
-  STUDENT
-  TEACHER
   ADMIN
   SUPER_ADMIN
 }
 
-model Student {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ScholarProfile {
+  id             Int      @id @default(autoincrement())
+  name           String
+  title          String?
+  biography      String?  @db.Text
+  shortBiography String?  @db.Text
+  profileImage   String?
+  coverImage     String?
+  yearsActive    Int?
+  studentsCount  Int      @default(0)
+  resourceCount  Int      @default(0)
+  youtubeUrl     String?
+  telegramUrl    String?
+  facebookUrl    String?
+  tiktokUrl      String?
+  websiteUrl     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
 
-  enrollments  Enrollment[]
-  submissions  Submission[]
-  certificates Certificate[]
+model SiteSettings {
+  id               Int     @id @default(autoincrement())
+  siteName         String  @default("Iman Chercher College")
+  siteDescription  String? @db.Text
+  logo             String?
+  favicon          String?
+  contactEmail     String?
+  phone            String?
+  address          String? @db.Text
+  copyrightText    String?
+  defaultLanguage  String  @default("en")
+  maintenanceMode  Boolean @default(false)
 }
 
 model Category {
@@ -70,46 +87,12 @@ model Category {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  books    Book[]
-  lessons  Lesson[]
-  courses  Course[]
-}
+  books   Book[]
+  lessons Lesson[]
+  courses Course[]
 
-model Teacher {
-  id          Int      @id @default(autoincrement())
-  userId      Int?     @unique
-  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  name        String
-  nameAmharic String?
-  nameArabic  String?
-  nameOromic  String?
-  slug        String   @unique
-  bio         String?  @db.Text
-  bioAmharic  String?  @db.Text
-  bioArabic   String?  @db.Text
-  bioOromic   String?  @db.Text
-  image       String?
-  telegram    String?
-  youtube     String?
-  facebook    String?
-  instagram   String?
-  tiktok      String?
-  twitter     String?
-  whatsapp    String?
-  website     String?
-  languages   String?
-  specialties String?
-  education   String?
-  verified    Boolean  @default(false)
-  featured    Boolean  @default(false)
-  studentsCount Int    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  lessons   Lesson[]
-  books     Book[]
-  courses   Course[]
-  resources Resource[]
+  @@index([slug])
+  @@index([order])
 }
 
 model Book {
@@ -133,15 +116,16 @@ model Book {
   coverImageAm String?
   coverImageOm String?
   categoryId  Int?
-  teacherId   Int?
   isBeginner  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   category  Category?  @relation(fields: [categoryId], references: [id])
-  teacher   Teacher?   @relation(fields: [teacherId], references: [id])
   lessons   Lesson[]
   resources Resource[]
+
+  @@index([slug])
+  @@index([categoryId])
 }
 
 model Level {
@@ -161,48 +145,33 @@ model Level {
   createdAt   DateTime @default(now())
 
   lessons Lesson[]
-  quizzes Quiz[]
   courses Course[]
+
+  @@index([slug])
+  @@index([order])
 }
 
 model Course {
-  id            Int            @id @default(autoincrement())
-  title         String
-  slug          String         @unique
-  thumbnail     String?
-  description   String?        @db.Text
-  teacherId     Int?
-  categoryId    Int?
-  levelId       Int?
-  language      String         @default("en")
-  duration      Int?
-  status        String         @default("DRAFT")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  teacher       Teacher?       @relation(fields: [teacherId], references: [id])
-  category      Category?      @relation(fields: [categoryId], references: [id])
-  level         Level?         @relation(fields: [levelId], references: [id])
-  modules       Module[]
-  lessons       Lesson[]
-  enrollments   Enrollment[]
-  assignments   Assignment[]
-  announcements Announcement[]
-  certificates  Certificate[]
-  quizzes       Quiz[]
-}
-
-model Module {
   id          Int      @id @default(autoincrement())
-  courseId    Int
   title       String
+  slug        String   @unique
+  thumbnail   String?
   description String?  @db.Text
-  order       Int      @default(0)
+  categoryId  Int?
+  levelId     Int?
+  language    String   @default("en")
+  duration    Int?
+  status      String   @default("DRAFT")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  lessons     Lesson[]
+  category      Category?      @relation(fields: [categoryId], references: [id])
+  level         Level?         @relation(fields: [levelId], references: [id])
+  lessons       Lesson[]
+  announcements Announcement[]
+
+  @@index([slug])
+  @@index([status])
 }
 
 model Lesson {
@@ -224,123 +193,29 @@ model Lesson {
   duration    Int?
   episodeNumber Int?
   categoryId  Int?
-  teacherId   Int?
   bookId      Int?
   levelId     Int?
   courseId    Int?
-  moduleId    Int?
   difficulty  String   @default("beginner")
   isBeginner  Boolean  @default(false)
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  category    Category?   @relation(fields: [categoryId], references: [id])
-  teacher     Teacher?    @relation(fields: [teacherId], references: [id])
-  book        Book?       @relation(fields: [bookId], references: [id])
-  level       Level?      @relation(fields: [levelId], references: [id])
-  course      Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  module      Module?     @relation(fields: [moduleId], references: [id], onDelete: SetNull)
-  bookmarks   Bookmark[]
-  progress    UserProgress[]
-  schedules   Schedule[]
-  lessonProgress LessonProgress[]
-  quizzes     Quiz[]
-}
+  category  Category?   @relation(fields: [categoryId], references: [id])
+  book      Book?       @relation(fields: [bookId], references: [id])
+  level     Level?      @relation(fields: [levelId], references: [id])
+  course    Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  bookmarks Bookmark[]
+  progress  UserProgress[]
+  schedules Schedule[]
 
-model LessonProgress {
-  id              Int      @id @default(autoincrement())
-  userId          Int
-  lessonId        Int
-  completed       Boolean  @default(false)
-  watchPercentage Float    @default(0)
-  completedAt     DateTime?
-  updatedAt       DateTime @updatedAt
-
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-}
-
-model Enrollment {
-  id          Int      @id @default(autoincrement())
-  studentId   Int
-  courseId    Int
-  progress    Float    @default(0)
-  completed   Boolean  @default(false)
-  enrolledAt  DateTime @default(now())
-  completedAt DateTime?
-
-  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, courseId])
-}
-
-model Assignment {
-  id          Int      @id @default(autoincrement())
-  courseId    Int
-  title       String
-  description String?  @db.Text
-  fileUrl     String?
-  dueDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  submissions Submission[]
-}
-
-model Submission {
-  id           Int      @id @default(autoincrement())
-  assignmentId Int
-  studentId    Int
-  fileUrl      String
-  status       String   @default("PENDING") // PENDING, REVIEWED, PASSED, FAILED, REVISION
-  score        Int?
-  feedback     String?  @db.Text
-  submittedAt  DateTime @default(now())
-  gradedAt     DateTime?
-
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
-}
-
-model Quiz {
-  id            Int           @id @default(autoincrement())
-  levelId       Int?
-  courseId      Int?
-  lessonId      Int?
-  question      String
-  questionAmharic String?
-  questionArabic  String?
-  questionOromic  String?
-  type          String        @default("MCQ") // MCQ, TF, FILL, MATCH
-  options       String
-  correctIndex  Int?
-  correctText   String?
-  points        Int           @default(1)
-  createdAt     DateTime      @default(now())
-
-  level     Level?        @relation(fields: [levelId], references: [id])
-  course    Course?       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  lesson    Lesson?       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  attempts  QuizAttempt[]
-}
-
-model QuizAttempt {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  quizId      Int
-  answerIndex Int?
-  answerText  String?
-  correct     Boolean
-  score       Int      @default(0)
-  createdAt   DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  @@index([slug])
+  @@index([categoryId])
+  @@index([levelId])
+  @@index([courseId])
+  @@index([published])
+  @@index([isBeginner])
 }
 
 model Bookmark {
@@ -353,6 +228,7 @@ model Bookmark {
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
+  @@index([userId])
 }
 
 model UserProgress {
@@ -367,6 +243,8 @@ model UserProgress {
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
 }
 
 model Schedule {
@@ -380,6 +258,8 @@ model Schedule {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model UsageLog {
@@ -390,6 +270,10 @@ model UsageLog {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Notification {
@@ -401,6 +285,9 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
 }
 
 enum ResourceType {
@@ -418,7 +305,6 @@ model Resource {
   collection   String?
   language     String       @default("en")
   author       String?
-  teacherId    Int?
   bookId       Int?
   fileType     String       @default("pdf")
   resourceType ResourceType @default(PDF)
@@ -432,38 +318,16 @@ model Resource {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  teacher      Teacher?     @relation(fields: [teacherId], references: [id], onDelete: SetNull)
   book         Book?        @relation(fields: [bookId], references: [id], onDelete: SetNull)
-}
 
-model Certificate {
-  id               Int      @id @default(autoincrement())
-  studentId        Int
-  courseId         Int
-  studentName      String
-  courseName       String
-  teacherName      String
-  issueDate        DateTime @default(now())
-  verificationCode String   @unique
-  qrCode           String?
-
-  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-}
-
-model Task {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  title       String
-  description String?  @db.Text
-  dueDate     DateTime?
-  priority    String   @default("MEDIUM")
-  status      String   @default("PENDING")
-  type        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([resourceType])
+  @@index([category])
+  @@index([collection])
+  @@index([language])
+  @@index([featured])
+  @@index([published])
+  @@index([downloads])
+  @@index([views])
 }
 
 model Announcement {
@@ -474,6 +338,8 @@ model Announcement {
   createdAt DateTime @default(now())
 
   course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
 }
 
 model TelegramChannel {
@@ -487,6 +353,9 @@ model TelegramChannel {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+  @@index([category])
 }
 
 model Subscriber {
@@ -495,6 +364,8 @@ model Subscriber {
   language  String   @default("en")
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  @@index([active])
 }
 
 model ChatMessage {
@@ -507,5 +378,7 @@ model ChatMessage {
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
+  @@index([sessionId])
+  @@index([userId])
+}

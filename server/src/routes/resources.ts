@@ -27,7 +27,6 @@ router.get('/', async (req: Request, res: Response) => {
         { title: { contains: q } },
         { description: { contains: q } },
         { author: { contains: q } },
-        { teacher: { name: { contains: q } } },
         { book: { title: { contains: q } } },
       ];
     }
@@ -56,7 +55,6 @@ router.get('/', async (req: Request, res: Response) => {
     if (teacherId && teacherId !== 'All Teachers' && teacherId !== 'all') {
       const tid = Number(teacherId);
       if (!isNaN(tid)) {
-        where.teacherId = tid;
       }
     }
 
@@ -78,7 +76,6 @@ router.get('/', async (req: Request, res: Response) => {
     const resources = await prisma.resource.findMany({
       where,
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
       orderBy: { createdAt: 'desc' },
@@ -114,7 +111,6 @@ router.get('/', async (req: Request, res: Response) => {
         featured: r.featured,
         downloads: r.downloads,
         views: r.views,
-        teacher: r.teacher,
         book: r.book,
       };
     });
@@ -132,7 +128,6 @@ router.get('/popular', async (_req: Request, res: Response) => {
       orderBy: { downloads: 'desc' },
       take: 10,
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -163,7 +158,6 @@ router.get('/popular', async (_req: Request, res: Response) => {
         featured: r.featured,
         downloads: r.downloads,
         views: r.views,
-        teacher: r.teacher,
         book: r.book,
       };
     });
@@ -181,7 +175,6 @@ router.get('/recent', async (_req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
       take: 10,
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -212,7 +205,6 @@ router.get('/recent', async (_req: Request, res: Response) => {
         featured: r.featured,
         downloads: r.downloads,
         views: r.views,
-        teacher: r.teacher,
         book: r.book,
       };
     });
@@ -246,7 +238,6 @@ router.get('/featured', async (_req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
       take: 8,
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -277,7 +268,6 @@ router.get('/featured', async (_req: Request, res: Response) => {
         featured: r.featured,
         downloads: r.downloads,
         views: r.views,
-        teacher: r.teacher,
         book: r.book,
       };
     });
@@ -367,7 +357,6 @@ router.get('/collections/:slug', async (req: Request, res: Response) => {
       where,
       orderBy: { createdAt: 'desc' },
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -397,7 +386,6 @@ router.get('/collections/:slug', async (req: Request, res: Response) => {
         featured: r.featured,
         downloads: r.downloads,
         views: r.views,
-        teacher: r.teacher,
         book: r.book,
       };
     });

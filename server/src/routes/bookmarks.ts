@@ -14,7 +14,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       include: {
         lesson: {
           include: {
-            teacher: { select: { id: true, name: true, image: true } },
             category: { select: { id: true, name: true, slug: true } },
           },
         },

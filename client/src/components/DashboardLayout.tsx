@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
   HiHome, HiBookmark, HiDownload, HiMenu, HiX,
@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from '../i18n';
 import type { TranslationKey } from '../i18n';
+import { lockBodyScroll, unlockBodyScroll } from '../utils/scrollLock';
 
 const navItems = [
   { href: '/dashboard', labelKey: 'dashboard.home' as const, icon: HiHome },
@@ -33,6 +34,25 @@ export default function DashboardLayout() {
 
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 
+  const closeSidebar = useCallback(() => {
+    setSidebarOpen(false);
+  }, []);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      lockBodyScroll();
+    } else {
+      unlockBodyScroll();
+    }
+    return () => {
+      unlockBodyScroll();
+    };
+  }, [sidebarOpen]);
+
   if (!user) {
     return (
       <div className="min-h-screen bg-surface-950 flex items-center justify-center">
@@ -45,8 +65,10 @@ export default function DashboardLayout() {
     <BackgroundLayout>
       <div className="flex h-screen overflow-hidden">
         <aside className={`
-          fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
-          lg:translate-x-0 lg:static lg:inset-auto
+          fixed inset-y-0 start-0 z-40 w-64 max-w-[85vw]
+          transform transition-transform duration-300 ease-in-out will-change-transform
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'}
+          lg:translate-x-0 lg:rtl:translate-x-0 lg:static lg:inset-auto
           bg-surface-900/95 border-r border-white/5
           flex flex-col backdrop-blur-xl
         `}>
@@ -172,9 +194,15 @@ export default function DashboardLayout() {
         </div>
       </div>
 
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
+      <div
+        className={`
+          fixed inset-0 z-30 bg-black/60 backdrop-blur-sm
+          transition-opacity duration-300 lg:hidden
+          ${sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+        `}
+        onClick={closeSidebar}
+        aria-hidden="true"
+      />
     </BackgroundLayout>
   );
 }

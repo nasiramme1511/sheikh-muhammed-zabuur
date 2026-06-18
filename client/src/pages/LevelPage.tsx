@@ -139,12 +139,6 @@ export default function LevelPage() {
                     {localizedTitle}
                   </h3>
                   <div className="flex items-center gap-3 mt-1">
-                    {lesson.teacher && (
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <HiUser className="w-3 h-3" />
-                        <span className="truncate">{getLocalizedField(lesson.teacher, 'name', language)}</span>
-                      </span>
-                    )}
                     {lesson.duration && (
                       <span className="flex items-center gap-1 text-xs text-gray-400">
                         <HiClock className="w-3 h-3" />

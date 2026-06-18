@@ -84,11 +84,6 @@ export default function BookDetail() {
               )}
 
               <div className="flex items-center gap-4 mt-3 text-sm text-gray-400">
-                {book.teacher && (
-                  <Link to={`/teachers/${book.teacher.slug}`} className="flex items-center gap-1 hover:text-icc-500">
-                    <HiUser className="w-4 h-4" /> {book.teacher.name}
-                  </Link>
-                )}
                 {book.category && (
                   <Link to={`/categories/${book.category.slug}`} className="flex items-center gap-1 hover:text-icc-500">
                     <HiBookOpen className="w-4 h-4" /> {book.category.name}

@@ -88,7 +88,6 @@ router.get('/:slug', async (req: Request, res: Response) => {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
-          teacher: { select: { id: true, name: true, image: true } },
           book: { select: { id: true, title: true, slug: true } },
         },
       }),

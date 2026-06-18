@@ -37,11 +37,6 @@ export default function FloatingPlayer() {
             <p className="text-sm font-medium text-white truncate">
               {currentLesson.episodeNumber && `${currentLesson.episodeNumber}. `}{getLocalizedField(currentLesson, 'title', language)}
             </p>
-            {currentLesson.teacher && (
-              <p className="text-xs text-white/40 truncate">
-                {getLocalizedField(currentLesson.teacher, 'name', language)}
-              </p>
-            )}
           </div>
           <div className="hidden sm:block text-xs text-white/30 tabular-nums shrink-0">
             {formatTime(currentTime)} / {formatTime(duration)}

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { HiPlus, HiUpload } from 'react-icons/hi';
 import { Loader2, Globe, FileText, Image } from 'lucide-react';
-import { admin, categories as catApi, teachers as teachersApi } from '../../lib/api';
-import { Book, Category, Teacher } from '../../types';
+import { admin, categories as catApi } from '../../lib/api';
+import { Book, Category } from '../../types';
 import { AdminTable, AdminModal, ConfirmDeleteModal, useAdminCrud } from '../../components/admin';
 import { slugify, renderActions, StatusBadge } from '../../components/admin/helpers';
 import { useTranslation } from '../../i18n';
@@ -27,7 +27,6 @@ interface FormData {
   coverImageAm: string;
   coverImageOm: string;
   categoryId: number | '';
-  teacherId: number | '';
   isBeginner: boolean;
 }
 
@@ -37,7 +36,7 @@ const emptyForm: FormData = {
   description: '', descriptionAmharic: '', descriptionArabic: '', descriptionOromic: '',
   author: '', pdfUrl: '', pdfUrlAr: '', pdfUrlAm: '', pdfUrlOm: '',
   coverImage: '', coverImageAr: '', coverImageAm: '', coverImageOm: '',
-  categoryId: '', teacherId: '',
+  categoryId: '',
   isBeginner: false,
 };
 
@@ -61,7 +60,6 @@ const ITEM_MAPPER = (item: Book): FormData => ({
   coverImageAm: item.coverImageAm || '',
   coverImageOm: item.coverImageOm || '',
   categoryId: item.categoryId ?? '',
-  teacherId: item.teacherId ?? '',
   isBeginner: item.isBeginner,
 });
 
@@ -166,11 +164,9 @@ export default function AdminBooks() {
   const crud = useAdminCrud<Book>(admin.books, 'books', emptyForm);
   const [localForm, setLocalForm] = useState<FormData>(emptyForm);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   useEffect(() => {
     catApi.getAll().then((r) => setCategories(r.data)).catch(() => {});
-    teachersApi.getAll().then((r) => setTeachers(r.data)).catch(() => {});
   }, []);
 
   const handleFormChange = (key: string, value: any) => {
@@ -195,7 +191,6 @@ export default function AdminBooks() {
     crud.handleSave(e, () => ({
       ...localForm,
       categoryId: localForm.categoryId || null,
-      teacherId: localForm.teacherId || null,
     }));
   };
 
@@ -211,7 +206,6 @@ export default function AdminBooks() {
     { key: 'title', header: t('admin.book_title_col'), render: (item: Book) => <span className="font-medium max-w-[200px] truncate block">{item.title}</span> },
     { key: 'author', header: t('admin.book_author_col'), render: (item: Book) => <span className="text-gray-500">{item.author || '-'}</span> },
     { key: 'category', header: t('admin.book_category_col'), render: (item: Book) => <span className="text-gray-500">{item.category?.name || '-'}</span> },
-    { key: 'teacher', header: t('admin.book_teacher_col'), render: (item: Book) => <span className="text-gray-500">{item.teacher?.name || '-'}</span> },
     { key: 'lessons', header: t('admin.book_lessons_col'), render: (item: Book) => item._count?.lessons ?? 0 },
     { key: 'beginner', header: t('admin.book_beginner'), render: (item: Book) => item.isBeginner ? <StatusBadge active={true} /> : '-' },
     { key: 'actions', header: '', className: 'text-right', render: (item: Book) => renderActions(item, openEdit, (id) => crud.setDeleteId(id)) },
@@ -257,13 +251,6 @@ export default function AdminBooks() {
               <select value={localForm.categoryId} onChange={(e) => handleFormChange('categoryId', e.target.value ? parseInt(e.target.value) : '')} className="input-field">
                 <option value="">{t('admin.none')}</option>
                 {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">{t('admin.book_teacher')}</label>
-              <select value={localForm.teacherId} onChange={(e) => handleFormChange('teacherId', e.target.value ? parseInt(e.target.value) : '')} className="input-field">
-                <option value="">{t('admin.none')}</option>
-                {teachers.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
             <div className="flex items-end pb-2">

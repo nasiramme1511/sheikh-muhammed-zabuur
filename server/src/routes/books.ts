@@ -7,18 +7,16 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const { category, beginner, teacherId } = req.query;
+    const { category, beginner } = req.query;
     const where: any = {};
     if (category) where.categoryId = Number(category);
     if (beginner === 'true') where.isBeginner = true;
-    if (teacherId) where.teacherId = Number(teacherId);
 
     const books = await prisma.book.findMany({
       where,
       orderBy: { title: 'asc' },
       include: {
         category: { select: { id: true, name: true, slug: true } },
-        teacher: { select: { id: true, name: true } },
         _count: { select: { lessons: true } },
       },
     });
@@ -78,10 +76,8 @@ router.get('/:slug', async (req: Request, res: Response) => {
       where: { slug: req.params.slug },
       include: {
         category: true,
-        teacher: true,
         lessons: {
           orderBy: { episodeNumber: 'asc' },
-          include: { teacher: { select: { id: true, name: true, image: true } } },
         },
       },
     });

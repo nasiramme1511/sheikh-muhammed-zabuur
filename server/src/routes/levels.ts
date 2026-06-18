@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { optionalAuth, authenticate, AuthRequest } from '../middleware/auth';
+import { optionalAuth, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.get('/', async (_req: Request, res: Response) => {
     const levels = await prisma.level.findMany({
       orderBy: { order: 'asc' },
       include: {
-        _count: { select: { lessons: true, quizzes: true } },
+        _count: { select: { lessons: true } },
       },
     });
     res.json(levels);
@@ -23,8 +23,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
     const level = await prisma.level.findUnique({
       where: { slug: req.params.slug },
       include: {
-        _count: { select: { lessons: true, quizzes: true } },
-        quizzes: true,
+        _count: { select: { lessons: true } },
       },
     });
     if (!level) return res.status(404).json({ error: 'Level not found' });
@@ -43,7 +42,6 @@ router.get('/:slug/lessons', optionalAuth, async (req: AuthRequest, res: Respons
       where: { levelId: level.id, published: true },
       orderBy: { episodeNumber: 'asc' },
       include: {
-        teacher: { select: { id: true, name: true, image: true, slug: true } },
         category: { select: { id: true, name: true, slug: true } },
       },
     });
@@ -65,31 +63,6 @@ router.get('/:slug/lessons', optionalAuth, async (req: AuthRequest, res: Respons
     res.json(lessonsWithProgress);
   } catch {
     res.status(500).json({ error: 'Failed to fetch level lessons' });
-  }
-});
-
-router.post('/quizzes/:id/attempt', authenticate, async (req: AuthRequest, res: Response) => {
-  try {
-    const quizId = Number(req.params.id);
-    const { answerIndex } = req.body;
-
-    const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-    if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
-
-    const correct = answerIndex === quiz.correctIndex;
-
-    const attempt = await prisma.quizAttempt.create({
-      data: {
-        userId: req.userId!,
-        quizId,
-        answerIndex,
-        correct,
-      },
-    });
-
-    res.json({ correct, attempt });
-  } catch {
-    res.status(500).json({ error: 'Failed to submit quiz attempt' });
   }
 });
 

@@ -140,7 +140,7 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const { title, description, category, teacherId: rawTeacherId, bookId: rawBookId, resourceType, language, featured, collection } = req.body;
+    const { title, description, category, bookId: rawBookId, resourceType, language, featured, collection } = req.body;
 
     // Validate required fields
     if (!title || !resourceType || !category) {
@@ -153,20 +153,6 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
       try { fs.unlinkSync(req.file.path); } catch {}
       return res.status(400).json({ error: 'Invalid resourceType. Must be PDF, AUDIO, VIDEO, or IMAGE' });
     }
-
-    // Auto-assign Sheikh Mohammed Zabuur as teacher
-    let teacherId: number | null = null;
-    try {
-      const sheikh = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
-      if (sheikh) {
-        teacherId = sheikh.id;
-      } else {
-        const created = await prisma.teacher.create({
-          data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
-        });
-        teacherId = created.id;
-      }
-    } catch {}
 
     // Safely parse bookId
     let bookId: number | null = null;
@@ -265,7 +251,6 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
             resourceType: finalResourceType as any,
             language: finalLanguage,
             featured: finalFeatured,
-            teacherId,
             bookId,
             fileHash: fileHash || existingResource.fileHash,
             updatedAt: new Date(),
@@ -280,7 +265,6 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
             fileHash: fileHash || null,
             fileType: typeLabel,
             resourceType: finalResourceType as any,
-            teacherId,
             bookId,
             category,
             collection: finalCollection,
@@ -313,7 +297,6 @@ router.get('/resources', async (_req: AuthRequest, res: Response) => {
     const resources = await prisma.resource.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        teacher: { select: { id: true, name: true, slug: true } },
         book: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -342,9 +325,7 @@ router.get('/resources', async (_req: AuthRequest, res: Response) => {
         language: r.language,
         featured: r.featured,
         author: r.author,
-        teacherId: r.teacherId,
         bookId: r.bookId,
-        teacher: r.teacher,
         book: r.book,
       };
     });
@@ -359,7 +340,7 @@ router.get('/resources', async (_req: AuthRequest, res: Response) => {
 router.put('/resources/:id', async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { title, description, category, author, language, featured, teacherId, bookId, resourceType, collection } = req.body;
+    const { title, description, category, author, language, featured, bookId, resourceType, collection } = req.body;
     const updated = await prisma.resource.update({
       where: { id },
       data: {
@@ -369,7 +350,6 @@ router.put('/resources/:id', async (req: AuthRequest, res: Response) => {
         ...(author !== undefined ? { author } : {}),
         ...(language !== undefined ? { language } : {}),
         ...(featured !== undefined ? { featured: Boolean(featured) } : {}),
-        ...(teacherId !== undefined ? { teacherId: teacherId ? Number(teacherId) : null } : {}),
         ...(bookId !== undefined ? { bookId: bookId ? Number(bookId) : null } : {}),
         ...(resourceType !== undefined ? { resourceType } : {}),
         ...(collection !== undefined ? { collection: collection || null } : {}),
@@ -480,82 +460,17 @@ router.delete('/categories/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.get('/teachers', async (req: AuthRequest, res: Response) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
 
-    const [teachers, total] = await Promise.all([
-      prisma.teacher.findMany({
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.teacher.count(),
-    ]);
-
-    res.json({ items: teachers, total, page, totalPages: Math.ceil(total / limit) });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch teachers' });
-  }
-});
-
-router.post('/teachers', async (req: AuthRequest, res: Response) => {
-  try {
-    const { name, nameAmharic, nameArabic, nameOromic, slug, bio, bioAmharic, bioArabic, bioOromic, image, telegram, youtube, facebook, instagram, tiktok, twitter, whatsapp, website, languages, specialties, education, verified, featured, studentsCount } = req.body;
-    const teacher = await prisma.teacher.create({
-      data: { name, nameAmharic, nameArabic, nameOromic, slug, bio, bioAmharic, bioArabic, bioOromic, image, telegram, youtube, facebook, instagram, tiktok, twitter, whatsapp, website, languages, specialties, education, verified, featured, studentsCount },
-    });
-    res.status(201).json(teacher);
-  } catch {
-    res.status(400).json({ error: 'Failed to create teacher' });
-  }
-});
-
-router.put('/teachers/:id', async (req: AuthRequest, res: Response) => {
-  try {
-    const id = Number(req.params.id);
-    const existing = await prisma.teacher.findUnique({ where: { id } });
-    if (!existing) return res.status(404).json({ error: 'Teacher not found' });
-
-    const { name, nameAmharic, nameArabic, nameOromic, slug, bio, bioAmharic, bioArabic, bioOromic, image, telegram, youtube, facebook, instagram, tiktok, twitter, whatsapp, website, languages, specialties, education, verified, featured, studentsCount } = req.body;
-    const teacher = await prisma.teacher.update({
-      where: { id },
-      data: { name, nameAmharic, nameArabic, nameOromic, slug, bio, bioAmharic, bioArabic, bioOromic, image, telegram, youtube, facebook, instagram, tiktok, twitter, whatsapp, website, languages, specialties, education, verified, featured, studentsCount },
-    });
-    res.json(teacher);
-  } catch {
-    res.status(400).json({ error: 'Failed to update teacher' });
-  }
-});
-
-router.delete('/teachers/:id', async (req: AuthRequest, res: Response) => {
-  try {
-    const id = Number(req.params.id);
-    const existing = await prisma.teacher.findUnique({ where: { id } });
-    if (!existing) return res.status(404).json({ error: 'Teacher not found' });
-
-    await prisma.lesson.updateMany({ where: { teacherId: id }, data: { teacherId: null } });
-    await prisma.book.updateMany({ where: { teacherId: id }, data: { teacherId: null } });
-    await prisma.teacher.delete({ where: { id } });
-
-    res.json({ message: 'Teacher deleted' });
-  } catch {
-    res.status(500).json({ error: 'Failed to delete teacher' });
-  }
-});
 
 router.get('/lessons', async (req: AuthRequest, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-    const { categoryId, teacherId, bookId, published } = req.query;
+    const { categoryId, bookId, published } = req.query;
 
     const where: any = {};
     if (categoryId) where.categoryId = Number(categoryId);
-    if (teacherId) where.teacherId = Number(teacherId);
     if (bookId) where.bookId = Number(bookId);
     if (published === 'true') where.published = true;
     else if (published === 'false') where.published = false;
@@ -567,7 +482,6 @@ router.get('/lessons', async (req: AuthRequest, res: Response) => {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
-          teacher: { select: { id: true, name: true } },
           category: { select: { id: true, name: true } },
           book: { select: { id: true, title: true } },
           _count: { select: { bookmarks: true, progress: true } },
@@ -584,9 +498,9 @@ router.get('/lessons', async (req: AuthRequest, res: Response) => {
 
 router.post('/lessons', async (req: AuthRequest, res: Response) => {
   try {
-    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, teacherId, bookId, isBeginner, published } = req.body;
+    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, bookId, isBeginner, published } = req.body;
     const lesson = await prisma.lesson.create({
-      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, teacherId, bookId, isBeginner, published },
+      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, bookId, isBeginner, published },
     });
     res.status(201).json(lesson);
   } catch {
@@ -600,10 +514,10 @@ router.put('/lessons/:id', async (req: AuthRequest, res: Response) => {
     const existing = await prisma.lesson.findUnique({ where: { id } });
     if (!existing) return res.status(404).json({ error: 'Lesson not found' });
 
-    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, teacherId, bookId, isBeginner, published } = req.body;
+    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, bookId, isBeginner, published } = req.body;
     const lesson = await prisma.lesson.update({
       where: { id },
-      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, teacherId, bookId, isBeginner, published },
+      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, audioUrl, pdfUrl, duration, episodeNumber, categoryId, bookId, isBeginner, published },
     });
     res.json(lesson);
   } catch {
@@ -629,11 +543,10 @@ router.get('/books', async (req: AuthRequest, res: Response) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-    const { categoryId, teacherId } = req.query;
+    const { categoryId } = req.query;
 
     const where: any = {};
     if (categoryId) where.categoryId = Number(categoryId);
-    if (teacherId) where.teacherId = Number(teacherId);
 
     const [books, total] = await Promise.all([
       prisma.book.findMany({
@@ -643,7 +556,6 @@ router.get('/books', async (req: AuthRequest, res: Response) => {
         orderBy: { createdAt: 'desc' },
         include: {
           category: { select: { id: true, name: true } },
-          teacher: { select: { id: true, name: true } },
           _count: { select: { lessons: true } },
         },
       }),
@@ -658,9 +570,9 @@ router.get('/books', async (req: AuthRequest, res: Response) => {
 
 router.post('/books', async (req: AuthRequest, res: Response) => {
   try {
-    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, teacherId, isBeginner } = req.body;
+    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, isBeginner } = req.body;
     const book = await prisma.book.create({
-      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, teacherId, isBeginner },
+      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, isBeginner },
     });
     res.status(201).json(book);
   } catch {
@@ -674,10 +586,10 @@ router.put('/books/:id', async (req: AuthRequest, res: Response) => {
     const existing = await prisma.book.findUnique({ where: { id } });
     if (!existing) return res.status(404).json({ error: 'Book not found' });
 
-    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, teacherId, isBeginner } = req.body;
+    const { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, isBeginner } = req.body;
     const book = await prisma.book.update({
       where: { id },
-      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, teacherId, isBeginner },
+      data: { title, titleAmharic, titleArabic, titleOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, author, pdfUrl, pdfUrlAr, pdfUrlAm, pdfUrlOm, coverImage, coverImageAr, coverImageAm, coverImageOm, categoryId, isBeginner },
     });
     res.json(book);
   } catch {
@@ -960,7 +872,7 @@ router.get('/levels', async (req: AuthRequest, res: Response) => {
         skip,
         take: limit,
         orderBy: { order: 'asc' },
-        include: { _count: { select: { lessons: true, quizzes: true } } },
+        include: { _count: { select: { lessons: true } } },
       }),
       prisma.level.count(),
     ]);
@@ -1014,36 +926,7 @@ router.delete('/levels/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
-router.get('/levels/:id/quizzes', async (req: AuthRequest, res: Response) => {
-  try {
-    const quizzes = await prisma.quiz.findMany({
-      where: { levelId: Number(req.params.id) },
-    });
-    res.json(quizzes);
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch quizzes' });
-  }
-});
 
-router.post('/levels/:id/quizzes', async (req: AuthRequest, res: Response) => {
-  try {
-    const { question, questionAmharic, questionArabic, questionOromic, options, correctIndex } = req.body;
-    const quiz = await prisma.quiz.create({
-      data: {
-        levelId: Number(req.params.id),
-        question,
-        questionAmharic,
-        questionArabic,
-        questionOromic,
-        options,
-        correctIndex,
-      },
-    });
-    res.status(201).json(quiz);
-  } catch {
-    res.status(400).json({ error: 'Failed to create quiz' });
-  }
-});
 
 router.get('/telegram', async (_req: AuthRequest, res: Response) => {
   try {
@@ -1162,9 +1045,6 @@ router.get('/duplicates', async (_req: AuthRequest, res: Response) => {
   try {
     const resources = await prisma.resource.findMany({
       orderBy: { createdAt: 'desc' },
-      include: {
-        teacher: { select: { id: true, name: true } },
-      },
     });
 
     const groups: { key: string; type: 'title' | 'filename' | 'hash'; items: typeof resources }[] = [];
@@ -1327,7 +1207,6 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
                 if (fs.existsSync(destPath)) {
                   const fileUrl = '/uploads/' + subdir + '/' + safeName;
                   const title = prettyTitle(safeName);
-                  const sheikhId = await getSheikhTeacherId();
                   const existing = await prisma.resource.findFirst({ where: { fileUrl } });
                   if (!existing || duplicateAction === 'replace') {
                     const data = {
@@ -1339,7 +1218,6 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
                       category: deriveCategory(safeName),
                       collection: deriveCollectionFromName(safeName),
                       language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
-                      teacherId: sheikhId,
                     };
                     if (existing) {
                       await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
@@ -1407,10 +1285,9 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
             continue;
           }
           if (duplicateAction === 'replace') {
-            const teacherId = await getSheikhTeacherId();
             await prisma.resource.update({
               where: { id: existing.id },
-              data: { title, category, collection, resourceType: resourceType as any, fileType: typeLabel, fileHash, teacherId, updatedAt: new Date() },
+              data: { title, category, collection, resourceType: resourceType as any, fileType: typeLabel, fileHash, updatedAt: new Date() },
             });
             results.push({ file: file.originalname, url: fileUrl, status: 'replaced' });
             try { fs.unlinkSync(file.path); } catch {}
@@ -1418,13 +1295,12 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
           }
         }
 
-        const teacherId = await getSheikhTeacherId();
         const resource = await prisma.resource.create({
           data: {
             title, fileUrl, fileHash: fileHash || null, fileType: typeLabel,
             resourceType: resourceType as any, category, collection,
             language: /[\u0600-\u06FF]/.test(file.originalname) ? 'ar' : 'en',
-            teacherId, views: 0, downloads: 0,
+            views: 0, downloads: 0,
           },
         });
 
@@ -1698,17 +1574,6 @@ function deriveCollectionFromName(filename: string): string | null {
     if (n.includes(kw)) return colSlug;
   }
   return null;
-}
-
-async function getSheikhTeacherId(): Promise<number | null> {
-  try {
-    const existing = await prisma.teacher.findFirst({ where: { name: { contains: 'Zabuur' } } });
-    if (existing) return existing.id;
-    const created = await prisma.teacher.create({
-      data: { name: 'Sheikh Mohammed Zabuur', slug: 'sheikh-mohammed-zabuur', verified: true, featured: true },
-    });
-    return created.id;
-  } catch { return null; }
 }
 
 export default router;

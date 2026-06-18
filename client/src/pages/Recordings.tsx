@@ -350,6 +350,7 @@ export default function Recordings() {
                     src={activeRecording.url}
                     controls
                     autoPlay
+                    playsInline
                     className="w-full h-full object-contain"
                   />
                 )}

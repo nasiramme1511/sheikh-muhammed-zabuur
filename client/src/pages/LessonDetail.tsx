@@ -104,11 +104,6 @@ export default function LessonDetail() {
           </h1>
           {language !== 'en' && lesson.title && getLocalizedField(lesson, 'title', language) !== lesson.title && <p className="text-lg text-gray-500 mt-1">{lesson.title}</p>}
           <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
-            {lesson.teacher && (
-              <Link to={`/teachers/${lesson.teacher.slug}`} className="flex items-center gap-1 hover:text-primary-600">
-                <HiUser className="w-4 h-4" /> {getLocalizedField(lesson.teacher, 'name', language)}
-              </Link>
-            )}
             {lesson.duration && (
               <span className="flex items-center gap-1">
                 <HiClock className="w-4 h-4" /> {formatDuration(lesson.duration)}

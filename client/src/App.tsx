@@ -62,6 +62,8 @@ const AdminActivity = lazy(() => import('./pages/admin/ActivityLogs'));
 const AdminCollections = lazy(() => import('./pages/admin/Collections'));
 const AdminBulkUpload = lazy(() => import('./pages/admin/BulkUpload'));
 const AdminTelegramChannels = lazy(() => import('./pages/admin/TelegramChannels'));
+const AdminScholarProfile = lazy(() => import('./pages/admin/ScholarProfile'));
+const AdminSiteSettings = lazy(() => import('./pages/admin/SiteSettings'));
 
 // Lazy-loaded dashboard pages
 const DashboardHome = lazy(() => import('./pages/dashboard/Home'));
@@ -180,6 +182,8 @@ export default function App() {
         <Route path="backup" element={<Suspense fallback={<AdminFallback />}><AdminBackup /></Suspense>} />
         <Route path="activity" element={<Suspense fallback={<AdminFallback />}><AdminActivity /></Suspense>} />
         <Route path="telegram" element={<Suspense fallback={<AdminFallback />}><AdminTelegramChannels /></Suspense>} />
+        <Route path="scholar" element={<Suspense fallback={<AdminFallback />}><AdminScholarProfile /></Suspense>} />
+        <Route path="site-settings" element={<Suspense fallback={<AdminFallback />}><AdminSiteSettings /></Suspense>} />
       </Route>
 
       {/* PUBLIC ROUTES */}

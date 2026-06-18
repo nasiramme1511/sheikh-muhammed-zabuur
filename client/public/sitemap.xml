@@ -11,24 +11,34 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://sheikhmohammedzabuur.com/audio</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://sheikhmohammedzabuur.com/videos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://sheikhmohammedzabuur.com/pdfs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://sheikhmohammedzabuur.com/live</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sheikhmohammedzabuur.com/recordings</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://sheikhmohammedzabuur.com/categories</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://sheikhmohammedzabuur.com/teachers</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://sheikhmohammedzabuur.com/beginner</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sheikhmohammedzabuur.com/levels</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sheikhmohammedzabuur.com/search</loc>
@@ -42,11 +52,6 @@
   </url>
   <url>
     <loc>https://sheikhmohammedzabuur.com/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://sheikhmohammedzabuur.com/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

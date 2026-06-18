@@ -58,22 +58,6 @@ export const requireRole = (allowedRoles: string[]) => {
   };
 };
 
-export const studentOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const role = req.userRole;
-  if (role !== 'STUDENT' && role !== 'TEACHER' && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
-    return res.status(403).json({ error: 'Access denied: Student role required' });
-  }
-  next();
-};
-
-export const teacherOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const role = req.userRole;
-  if (role !== 'TEACHER' && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
-    return res.status(403).json({ error: 'Access denied: Teacher role required' });
-  }
-  next();
-};
-
 export const adminOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
   const role = req.userRole;
   if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
@@ -88,4 +72,3 @@ export const superAdminOnly = (req: AuthRequest, res: Response, next: NextFuncti
   }
   next();
 };
-

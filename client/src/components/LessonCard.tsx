@@ -29,7 +29,6 @@ export default function LessonCard({ lesson, highlightQuery }: Props) {
   const { language } = useLanguage();
   const { play } = usePlayer();
   const localizedTitle = getLocalizedField(lesson, 'title', language);
-  const localizedTeacher = lesson.teacher ? getLocalizedField(lesson.teacher, 'name', language) : '';
   const catColor = lesson.category ? CATEGORY_COLORS[lesson.category.slug] || '#0284C7' : '#0284C7';
 
   return (
@@ -61,12 +60,6 @@ export default function LessonCard({ lesson, highlightQuery }: Props) {
           <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-icc-400 transition-colors leading-snug">
             {localizedTitle}
           </h3>
-          {lesson.teacher && (
-            <div className="flex items-center gap-1 mt-2 text-xs text-white/50">
-              <HiUser className="w-3 h-3 shrink-0" />
-              <span className="truncate">{localizedTeacher}</span>
-            </div>
-          )}
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
               {lesson.duration && (

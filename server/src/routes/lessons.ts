@@ -6,12 +6,11 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const { category, teacher, book, beginner, page = '1', limit = '20' } = req.query;
+    const { category, book, beginner, page = '1', limit = '20' } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
     const where: any = { published: true };
     if (category) where.categoryId = Number(category);
-    if (teacher) where.teacherId = Number(teacher);
     if (book) where.bookId = Number(book);
     if (beginner === 'true') where.isBeginner = true;
 
@@ -22,7 +21,6 @@ router.get('/', async (req: Request, res: Response) => {
         take: Number(limit),
         orderBy: { createdAt: 'desc' },
         include: {
-          teacher: { select: { id: true, name: true, image: true } },
           category: { select: { id: true, name: true, slug: true } },
         },
       }),
@@ -42,7 +40,6 @@ router.get('/recent', async (_req: Request, res: Response) => {
       take: 10,
       orderBy: { createdAt: 'desc' },
       include: {
-        teacher: { select: { id: true, name: true, image: true } },
         category: { select: { id: true, name: true, slug: true } },
       },
     });
@@ -57,7 +54,6 @@ router.get('/:slug', optionalAuth, async (req: AuthRequest, res: Response) => {
     const lesson = await prisma.lesson.findUnique({
       where: { slug: req.params.slug },
       include: {
-        teacher: true,
         category: true,
         book: true,
       },
@@ -83,13 +79,11 @@ router.get('/:slug', optionalAuth, async (req: AuthRequest, res: Response) => {
         published: true,
         OR: [
           { categoryId: lesson.categoryId },
-          { teacherId: lesson.teacherId },
         ],
         id: { not: lesson.id },
       },
       take: 5,
       include: {
-        teacher: { select: { id: true, name: true, image: true } },
       },
     });
 
