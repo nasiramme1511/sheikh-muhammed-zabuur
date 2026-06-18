@@ -4,6 +4,7 @@ import { adminOnly } from '../middleware/admin';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import { uploadFile } from '../lib/storage';
 
 const router = Router();
 
@@ -199,15 +200,17 @@ router.post('/reset', authenticate, adminOnly, (_req: Request, res: Response) =>
   res.json({ ...defaultState });
 });
 
-router.post('/upload', authenticate, adminOnly, (req: AuthRequest, res: Response) => {
-  upload.single('file')(req, res, (err) => {
+router.post('/upload', authenticate, adminOnly, async (req: AuthRequest, res: Response) => {
+  upload.single('file')(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    const url = `/uploads/images/${req.file.filename}`;
+    const uploadResult = await uploadFile(req.file.path, req.file.originalname);
+    try { fs.unlinkSync(req.file.path); } catch {}
+    const url = uploadResult.url;
     const current = readState();
     current.backgroundImage = url;
     writeState(current);

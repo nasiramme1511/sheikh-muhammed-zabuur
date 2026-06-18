@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import prisma from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { isCloudUrl, getFileUrl } from '../lib/storage';
 
 const router = Router();
 const UPLOAD_DIR = path.join(__dirname, '../../uploads');
@@ -21,13 +22,6 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Resource not found' });
     }
 
-    const relPath = resource.fileUrl.replace(/^\//, '');
-    const absPath = path.join(UPLOAD_DIR, relPath.replace(/^uploads\//, ''));
-    
-    if (!fs.existsSync(absPath)) {
-      return res.status(404).json({ error: 'File not found on server' });
-    }
-
     await prisma.resource.update({
       where: { id },
       data: { downloads: { increment: 1 } },
@@ -40,6 +34,23 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
         metadata: JSON.stringify({ resourceId: id, resourceType: resource.resourceType, title: resource.title }),
       },
     });
+
+    // If cloud URL, redirect to CDN for download
+    if (isCloudUrl(resource.fileUrl)) {
+      const url = getFileUrl(resource.fileUrl);
+      // Cloudinary supports `fl_attachment` flag for forced download
+      const downloadUrl = url.includes('cloudinary.com')
+        ? url.replace('/upload/', '/upload/fl_attachment/')
+        : url;
+      return res.redirect(302, downloadUrl);
+    }
+
+    const relPath = resource.fileUrl.replace(/^\//, '');
+    const absPath = path.join(UPLOAD_DIR, relPath.replace(/^uploads\//, ''));
+
+    if (!fs.existsSync(absPath)) {
+      return res.status(404).json({ error: 'File not found on server' });
+    }
 
     const filename = path.basename(absPath);
     res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);

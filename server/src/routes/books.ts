@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import prisma from '../lib/prisma';
+import { isCloudUrl } from '../lib/storage';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/download/:fileName', async (req: Request, res: Response) => {
   try {
     const { fileName } = req.params;
-    
+
     // 1. Basic validation - only alphanumeric, dashes, dots
     if (!/^[a-zA-Z0-9-_\.]+$/.test(fileName)) {
       return res.status(400).json({ error: 'Invalid file name format' });
@@ -51,7 +52,7 @@ router.get('/download/:fileName', async (req: Request, res: Response) => {
     // 4. Construct secure path (resolves to server/uploads/pdfs)
     const filePath = path.join(__dirname, '../../uploads/pdfs', fileName);
 
-    // 5. Check if file exists
+    // 5. Check if file exists locally
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'File not found' });
     }

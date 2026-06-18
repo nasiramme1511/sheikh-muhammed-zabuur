@@ -2,10 +2,12 @@ import { Router, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import crypto from 'crypto';
 import prisma from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { adminOnly } from '../middleware/admin';
+import { uploadFile, deleteFile, deleteFiles, isCloudUrl } from '../lib/storage';
 
 const router = Router();
 
@@ -218,27 +220,13 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
     }
     // VIDEO has 2GB global limit from multer config
 
-    const relativePath = req.file.path.replace(/\\/g, '/').split('uploads/')[1];
-    const fileUrl = '/uploads/' + relativePath;
-
-    // Ensure file is in the correct subdirectory
-    const correctDir = path.join(uploadDir, subdir);
-    if (path.dirname(req.file.path) !== correctDir) {
-      const destPath = path.join(correctDir, path.basename(req.file.path));
-      if (!fs.existsSync(correctDir)) fs.mkdirSync(correctDir, { recursive: true });
-      try { fs.copyFileSync(req.file.path, destPath); fs.unlinkSync(req.file.path); } catch {}
-    }
-
-    const fileHash = crypto.createHash('sha256').update(fs.readFileSync(req.file.path)).digest('hex');
+    // Upload to cloud storage (or local fallback)
+    const uploadResult = await uploadFile(req.file.path, req.file.originalname);
+    const fileUrl = uploadResult.url;
 
     try {
       const existingResource = await prisma.resource.findFirst({
-        where: {
-          OR: [
-            { fileUrl },
-            ...(fileHash ? [{ fileHash }] : []),
-          ],
-        },
+        where: { fileUrl },
       });
       if (existingResource) {
         await prisma.resource.update({
@@ -252,7 +240,6 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
             language: finalLanguage,
             featured: finalFeatured,
             bookId,
-            fileHash: fileHash || existingResource.fileHash,
             updatedAt: new Date(),
           },
         });
@@ -262,7 +249,7 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
             title,
             description: description || null,
             fileUrl,
-            fileHash: fileHash || null,
+            fileHash: null,
             fileType: typeLabel,
             resourceType: finalResourceType as any,
             bookId,
@@ -283,9 +270,10 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
 
     res.json({
       url: fileUrl,
-      name: req.file.filename,
-      size: req.file.size,
+      name: path.basename(fileUrl),
+      size: req.file ? req.file.size : 0,
       type: typeLabel,
+      isCloud: isCloudUrl(fileUrl),
     });
   });
 });
@@ -368,23 +356,9 @@ router.delete('/resources', async (req: AuthRequest, res: Response) => {
     if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'url required' });
     }
-    const rel = url.replace(/^\//, '').replace(/^uploads\//, '');
-    const parts = rel.split('/');
-    if (parts.length < 2) return res.status(400).json({ error: 'Invalid path' });
-    const filePath = path.join(uploadDir, ...parts.map(decodeURIComponent));
-    
-    // Prevent path traversal
-    if (!filePath.startsWith(uploadDir)) {
-      return res.status(400).json({ error: 'Invalid path' });
-    }
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
 
-    // Delete from DB
-    await prisma.resource.deleteMany({
-      where: { fileUrl: url }
-    });
+    await deleteFile(url);
+    await prisma.resource.deleteMany({ where: { fileUrl: url } });
 
     res.json({ message: 'File deleted' });
   } catch {
@@ -1193,47 +1167,44 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
                 if (BLOCKED_EXTS.has(entryExt)) continue;
                 const detected = detectTypeFromExt(entryExt);
                 if (!detected) continue;
-                const subdir = detected.subdir;
-                const destDir = path.join(uploadDir, subdir);
-                if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
                 const originalName = path.basename(entry.entryName);
                 const safeName = sanitizeFilename(originalName);
-                const destPath = path.join(destDir, safeName);
-                zip.extractEntryTo(entry, destDir, false, true);
-                const extractedPath = path.join(destDir, originalName);
-                if (fs.existsSync(extractedPath) && extractedPath !== destPath) {
-                  try { fs.renameSync(extractedPath, destPath); } catch {}
-                }
-                if (fs.existsSync(destPath)) {
-                  const fileUrl = '/uploads/' + subdir + '/' + safeName;
-                  const title = prettyTitle(safeName);
-                  const existing = await prisma.resource.findFirst({ where: { fileUrl } });
-                  if (!existing || duplicateAction === 'replace') {
-                    const data = {
-                      title,
-                      fileUrl,
-                      fileHash: crypto.createHash('sha256').update(fs.readFileSync(destPath)).digest('hex'),
-                      fileType: detected.typeLabel,
-                      resourceType: detected.resourceType as any,
-                      category: deriveCategory(safeName),
-                      collection: deriveCollectionFromName(safeName),
-                      language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
-                    };
-                    if (existing) {
-                      await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
-                      results.push({ file: safeName, url: fileUrl, status: 'replaced' });
-                      zipCreated++;
-                    } else {
-                      await prisma.resource.create({ data: { ...data, views: 0, downloads: 0 } });
-                      results.push({ file: safeName, url: fileUrl, status: 'created' });
-                      zipCreated++;
-                    }
-                    extracted++;
+                const extractDir = path.join(os.tmpdir(), 'zip-extract-' + Date.now());
+                if (!fs.existsSync(extractDir)) fs.mkdirSync(extractDir, { recursive: true });
+                const extractedPath = path.join(extractDir, safeName);
+                zip.extractEntryTo(entry, extractDir, false, true);
+                if (!fs.existsSync(extractedPath)) continue;
+
+                const uploadResult = await uploadFile(extractedPath, safeName);
+                try { fs.unlinkSync(extractedPath); } catch {}
+                const fileUrl = uploadResult.url;
+
+                const title = prettyTitle(safeName);
+                const existing = await prisma.resource.findFirst({ where: { fileUrl } });
+                if (!existing || duplicateAction === 'replace') {
+                  const data = {
+                    title,
+                    fileUrl,
+                    fileHash: null as string | null,
+                    fileType: detected.typeLabel,
+                    resourceType: detected.resourceType as any,
+                    category: deriveCategory(safeName),
+                    collection: deriveCollectionFromName(safeName),
+                    language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
+                  };
+                  if (existing) {
+                    await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
+                    results.push({ file: safeName, url: fileUrl, status: 'replaced' });
+                    zipCreated++;
                   } else {
-                    results.push({ file: safeName, url: fileUrl, status: 'skipped' });
-                    zipSkipped++;
-                    try { fs.unlinkSync(destPath); } catch {}
+                    await prisma.resource.create({ data: { ...data, views: 0, downloads: 0 } });
+                    results.push({ file: safeName, url: fileUrl, status: 'created' });
+                    zipCreated++;
                   }
+                  extracted++;
+                } else {
+                  results.push({ file: safeName, url: fileUrl, status: 'skipped' });
+                  zipSkipped++;
                 }
               } catch (entryErr: any) {
                 zipErrors.push(`Entry ${entry.entryName}: ${entryErr.message}`);
@@ -1253,29 +1224,20 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
           continue;
         }
 
-        // Regular file processing
-        const relativePath = file.path.replace(/\\/g, '/').split('uploads/')[1];
-        const fileUrl = '/uploads/' + relativePath;
+        // Regular file processing — upload to cloud/local storage
+        const uploadResult = await uploadFile(file.path, file.originalname);
+        const fileUrl = uploadResult.url;
         const ext = path.extname(file.originalname).toLowerCase();
         const extDetect = detectTypeFromExt(ext);
-        let subdir = extDetect?.subdir || MIME_MAP[file.mimetype] || 'images';
-        let typeLabel = extDetect?.typeLabel || (subdir === 'pdfs' ? 'pdf' : subdir === 'audio' ? 'audio' : subdir === 'videos' ? 'video' : 'image');
-        let resourceType = extDetect?.resourceType || (subdir === 'pdfs' ? 'PDF' : subdir === 'audio' ? 'AUDIO' : subdir === 'videos' ? 'VIDEO' : 'IMAGE');
-
-        const correctDir = path.join(uploadDir, subdir);
-        if (file.destination !== correctDir) {
-          const destPath = path.join(correctDir, path.basename(file.path));
-          if (!fs.existsSync(correctDir)) fs.mkdirSync(correctDir, { recursive: true });
-          try { fs.copyFileSync(file.path, destPath); fs.unlinkSync(file.path); } catch {}
-        }
+        const typeLabel = extDetect?.typeLabel || 'image';
+        const resourceType = extDetect?.resourceType || 'IMAGE';
 
         const title = prettyTitle(file.originalname);
         const category = deriveCategory(file.originalname);
         const collection = deriveCollectionFromName(file.originalname);
-        const fileHash = crypto.createHash('sha256').update(fs.readFileSync(file.path)).digest('hex');
 
         const existing = await prisma.resource.findFirst({
-          where: { OR: [{ fileUrl }, ...(fileHash ? [{ fileHash }] : [])] },
+          where: { OR: [{ fileUrl }] },
         });
 
         if (existing) {
@@ -1287,7 +1249,7 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
           if (duplicateAction === 'replace') {
             await prisma.resource.update({
               where: { id: existing.id },
-              data: { title, category, collection, resourceType: resourceType as any, fileType: typeLabel, fileHash, updatedAt: new Date() },
+              data: { title, category, collection, resourceType: resourceType as any, fileType: typeLabel, updatedAt: new Date() },
             });
             results.push({ file: file.originalname, url: fileUrl, status: 'replaced' });
             try { fs.unlinkSync(file.path); } catch {}
@@ -1297,7 +1259,7 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
 
         const resource = await prisma.resource.create({
           data: {
-            title, fileUrl, fileHash: fileHash || null, fileType: typeLabel,
+            title, fileUrl, fileHash: null, fileType: typeLabel,
             resourceType: resourceType as any, category, collection,
             language: /[\u0600-\u06FF]/.test(file.originalname) ? 'ar' : 'en',
             views: 0, downloads: 0,
@@ -1311,8 +1273,8 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
         });
       } catch (fileErr: any) {
         results.push({ file: file.originalname, status: 'error', message: fileErr.message });
-        try { fs.unlinkSync(file.path); } catch {}
       }
+      try { fs.unlinkSync(file.path); } catch {}
     }
 
     res.json({
@@ -1335,18 +1297,7 @@ router.post('/resources/bulk-delete', async (req: AuthRequest, res: Response) =>
       return res.status(400).json({ error: 'ids array is required' });
     }
     const resources = await prisma.resource.findMany({ where: { id: { in: ids } } });
-    for (const r of resources) {
-      if (r.fileUrl.startsWith('/uploads/')) {
-        const rel = r.fileUrl.replace('/uploads/', '');
-        const parts = rel.split('/');
-        if (parts.length >= 2) {
-          const filePath = path.join(uploadDir, ...parts.map(decodeURIComponent));
-          if (filePath.startsWith(uploadDir) && fs.existsSync(filePath)) {
-            try { fs.unlinkSync(filePath); } catch {}
-          }
-        }
-      }
-    }
+    await deleteFiles(resources.map(r => r.fileUrl));
     await prisma.resource.deleteMany({ where: { id: { in: ids } } });
     res.json({ message: `Deleted ${resources.length} resources`, count: resources.length });
   } catch (err) {
@@ -1367,18 +1318,7 @@ router.post('/resources/delete-all', async (req: AuthRequest, res: Response) => 
       where.resourceType = resourceType;
     }
     const resources = await prisma.resource.findMany({ where });
-    for (const r of resources) {
-      if (r.fileUrl.startsWith('/uploads/')) {
-        const rel = r.fileUrl.replace('/uploads/', '');
-        const parts = rel.split('/');
-        if (parts.length >= 2) {
-          const filePath = path.join(uploadDir, ...parts.map(decodeURIComponent));
-          if (filePath.startsWith(uploadDir) && fs.existsSync(filePath)) {
-            try { fs.unlinkSync(filePath); } catch {}
-          }
-        }
-      }
-    }
+    await deleteFiles(resources.map(r => r.fileUrl));
     await prisma.resource.deleteMany({ where });
     const label = resourceType === 'ALL' ? 'Entire Library' : resourceType;
     res.json({ message: `Deleted all ${label} resources (${resources.length})`, count: resources.length });
@@ -1418,18 +1358,7 @@ router.post('/resources/delete-by-category', async (req: AuthRequest, res: Respo
     if (resourceType) where.resourceType = resourceType;
     if (keepFeatured) where.featured = false;
     const resources = await prisma.resource.findMany({ where });
-    for (const r of resources) {
-      if (r.fileUrl.startsWith('/uploads/')) {
-        const rel = r.fileUrl.replace('/uploads/', '');
-        const parts = rel.split('/');
-        if (parts.length >= 2) {
-          const filePath = path.join(uploadDir, ...parts.map(decodeURIComponent));
-          if (filePath.startsWith(uploadDir) && fs.existsSync(filePath)) {
-            try { fs.unlinkSync(filePath); } catch {}
-          }
-        }
-      }
-    }
+    await deleteFiles(resources.map(r => r.fileUrl));
     await prisma.resource.deleteMany({ where });
     res.json({ message: `Deleted all resources in category "${category}"`, count: resources.length });
   } catch (err) {
