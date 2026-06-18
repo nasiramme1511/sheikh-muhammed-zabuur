@@ -12,6 +12,11 @@ export default function About() {
     { subject: t('about.expertise_fiqh_subject'), desc: t('about.expertise_fiqh_desc') },
     { subject: t('about.expertise_seerah_subject'), desc: t('about.expertise_seerah_desc') },
     { subject: t('about.expertise_arabic_subject'), desc: t('about.expertise_arabic_desc') },
+    { subject: t('about.expertise_tawheed_subject'), desc: t('about.expertise_tawheed_desc') },
+    { subject: t('about.expertise_usul_subject'), desc: t('about.expertise_usul_desc') },
+    { subject: t('about.expertise_bulugh_subject'), desc: t('about.expertise_bulugh_desc') },
+    { subject: t('about.expertise_riyad_subject'), desc: t('about.expertise_riyad_desc') },
+    { subject: t('about.expertise_tajred_subject'), desc: t('about.expertise_tajred_desc') },
   ];
 
   useSEO({

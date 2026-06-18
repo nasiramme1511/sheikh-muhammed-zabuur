@@ -53,7 +53,91 @@
     background-image: none;
   }
 
-  /* ── CSS Custom Properties ── */
+  /* ── CSS Custom Properties — Theme: Dark (default) ── */
+  [data-theme="dark"] {
+    --app-bg-image: url('/uploads/images/roomaa-xiqqoo-masjid.jpg');
+    --app-card-opacity: 0.72;
+    --app-card-radius: 1.25rem;
+    --app-card-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 20px rgba(14,165,233,0.12);
+    --app-card-border: rgba(255, 255, 255, 0.08);
+    --app-card-hover-border: rgba(212, 175, 55, 0.4);
+    --app-glass-bg: rgba(31, 41, 55, 0.72);
+    --bg-primary: #0B1220;
+    --bg-secondary: #111827;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.35);
+    --border-primary: rgba(255, 255, 255, 0.08);
+    --border-secondary: rgba(255, 255, 255, 0.04);
+    --accent-blue: #0EA5E9;
+    --accent-gold: #D4AF37;
+    --glass-bg-light: rgba(31, 41, 55, 0.72);
+    --glass-bg-hover: rgba(55, 65, 81, 0.85);
+    --glass-premium-shine: rgba(14, 165, 233, 0.06);
+    --glass-premium-hover-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.18);
+    --glass-white-hover-border: rgba(14, 165, 233, 0.3);
+    --nav-bg: rgba(11, 18, 32, 0.92);
+    --nav-border: rgba(255, 255, 255, 0.06);
+    --selection-bg: rgba(14, 165, 233, 0.35);
+  }
+
+  /* ── CSS Custom Properties — Theme: Gold ── */
+  [data-theme="gold"] {
+    --app-bg-image: url('/uploads/images/roomaa-xiqqoo-masjid.jpg');
+    --app-card-opacity: 0.75;
+    --app-card-radius: 1.25rem;
+    --app-card-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 20px rgba(212,175,55,0.12);
+    --app-card-border: rgba(255, 255, 255, 0.08);
+    --app-card-hover-border: rgba(245, 215, 66, 0.5);
+    --app-glass-bg: rgba(35, 30, 20, 0.75);
+    --bg-primary: #1A1208;
+    --bg-secondary: #221A0E;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.35);
+    --border-primary: rgba(255, 255, 255, 0.08);
+    --border-secondary: rgba(255, 255, 255, 0.04);
+    --accent-blue: #D4AF37;
+    --accent-gold: #F5D742;
+    --glass-bg-light: rgba(35, 30, 20, 0.75);
+    --glass-bg-hover: rgba(50, 42, 28, 0.85);
+    --glass-premium-shine: rgba(212, 175, 55, 0.06);
+    --glass-premium-hover-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 30px rgba(212,175,55,0.25);
+    --glass-white-hover-border: rgba(212, 175, 55, 0.3);
+    --nav-bg: rgba(26, 18, 8, 0.92);
+    --nav-border: rgba(255, 255, 255, 0.06);
+    --selection-bg: rgba(212, 175, 55, 0.35);
+  }
+
+  /* ── CSS Custom Properties — Theme: Classic ── */
+  [data-theme="classic"] {
+    --app-bg-image: url('/uploads/images/roomaa-xiqqoo-masjid.jpg');
+    --app-card-opacity: 0.72;
+    --app-card-radius: 1rem;
+    --app-card-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 15px rgba(59,130,246,0.08);
+    --app-card-border: rgba(255, 255, 255, 0.06);
+    --app-card-hover-border: rgba(245, 158, 11, 0.4);
+    --app-glass-bg: rgba(30, 41, 59, 0.75);
+    --bg-primary: #0F172A;
+    --bg-secondary: #1E293B;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.55);
+    --text-tertiary: rgba(255, 255, 255, 0.3);
+    --border-primary: rgba(255, 255, 255, 0.06);
+    --border-secondary: rgba(255, 255, 255, 0.03);
+    --accent-blue: #3B82F6;
+    --accent-gold: #F59E0B;
+    --glass-bg-light: rgba(30, 41, 59, 0.75);
+    --glass-bg-hover: rgba(51, 65, 85, 0.85);
+    --glass-premium-shine: rgba(59, 130, 246, 0.06);
+    --glass-premium-hover-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 20px rgba(245,158,11,0.12);
+    --glass-white-hover-border: rgba(59, 130, 246, 0.3);
+    --nav-bg: rgba(15, 23, 42, 0.92);
+    --nav-border: rgba(255, 255, 255, 0.05);
+    --selection-bg: rgba(59, 130, 246, 0.35);
+  }
+
+  /* Default fallback (if no data-theme) */
   :root {
     --app-bg-image: url('/uploads/images/roomaa-xiqqoo-masjid.jpg');
     --app-card-opacity: 0.72;
@@ -73,6 +157,9 @@
     --accent-gold: #D4AF37;
     --glass-bg-light: rgba(31, 41, 55, 0.72);
     --glass-bg-hover: rgba(55, 65, 81, 0.85);
+    --glass-premium-shine: rgba(14, 165, 233, 0.06);
+    --glass-premium-hover-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.18);
+    --glass-white-hover-border: rgba(14, 165, 233, 0.3);
     --nav-bg: rgba(11, 18, 32, 0.92);
     --nav-border: rgba(255, 255, 255, 0.06);
     --selection-bg: rgba(14, 165, 233, 0.35);
@@ -130,12 +217,12 @@
 
   /* ── Premium Glass Card ── */
   .glass-premium {
-    background: rgba(31, 41, 55, 0.72);
+    background: var(--glass-bg-light, rgba(31, 41, 55, 0.72));
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--app-card-border, rgba(255, 255, 255, 0.08));
     border-radius: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 20px rgba(14,165,233,0.12);
+    box-shadow: var(--app-card-shadow, 0 8px 32px rgba(0,0,0,0.35));
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
     overflow: hidden;
@@ -148,32 +235,32 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.06), transparent);
+    background: linear-gradient(90deg, transparent, var(--glass-premium-shine, rgba(14, 165, 233, 0.06)), transparent);
     transition: left 0.8s ease;
   }
 
   .glass-premium:hover::before { left: 100%; }
 
   .glass-premium:hover {
-    background: rgba(55, 65, 81, 0.85);
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.18);
+    background: var(--glass-bg-hover, rgba(55, 65, 81, 0.85));
+    border-color: var(--app-card-hover-border, rgba(212, 175, 55, 0.4));
+    box-shadow: var(--glass-premium-hover-shadow, 0 12px 40px rgba(0,0,0,0.4));
     transform: translateY(-4px);
   }
 
   /* ── Glass White (lighter variant for contrast on dark) ── */
   .glass-white {
-    background: rgba(55, 65, 81, 0.85);
+    background: var(--glass-bg-hover, rgba(55, 65, 81, 0.85));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--app-card-border, rgba(255, 255, 255, 0.12));
     border-radius: 1.5rem;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .glass-white:hover {
-    background: rgba(75, 85, 99, 0.9);
-    border-color: rgba(14, 165, 233, 0.3);
+    background: var(--glass-bg-hover, rgba(75, 85, 99, 0.9));
+    border-color: var(--glass-white-hover-border, rgba(14, 165, 233, 0.3));
     box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     transform: translateY(-3px);
   }
@@ -193,10 +280,10 @@
 
   /* ── Content Card ── */
   .content-card {
-    background: rgba(31, 41, 55, 0.72);
+    background: var(--glass-bg-light, rgba(31, 41, 55, 0.72));
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--app-card-border, rgba(255, 255, 255, 0.08));
     border-radius: 1.25rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.35);
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);

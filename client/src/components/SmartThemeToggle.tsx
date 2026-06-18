@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Monitor } from 'lucide-react';
+import { Moon, Palmtree, Sparkles } from 'lucide-react';
 import { useTheme, type ThemeMode } from '../context/ThemeContext';
 import { useTranslation } from '../i18n';
 
-const OPTIONS: { mode: ThemeMode; icon: typeof Sun; labelKey: string }[] = [
-  { mode: 'light', icon: Sun, labelKey: 'theme.light' },
+const OPTIONS: { mode: ThemeMode; icon: typeof Moon; labelKey: string }[] = [
   { mode: 'dark', icon: Moon, labelKey: 'theme.dark' },
-  { mode: 'system', icon: Monitor, labelKey: 'theme.system' },
+  { mode: 'gold', icon: Sparkles, labelKey: 'theme.gold' },
+  { mode: 'classic', icon: Palmtree, labelKey: 'theme.classic' },
 ];
 
 export default function SmartThemeToggle() {
@@ -24,7 +24,7 @@ export default function SmartThemeToggle() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const currentIcon = OPTIONS.find(o => o.mode === mode)?.icon || Sun;
+  const currentIcon = OPTIONS.find(o => o.mode === mode)?.icon || Moon;
   const Icon = currentIcon;
 
   return (
@@ -43,17 +43,15 @@ export default function SmartThemeToggle() {
           exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
         >
-          {mode === 'dark' ? (
-            <Moon className="w-4 h-4 text-gold-400" />
-          ) : mode === 'light' ? (
-            <Sun className="w-4 h-4 text-amber-400" />
+          {mode === 'gold' ? (
+            <Sparkles className="w-4 h-4 text-gold-400" />
+          ) : mode === 'classic' ? (
+            <Palmtree className="w-4 h-4 text-icc-400" />
           ) : (
-            <Monitor className="w-4 h-4 text-white/70" />
+            <Moon className="w-4 h-4 text-gold-400" />
           )}
         </motion.div>
-        {resolved === 'dark' && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-icc-500 animate-pulse" />
-        )}
+        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-icc-500 animate-pulse" />
       </button>
 
       <AnimatePresence>

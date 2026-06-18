@@ -32,7 +32,7 @@ export interface AppearanceSettings {
   fontSize: number;
   headingWeight: number;
   bodyWeight: number;
-  defaultMode: 'dark' | 'light' | 'system';
+  defaultMode: 'dark' | 'gold' | 'classic';
   showHero: boolean;
   showFeaturedAudio: boolean;
   showFeaturedVideos: boolean;

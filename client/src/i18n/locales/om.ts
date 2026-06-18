@@ -935,7 +935,7 @@ export const om: DeepPartial<TranslationDictionary> = {
     languages_spoken: "Afaanota Dubbatu",
     languages_value: "Afaan Oromoo (Dursaa), Amhariffaa, Arabiffaa",
     core_focus: "Xiyyeeffannoo Guddoo",
-    focus_value: "Aqeedaa, Tafsir, Fiqh, Seera",
+    focus_value: "Tafsir, Usul, Bulugh, Riyad, Tajred, Tawheed, Fiqh",
     academic_journey: "Imla Barumsaa fi Seenaa Jireenyaa",
     recorded_lectures_count: "100+",
     recorded_lectures_label: "Barumsa Sagalee Waraabame",

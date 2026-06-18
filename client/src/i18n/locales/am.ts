@@ -940,7 +940,7 @@ export const am: DeepPartial<TranslationDictionary> = {
     languages_spoken: "የሚነገሩ ቋንቋዎች",
     languages_value: "ኦሮሞ (ዋና)፣ አማርኛ፣ ዐረብኛ",
     core_focus: "ዋና ትኩረት",
-    focus_value: "ዐቅዳህ፣ ተፍሲር፣ ፊቅህ፣ ሲራ",
+    focus_value: "ተፍሲር፣ ኡሱል፣ ቡሉግ፣ ረዩድ፣ ታጅሪድ፣ ተውሂድ፣ ፊቅህ",
     academic_journey: "የአካዳሚክ ጉዞ እና የሕይወት ታሪክ",
     recorded_lectures_count: "100+",
     recorded_lectures_label: "የተቀዱ የድምጽ ትምህርቶች",

@@ -46,14 +46,10 @@ export default function Layout() {
   };
 
   useEffect(() => {
-    const mode = settings.defaultMode;
+    const theme = settings.defaultMode || 'dark';
     const root = document.documentElement;
-    if (mode === 'light') root.classList.remove('dark');
-    else if (mode === 'dark') root.classList.add('dark');
-    else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.classList.toggle('dark', prefersDark);
-    }
+    root.setAttribute('data-theme', theme);
+    root.classList.add('dark');
     root.classList.toggle('app-zoom-bg', settings.backgroundBehavior === 'zoom');
     root.classList.toggle('app-bg-enabled', settings.backgroundEnabled);
     root.classList.toggle('app-bg-disabled', !settings.backgroundEnabled);

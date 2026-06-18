@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = 'dark' | 'gold' | 'classic';
+
+const THEME_CYCLE: ThemeMode[] = ['dark', 'gold', 'classic'];
 
 interface ThemeContextType {
   mode: ThemeMode;
-  resolved: 'light' | 'dark';
+  resolved: ThemeMode;
   isDark: boolean;
   setMode: (mode: ThemeMode) => void;
   toggle: () => void;
@@ -16,14 +18,16 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-function applyTheme() {
-  document.documentElement.classList.add('dark');
-  document.documentElement.style.colorScheme = 'dark';
+function applyTheme(theme: ThemeMode) {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', theme);
+  root.classList.add('dark');
+  root.style.colorScheme = 'dark';
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>('dark');
-  const [resolved, setResolved] = useState<'light' | 'dark'>('dark');
+  const [resolved, setResolved] = useState<ThemeMode>('dark');
   const [fontSize, setFontSize] = useState(() => {
     try {
       return Number(localStorage.getItem('icc-font-size')) || 16;
@@ -37,16 +41,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggle = useCallback(() => {
-    setModeState(() => {
-      setResolved('dark');
-      applyTheme();
-      return 'dark';
+    setModeState(prev => {
+      const idx = THEME_CYCLE.indexOf(prev);
+      const next = THEME_CYCLE[(idx + 1) % THEME_CYCLE.length];
+      setResolved(next);
+      applyTheme(next);
+      return next;
     });
   }, []);
 
   useEffect(() => {
     setResolved('dark');
-    applyTheme();
+    applyTheme('dark');
   }, []);
 
   // Font size

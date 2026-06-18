@@ -4,7 +4,7 @@ import {
   Palette, Save, Upload, AlertCircle, CheckCircle, Sliders, Image as ImageIcon, Eye,
   RotateCcw, Download, Upload as UploadIcon, Trash2, Star, Settings, Type, Sun, Moon,
   Layout, Pen, Image as ImageOff, RefreshCw, X, ChevronDown, ChevronUp, Plus, Square,
-  Monitor, Layers, GlassWater, PanelTop, GripHorizontal, Music, Video, FileText
+  Monitor, Layers, GlassWater, PanelTop, GripHorizontal, Music, Video, FileText, Sparkles
 } from 'lucide-react';
 import { useAppearance, BackgroundItem } from '../../context/AppearanceContext';
 import { admin as adminApi, appearance as appearanceApi } from '../../lib/api';
@@ -372,14 +372,14 @@ export default function AdminAppearance() {
             </SectionCard>
           )}
 
-          {/* ── 6. DARK / LIGHT MODE ─────────────────── */}
+          {/* ── 6. COLOR MODE ─────────────────── */}
           {activeSection === 'mode' && (
             <SectionCard icon={Sun} title="Default Color Mode" subtitle="Choose the default theme for users">
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { id: 'dark', label: 'Dark Mode', icon: Moon, desc: 'Dark theme by default' },
-                  { id: 'light', label: 'Light Mode', icon: Sun, desc: 'Light theme by default' },
-                  { id: 'system', label: 'System Default', icon: Monitor, desc: 'Follow device preference' },
+                  { id: 'dark', label: 'Dark Mode', icon: Moon, desc: 'Deep navy dark theme' },
+                  { id: 'gold', label: 'Gold Mode', icon: Sparkles, desc: 'Warm gold-accented theme' },
+                  { id: 'classic', label: 'Classic Mode', icon: Palette, desc: 'Slate-based classic dark theme' },
                 ].map((opt) => {
                   const Icon = opt.icon;
                   const active = local.defaultMode === opt.id;
