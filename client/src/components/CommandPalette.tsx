@@ -13,7 +13,7 @@ const PAGES = [
   { labelKey: 'nav.teachers', href: '/teachers', icon: Users, categoryKey: 'command_palette.navigate' },
   { labelKey: 'nav.beginner', href: '/beginner', icon: GraduationCap, categoryKey: 'command_palette.navigate' },
   { labelKey: 'nav.courses', href: '/levels', icon: Layers, categoryKey: 'command_palette.navigate' },
-  { labelKey: 'nav.books', href: '/categories?type=books', icon: BookMarked, categoryKey: 'command_palette.navigate' },
+
   { labelKey: 'nav.telegram', href: '/telegram', icon: Send, categoryKey: 'command_palette.navigate' },
   { labelKey: 'nav.dashboard', href: '/dashboard', icon: Sparkles, categoryKey: 'command_palette.open' },
   { labelKey: 'nav.bookmarks', href: '/bookmarks', icon: BookMarked, categoryKey: 'command_palette.open' },

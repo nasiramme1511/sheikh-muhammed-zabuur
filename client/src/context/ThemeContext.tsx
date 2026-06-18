@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-export type ThemeMode = 'dark' | 'gold' | 'classic';
+export type ThemeMode = 'dark' | 'light';
 
-const THEME_CYCLE: ThemeMode[] = ['dark', 'gold', 'classic'];
+const THEME_CYCLE: ThemeMode[] = ['dark', 'light'];
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -21,12 +21,23 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 function applyTheme(theme: ThemeMode) {
   const root = document.documentElement;
   root.setAttribute('data-theme', theme);
-  root.classList.add('dark');
-  root.style.colorScheme = 'dark';
+  if (theme === 'light') {
+    root.classList.remove('dark');
+    root.style.colorScheme = 'light';
+  } else {
+    root.classList.add('dark');
+    root.style.colorScheme = 'dark';
+  }
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>('dark');
+  const [mode, setModeState] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('icc-theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch {}
+    return 'dark';
+  });
   const [resolved, setResolved] = useState<ThemeMode>('dark');
   const [fontSize, setFontSize] = useState(() => {
     try {
@@ -46,14 +57,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const next = THEME_CYCLE[(idx + 1) % THEME_CYCLE.length];
       setResolved(next);
       applyTheme(next);
+      try { localStorage.setItem('icc-theme', next); } catch {}
       return next;
     });
   }, []);
 
   useEffect(() => {
-    setResolved('dark');
-    applyTheme('dark');
-  }, []);
+    setResolved(mode);
+    applyTheme(mode);
+    try { localStorage.setItem('icc-theme', mode); } catch {}
+  }, [mode]);
 
   // Font size
   useEffect(() => {

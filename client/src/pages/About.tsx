@@ -1,22 +1,49 @@
 import { motion } from 'framer-motion';
-import { BookOpen, Award, Globe, Heart, Sparkles, Shield, Bookmark, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { BookOpen, Award, Globe, Sparkles, Shield, MapPin, CheckCircle, Clock, BookMarked, Headphones, Target, Heart } from 'lucide-react';
 import { useSEO } from '../seo/metadata';
 import { useTranslation } from '../i18n';
 
 export default function About() {
   const { t } = useTranslation();
-  const EXPERTISE = [
-    { subject: t('about.expertise_aqeedah_subject'), desc: t('about.expertise_aqeedah_desc') },
-    { subject: t('about.expertise_tafsir_subject'), desc: t('about.expertise_tafsir_desc') },
-    { subject: t('about.expertise_hadith_subject'), desc: t('about.expertise_hadith_desc') },
-    { subject: t('about.expertise_fiqh_subject'), desc: t('about.expertise_fiqh_desc') },
-    { subject: t('about.expertise_seerah_subject'), desc: t('about.expertise_seerah_desc') },
-    { subject: t('about.expertise_arabic_subject'), desc: t('about.expertise_arabic_desc') },
-    { subject: t('about.expertise_tawheed_subject'), desc: t('about.expertise_tawheed_desc') },
-    { subject: t('about.expertise_usul_subject'), desc: t('about.expertise_usul_desc') },
-    { subject: t('about.expertise_bulugh_subject'), desc: t('about.expertise_bulugh_desc') },
-    { subject: t('about.expertise_riyad_subject'), desc: t('about.expertise_riyad_desc') },
-    { subject: t('about.expertise_tajred_subject'), desc: t('about.expertise_tajred_desc') },
+  const MORNING_CLASSES = [
+    t('about.morning_classes_list_item_1'),
+    t('about.morning_classes_list_item_2'),
+    t('about.morning_classes_list_item_3'),
+    t('about.morning_classes_list_item_4'),
+    t('about.morning_classes_list_item_5'),
+  ];
+  const ADVANCED_STUDIES = [
+    t('about.advanced_studies_list_item_1'),
+    t('about.advanced_studies_list_item_2'),
+    t('about.advanced_studies_list_item_3'),
+    t('about.advanced_studies_list_item_4'),
+    t('about.advanced_studies_list_item_5'),
+    t('about.advanced_studies_list_item_6'),
+    t('about.advanced_studies_list_item_7'),
+    t('about.advanced_studies_list_item_8'),
+  ];
+  const METHODOLOGY_LIST = [
+    t('about.methodology_list_item_1'),
+    t('about.methodology_list_item_2'),
+    t('about.methodology_list_item_3'),
+    t('about.methodology_list_item_4'),
+    t('about.methodology_list_item_5'),
+    t('about.methodology_list_item_6'),
+  ];
+  const MEDIA_LIST = [
+    t('about.media_library_list_1'),
+    t('about.media_library_list_2'),
+    t('about.media_library_list_3'),
+    t('about.media_library_list_4'),
+    t('about.media_library_list_5'),
+  ];
+  const PURPOSE_LIST = [
+    t('about.purpose_list_1'),
+    t('about.purpose_list_2'),
+    t('about.purpose_list_3'),
+    t('about.purpose_list_4'),
+    t('about.purpose_list_5'),
+    t('about.purpose_list_6'),
   ];
 
   useSEO({
@@ -122,31 +149,169 @@ export default function About() {
           </motion.div>
         </div>
 
-        {/* Teaching Areas & Methodology */}
+        {/* Teaching Schedule */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-card p-8 md:p-10 mb-16"
+          className="glass-card p-8 md:p-10 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <Clock className="w-6 h-6 text-icc-400" /> {t('about.teaching_activities_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed mb-6">
+            {t('about.teaching_activities_desc')}
+          </p>
+          <div className="grid grid-cols-2 gap-4 max-w-md mb-6">
+            <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+              <p className="text-xs text-white/40">{t('about.schedule_days_label')}</p>
+              <p className="text-sm font-bold text-white mt-1">{t('about.schedule_days_value')}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+              <p className="text-xs text-white/40">{t('about.schedule_rest_label')}</p>
+              <p className="text-sm font-bold text-white mt-1">{t('about.schedule_rest_value')}</p>
+            </div>
+          </div>
+
+          <h3 className="text-lg font-bold text-white mb-3">{t('about.morning_classes_title')}</h3>
+          <p className="text-sm text-white/60 leading-relaxed mb-4">
+            {t('about.morning_classes_desc')}
+          </p>
+          <ul className="space-y-2 mb-4">
+            {MORNING_CLASSES.map((item, idx) => (
+              <li key={idx} className="flex gap-3 items-start">
+                <CheckCircle className="w-4 h-4 text-icc-400 shrink-0 mt-0.5" />
+                <span className="text-sm text-white/70">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-white/40 italic">{t('about.morning_classes_note')}</p>
+        </motion.div>
+
+        {/* Advanced Studies */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <BookMarked className="w-6 h-6 text-icc-400" /> {t('about.advanced_studies_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed mb-4">
+            {t('about.advanced_studies_desc')}
+          </p>
+          <ul className="space-y-2 mb-4">
+            {ADVANCED_STUDIES.map((item, idx) => (
+              <li key={idx} className="flex gap-3 items-start">
+                <CheckCircle className="w-4 h-4 text-icc-400 shrink-0 mt-0.5" />
+                <span className="text-sm text-white/70">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-white/40 italic">{t('about.advanced_studies_note')}</p>
+        </motion.div>
+
+        {/* Teaching Methodology */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 mb-8"
         >
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-icc-400" /> {t('about.methodology_title')}
           </h2>
-          <p className="text-sm text-white/60 leading-relaxed mb-8">
+          <p className="text-sm text-white/60 leading-relaxed mb-6">
             {t('about.methodology_desc')}
           </p>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {EXPERTISE.map((exp, idx) => (
-              <div key={idx} className="flex gap-3 items-start">
+          <ul className="space-y-3 max-w-2xl">
+            {METHODOLOGY_LIST.map((item, idx) => (
+              <li key={idx} className="flex gap-3 items-start">
                 <CheckCircle className="w-5 h-5 text-icc-400 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-white">{exp.subject}</h4>
-                  <p className="text-xs text-white/50 mt-1 leading-relaxed">{exp.desc}</p>
-                </div>
-              </div>
+                <span className="text-sm text-white/70">{item}</span>
+              </li>
             ))}
-          </div>
+          </ul>
+          <p className="text-xs text-white/40 italic mt-4">{t('about.methodology_note')}</p>
+        </motion.div>
+
+        {/* Media Library */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <Headphones className="w-6 h-6 text-icc-400" /> {t('about.media_library_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed mb-4">
+            {t('about.media_library_desc')}
+          </p>
+          <ul className="space-y-2 mb-4">
+            {MEDIA_LIST.map((item, idx) => (
+              <li key={idx} className="flex gap-3 items-start">
+                <CheckCircle className="w-4 h-4 text-icc-400 shrink-0 mt-0.5" />
+                <span className="text-sm text-white/70">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-white/40 italic">{t('about.media_library_note')}</p>
+        </motion.div>
+
+        {/* Mission */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <Target className="w-6 h-6 text-icc-400" /> {t('about.mission_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed mb-4">
+            {t('about.mission_desc')}
+          </p>
+          <p className="text-xs text-white/40 italic">{t('about.mission_note')}</p>
+        </motion.div>
+
+        {/* Purpose */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-icc-400" /> {t('about.purpose_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed mb-4">
+            {t('about.purpose_desc')}
+          </p>
+          <ul className="space-y-2">
+            {PURPOSE_LIST.map((item, idx) => (
+              <li key={idx} className="flex gap-3 items-start">
+                <CheckCircle className="w-4 h-4 text-icc-400 shrink-0 mt-0.5" />
+                <span className="text-sm text-white/70">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        {/* Conclusion */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card p-8 md:p-10 border border-icc-500/10 bg-gradient-to-br from-icc-500/5 to-transparent"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <Heart className="w-6 h-6 text-icc-400" /> {t('about.conclusion_title')}
+          </h2>
+          <p className="text-sm text-white/60 leading-relaxed">
+            {t('about.conclusion_desc')}
+          </p>
         </motion.div>
       </div>
     </div>

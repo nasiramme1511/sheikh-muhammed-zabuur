@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, Sparkles, Palmtree, Check, Settings2, Languages, Palette, Bell, Mail } from 'lucide-react';
+import { Moon, Sun, Check, Settings2, Languages, Palette, Bell, Mail } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useLanguage } from '../../context/LanguageContext';
@@ -16,8 +16,7 @@ export default function DashboardSettings() {
 
   const themeOptions: { value: ThemeMode; label: string; icon: any }[] = [
     { value: 'dark', label: t('theme.dark'), icon: Moon },
-    { value: 'gold', label: t('theme.gold'), icon: Sparkles },
-    { value: 'classic', label: t('theme.classic'), icon: Palmtree },
+    { value: 'light', label: t('theme.light'), icon: Sun },
   ];
 
   const languageOptions: { value: Language; label: string }[] = [
@@ -35,7 +34,7 @@ export default function DashboardSettings() {
           {t('dashboard.settings')}
         </h1>
         <span className="text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-          {mode === 'dark' ? t('theme.dark') : mode === 'gold' ? t('theme.gold') : t('theme.classic')}
+          {mode === 'dark' ? t('theme.dark') : t('theme.light')}
         </span>
       </div>
 
