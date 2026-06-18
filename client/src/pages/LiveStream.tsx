@@ -297,8 +297,8 @@ export default function LiveStream() {
       <div className="min-h-screen flex items-center justify-center bg-surface-900"
         style={{ background: 'linear-gradient(135deg, #041824 0%, #0a1f2e 50%, #041824 100%)' }}>
         <div className="text-center">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-            <Loader2 className="w-7 h-7 text-emerald-400 animate-spin" />
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center">
+            <Loader2 className="w-7 h-7 text-icc-400 animate-spin" />
           </div>
           <p className="text-white/60 text-sm">Loading broadcast platform...</p>
         </div>
@@ -307,7 +307,7 @@ export default function LiveStream() {
   }
 
   const statCards = [
-    { label: 'Total Streams', value: state.totalStreams || 0, icon: Radio, color: 'from-emerald-500/20 to-emerald-600/10' },
+    { label: 'Total Streams', value: state.totalStreams || 0, icon: Radio, color: 'from-icc-500/20 to-icc-600/10' },
     { label: 'Total Viewers', value: state.totalViewers || 0, icon: Users, color: 'from-blue-500/20 to-blue-600/10' },
     { label: 'Watch Hours', value: state.totalWatchHours || 0, icon: Clock, color: 'from-amber-500/20 to-amber-600/10' },
     { label: 'Subscribers', value: state.activeSubscribers || 0, icon: Heart, color: 'from-rose-500/20 to-rose-600/10' },
@@ -323,7 +323,7 @@ export default function LiveStream() {
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: "url('/uploads/images/roomaa-xiqqoo-masjid.jpg')" }} />
           <div className="absolute inset-0 bg-gradient-to-r from-dark-950/95 via-dark-950/80 to-dark-950/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-dark-950/50 via-transparent to-emerald-900/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-950/50 via-transparent to-icc-900/20" />
           <div className="relative z-10 w-full px-8 py-12 md:py-16">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="space-y-4 max-w-2xl">
@@ -361,7 +361,7 @@ export default function LiveStream() {
                           window.open(streamingUrl, '_blank');
                         }
                       })}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-sm font-bold transition-all shadow-lg shadow-emerald-500/30">
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-icc-500 hover:bg-icc-600 rounded-xl text-sm font-bold transition-all shadow-lg shadow-icc-500/30">
                       <Play className="w-4 h-4" /> Watch Live
                     </button>
                   )}
@@ -402,7 +402,7 @@ export default function LiveStream() {
           ].map((info) => (
             <div key={info.label} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-2">
-                <info.icon className="w-3.5 h-3.5 text-emerald-400" />
+                <info.icon className="w-3.5 h-3.5 text-icc-400" />
                 <span className="text-[10px] text-white/40 uppercase tracking-wider">{info.label}</span>
               </div>
               <p className="text-sm font-bold truncate">{info.value}</p>
@@ -417,11 +417,11 @@ export default function LiveStream() {
             <div className={`flex-1 min-w-0 ${theatreMode ? 'max-w-full' : ''}`}>
               {/* Admin Stream Controls */}
               {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
-                <div className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-emerald-500/[0.02] border border-emerald-500/20 backdrop-blur-xl">
+                <div className="mb-4 p-4 rounded-2xl bg-gradient-to-r from-icc-500/10 to-icc-500/[0.02] border border-icc-500/20 backdrop-blur-xl">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Radio className="w-4 h-4 text-emerald-400" />
-                      <span className="text-sm font-bold text-emerald-400">Stream Controls</span>
+                      <Radio className="w-4 h-4 text-icc-400" />
+                      <span className="text-sm font-bold text-icc-400">Stream Controls</span>
                     </div>
                     <span className="text-[10px] text-white/40">
                       {state.viewers || 0} viewers &middot; Peak: {state.totalViewers || 0}
@@ -429,7 +429,7 @@ export default function LiveStream() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={async () => { try { await liveApi.update({ isActive: !state.isActive }); setState(prev => ({ ...prev, isActive: !prev.isActive })); toast.success(state.isActive ? 'Stream stopped' : 'Stream started'); } catch { toast.error('Failed to toggle stream'); } }}
-                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${state.isActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-emerald-500 hover:bg-emerald-600 text-white'}`}>
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${state.isActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-icc-500 hover:bg-icc-600 text-white'}`}>
                       {state.isActive ? <X className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                       {state.isActive ? 'Stop Stream' : 'Start Stream'}
                     </button>
@@ -447,11 +447,11 @@ export default function LiveStream() {
                   {showScheduleForm && (
                     <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <input value={scheduleTitle} onChange={(e) => setScheduleTitle(e.target.value)} placeholder="Stream title"
-                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-emerald-500/50" />
+                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50" />
                       <input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500/50 [color-scheme:dark]" />
+                        className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-icc-500/50 [color-scheme:dark]" />
                       <button onClick={() => { if (scheduleTitle && scheduleDate) { toast.success('Stream scheduled!'); setShowScheduleForm(false); } else toast.error('Fill all fields'); }}
-                        className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold transition-all">Schedule Stream</button>
+                        className="px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">Schedule Stream</button>
                     </div>
                   )}
                 </div>
@@ -469,7 +469,7 @@ export default function LiveStream() {
                   {state.isActive && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
                   {state.isActive ? 'LIVE NOW' : state.schedule.length > 0 ? 'STARTING SOON' : 'OFFLINE'}
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-medium">
                   <Radio className="w-3 h-3" />
                   Broadcast
                 </div>
@@ -545,7 +545,7 @@ export default function LiveStream() {
               {state.isActive && (
                 <div className="mt-4 p-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center shrink-0">
                       <img src="/uploads/images/sheikh-zabuur.jpg" alt="Sheikh Zabuur" className="w-10 h-10 rounded-lg object-cover"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     </div>
@@ -559,7 +559,7 @@ export default function LiveStream() {
                     <div className="flex flex-wrap gap-2 shrink-0">
                       {state.chatUrl && (
                         <a href={state.chatUrl} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-emerald-500/20">
+                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-icc-500/20">
                           <MessageSquare className="w-3.5 h-3.5" /> Join Chat
                         </a>
                       )}
@@ -599,7 +599,7 @@ export default function LiveStream() {
                 <div className="rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl flex flex-col h-[500px] lg:h-[calc(100vh-250px)]">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-emerald-400" />
+                      <MessageSquare className="w-4 h-4 text-icc-400" />
                       <span className="text-sm font-bold">Live Chat</span>
                     </div>
                     <button onClick={() => setShowChat(false)} className="p-1 rounded-lg hover:bg-white/5 text-white/40 hover:text-white/80">
@@ -611,12 +611,12 @@ export default function LiveStream() {
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
                     {!user ? (
                       <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-3">
-                          <MessageSquare className="w-5 h-5 text-emerald-400" />
+                        <div className="w-12 h-12 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center mb-3">
+                          <MessageSquare className="w-5 h-5 text-icc-400" />
                         </div>
                         <p className="text-sm font-medium mb-1">Join the Discussion</p>
                         <p className="text-xs text-white/40 mb-4">Please log in to participate in the live chat.</p>
-                        <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold transition-all">
+                        <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">
                           <LogIn className="w-3.5 h-3.5" /> Login to Chat
                         </a>
                       </div>
@@ -640,16 +640,16 @@ export default function LiveStream() {
                         {chatMessages.map((msg, i) => (
                           <div key={i} className="flex gap-2.5 p-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-white/[0.07] transition-all">
                             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${
-                              msg.role === 'admin' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/60'
+                              msg.role === 'admin' ? 'bg-icc-500/20 text-icc-400' : 'bg-white/10 text-white/60'
                             }`}>
                               {msg.user.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                                 <span className={`text-[10px] font-bold ${
-                                  msg.role === 'admin' ? 'text-emerald-400' : 'text-white/70'
+                                  msg.role === 'admin' ? 'text-icc-400' : 'text-white/70'
                                 }`}>{msg.user}</span>
-                                {msg.role === 'admin' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-emerald-500/20 text-emerald-400 uppercase leading-none">Admin</span>}
+                                {msg.role === 'admin' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-icc-500/20 text-icc-400 uppercase leading-none">Admin</span>}
                                 {msg.role === 'student' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-white/10 text-white/40 uppercase leading-none">Student</span>}
                                 <span className="text-[8px] text-white/30 ml-auto">{msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
                               </div>
@@ -668,9 +668,9 @@ export default function LiveStream() {
                         <input value={chatMessage} onChange={(e) => setChatMessage(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
                           placeholder="Ask a question..."
-                          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-emerald-500/50 transition-all" />
+                          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50 transition-all" />
                         <button onClick={handleSendChat} disabled={!chatMessage.trim()}
-                          className="p-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                          className="p-2 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                           <Send className="w-4 h-4" />
                         </button>
                       </div>
@@ -704,7 +704,7 @@ export default function LiveStream() {
         {!showChat && (
           <div className="fixed bottom-24 right-4 z-40">
             <button onClick={() => setShowChat(true)}
-              className="p-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all">
+              className="p-3 rounded-2xl bg-icc-500 hover:bg-icc-600 text-white shadow-lg shadow-icc-500/30 transition-all">
               <MessageSquare className="w-5 h-5" />
             </button>
           </div>
@@ -718,7 +718,7 @@ export default function LiveStream() {
             {/* ── Live Statistics ── */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="flex items-center gap-2 mb-5">
-                <Star className="w-4 h-4 text-emerald-400" />
+                <Star className="w-4 h-4 text-icc-400" />
                 <h2 className="text-lg font-bold">Broadcast Analytics</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -742,7 +742,7 @@ export default function LiveStream() {
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-emerald-400" />
+                  <Calendar className="w-4 h-4 text-icc-400" />
                   <h2 className="text-lg font-bold">Upcoming Classes</h2>
                 </div>
                 {state.schedule.length > 0 && (
@@ -757,7 +757,7 @@ export default function LiveStream() {
                   <p className="text-base font-bold mb-1">📅 No Upcoming Classes Scheduled</p>
                   <p className="text-xs text-white/40 mb-5">Future classes will appear here when announced.</p>
                   <button onClick={() => { if (user) handleSubscribe(); else toast.error('Please login to subscribe'); }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-emerald-500/20">
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-icc-500/20">
                     <Bell className="w-3.5 h-3.5" /> Subscribe For Notifications
                   </button>
                 </div>
@@ -768,22 +768,22 @@ export default function LiveStream() {
                     .sort((a, b) => new Date(a.scheduledFor || a.startDate || '').getTime() - new Date(b.scheduledFor || b.startDate || '').getTime())
                     .map((stream, idx) => (
                     <div key={stream.id || idx}
-                      className="p-5 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/5 backdrop-blur-xl hover:border-emerald-500/20 transition-all group">
+                      className="p-5 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/5 backdrop-blur-xl hover:border-icc-500/20 transition-all group">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                          <Radio className="w-4 h-4 text-emerald-400" />
+                        <div className="w-10 h-10 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center shrink-0">
+                          <Radio className="w-4 h-4 text-icc-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-sm font-bold truncate">{stream.title}</h3>
                             {stream.category && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{stream.category}</span>
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20">{stream.category}</span>
                             )}
                           </div>
                           {stream.description && (
                             <p className="text-[10px] text-white/50 mt-1 line-clamp-1">{stream.description}</p>
                           )}
-                          <p className="text-xs text-emerald-400 mt-1.5 flex items-center gap-1.5">
+                          <p className="text-xs text-icc-400 mt-1.5 flex items-center gap-1.5">
                             <Clock className="w-3 h-3" />
                             {formatDate(stream.scheduledFor || stream.startDate || '')}
                           </p>
@@ -792,7 +792,7 @@ export default function LiveStream() {
                           )}
                           <div className="flex gap-2 mt-3">
                             <button onClick={() => handleAddReminder(stream)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-semibold transition-all">
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-icc-500/10 hover:bg-icc-500/20 text-icc-400 border border-icc-500/20 rounded-lg text-[10px] font-semibold transition-all">
                               <Bell className="w-3 h-3" /> Remind Me
                             </button>
                             <button onClick={() => handleAddReminder(stream)}
@@ -812,7 +812,7 @@ export default function LiveStream() {
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                 <div className="flex items-center gap-2">
-                  <Film className="w-4 h-4 text-emerald-400" />
+                  <Film className="w-4 h-4 text-icc-400" />
                   <h2 className="text-lg font-bold">Previous Recordings</h2>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -820,7 +820,7 @@ export default function LiveStream() {
                     <button key={cat} onClick={() => setActiveCategory(cat)}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
                         activeCategory === cat
-                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                          ? 'bg-icc-500/15 text-icc-400 border border-icc-500/30'
                           : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
                       }`}>
                       {cat}
@@ -843,8 +843,8 @@ export default function LiveStream() {
                 </div>
               ) : filteredRecordings.length === 0 ? (
                 <div className="p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/5 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                    <Film className="w-6 h-6 text-emerald-400" />
+                  <div className="w-14 h-14 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center mx-auto mb-4">
+                    <Film className="w-6 h-6 text-icc-400" />
                   </div>
                   <p className="text-base font-bold mb-1">🎥 No Recordings Available Yet</p>
                   <p className="text-xs text-white/40">Completed broadcasts will automatically appear here.</p>
@@ -853,7 +853,7 @@ export default function LiveStream() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {filteredRecordings.map((rec) => (
                     <div key={rec.id}
-                      className="group rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-xl overflow-hidden hover:border-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
+                      className="group rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-xl overflow-hidden hover:border-icc-500/20 hover:shadow-lg hover:shadow-icc-500/5 transition-all duration-300">
                       <div className="aspect-video bg-black/50 relative overflow-hidden">
                         {rec.thumbnail ? (
                           <img src={rec.thumbnail} alt={rec.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -863,7 +863,7 @@ export default function LiveStream() {
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <div className="w-10 h-10 rounded-full bg-emerald-500/90 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                          <div className="w-10 h-10 rounded-full bg-icc-500/90 flex items-center justify-center shadow-lg shadow-icc-500/30">
                             <Play className="w-4 h-4 text-white ml-0.5" />
                           </div>
                         </div>
@@ -875,7 +875,7 @@ export default function LiveStream() {
                         <h3 className="text-xs font-bold truncate leading-snug">{rec.title}</h3>
                         <div className="flex items-center justify-between mt-1.5">
                           <span className="text-[10px] text-white/40">{rec.views ? `${formatCount(rec.views)} views` : timeAgo(rec.createdAt)}</span>
-                          <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium">Watch</a>
+                          <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-icc-400 hover:text-icc-300 font-medium">Watch</a>
                         </div>
                       </div>
                     </div>
@@ -898,10 +898,10 @@ export default function LiveStream() {
             </div>
 
             {/* Quran Verse */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/[0.04] to-emerald-500/[0.01] border border-emerald-500/10 backdrop-blur-xl">
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-icc-500/[0.04] to-icc-500/[0.01] border border-icc-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
-                <h3 className="text-xs font-bold text-emerald-400">Quran Verse</h3>
+                <BookOpen className="w-4 h-4 text-icc-400" />
+                <h3 className="text-xs font-bold text-icc-400">Quran Verse</h3>
               </div>
               <p className="text-xs text-white/70 leading-relaxed italic">{QURAN_VERSE}</p>
             </div>
@@ -962,7 +962,7 @@ export default function LiveStream() {
                   </div>
                   <p className="text-xs font-medium text-amber-400 mb-1">🔒 Login Required</p>
                   <p className="text-[10px] text-white/40 mb-3">Sign in to access Telegram learning communities.</p>
-                  <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold transition-all">
+                  <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">
                     <LogIn className="w-3 h-3" /> Sign In
                   </a>
                 </div>
@@ -996,31 +996,31 @@ export default function LiveStream() {
               <div className="space-y-3 mb-4">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={notifEmail} onChange={() => setNotifEmail(!notifEmail)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-emerald-500" />
+                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
                   <span className="text-xs text-white/70">Email notifications</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={notifLiveReminder} onChange={() => setNotifLiveReminder(!notifLiveReminder)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-emerald-500" />
+                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
                   <span className="text-xs text-white/70">Live reminders</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={notifUploads} onChange={() => setNotifUploads(!notifUploads)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-emerald-500" />
+                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
                   <span className="text-xs text-white/70">New uploads</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={notifTelegram} onChange={() => setNotifTelegram(!notifTelegram)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-emerald-500" />
+                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
                   <span className="text-xs text-white/70">Telegram announcements</span>
                 </label>
               </div>
               {user ? (
                 <div className="flex gap-2">
                   <input value={subEmail} onChange={(e) => setSubEmail(e.target.value)} placeholder="Your email"
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-emerald-500/50" />
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50" />
                   <button onClick={handleSubscribe} disabled={!subEmail}
-                    className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-30 rounded-xl text-xs font-semibold transition-all whitespace-nowrap">
+                    className="px-3 py-2 bg-icc-500 hover:bg-icc-600 disabled:opacity-30 rounded-xl text-xs font-semibold transition-all whitespace-nowrap">
                     Subscribe
                   </button>
                 </div>
@@ -1032,21 +1032,21 @@ export default function LiveStream() {
             </div>
 
             {/* AI Scholar */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/[0.06] to-emerald-500/[0.02] border border-emerald-500/10 backdrop-blur-xl">
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-icc-500/[0.06] to-icc-500/[0.02] border border-icc-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <h3 className="text-sm font-bold text-emerald-400">Iman Chercher AI Scholar</h3>
+                <Sparkles className="w-4 h-4 text-icc-400" />
+                <h3 className="text-sm font-bold text-icc-400">Iman Chercher AI Scholar</h3>
               </div>
               <p className="text-[11px] text-white/50 leading-relaxed mb-4">
                 Your Islamic learning companion powered by the content library of Sheikh Mohammed Zabuur.
               </p>
               <div className="mb-4 grid grid-cols-2 gap-1.5">
                 {['Study Plans', 'Tafsir Guidance', 'Riyadh Recommendations', 'Usul Roadmaps', 'Tajreed Lessons', 'Arabic Learning'].map((feature) => (
-                  <span key={feature} className="text-[10px] px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400/80 border border-emerald-500/20 text-center">{feature}</span>
+                  <span key={feature} className="text-[10px] px-2 py-1 rounded-lg bg-icc-500/10 text-icc-400/80 border border-icc-500/20 text-center">{feature}</span>
                 ))}
               </div>
               <button onClick={() => { if (user) { openChat(); } else { toast.error('Please login to use AI Scholar'); } }}
-                className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-emerald-500/20">
+                className="w-full py-2.5 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-icc-500/20">
                 <Sparkles className="w-3.5 h-3.5" /> Ask AI Scholar
               </button>
             </div>

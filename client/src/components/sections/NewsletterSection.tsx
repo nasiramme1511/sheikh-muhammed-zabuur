@@ -106,7 +106,7 @@ export default function NewsletterSection() {
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-2 text-sm text-emerald-400 mt-4"
+              className="flex items-center justify-center gap-2 text-sm text-icc-400 mt-4"
             >
               <CheckCircle className="w-4 h-4" /> {message || t('newsletter.success')}
             </motion.p>

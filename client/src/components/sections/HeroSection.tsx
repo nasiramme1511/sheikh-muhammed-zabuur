@@ -1,4 +1,4 @@
-﻿import { useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Headphones, Video, FileText, Radio } from 'lucide-react';
@@ -7,14 +7,14 @@ import { heroStats } from '../../config/site';
 import { useAppearance } from '../../context/AppearanceContext';
 
 const floatingShapes = [
-  { size: 60, top: '15%', left: '10%', delay: 0, duration: 6, icon: '✨' },
-  { size: 40, top: '25%', right: '15%', delay: 1, duration: 7, icon: '🕌' },
-  { size: 50, top: '60%', left: '5%', delay: 2, duration: 8, icon: '☪' },
-  { size: 35, top: '70%', right: '10%', delay: 0.5, duration: 5.5, icon: '📖' },
-  { size: 45, top: '40%', left: '15%', delay: 3, duration: 9, icon: '🌙' },
-  { size: 30, top: '80%', left: '25%', delay: 1.5, duration: 7.5, icon: '⭐' },
-  { size: 55, top: '20%', left: '80%', delay: 2.5, duration: 6.5, icon: '🔮' },
-  { size: 25, top: '50%', right: '5%', delay: 4, duration: 8.5, icon: '💫' },
+  { size: 60, top: '15%', left: '10%', delay: 0, duration: 6, icon: '?' },
+  { size: 40, top: '25%', right: '15%', delay: 1, duration: 7, icon: '??' },
+  { size: 50, top: '60%', left: '5%', delay: 2, duration: 8, icon: '?' },
+  { size: 35, top: '70%', right: '10%', delay: 0.5, duration: 5.5, icon: '??' },
+  { size: 45, top: '40%', left: '15%', delay: 3, duration: 9, icon: '??' },
+  { size: 30, top: '80%', left: '25%', delay: 1.5, duration: 7.5, icon: '?' },
+  { size: 55, top: '20%', left: '80%', delay: 2.5, duration: 6.5, icon: '??' },
+  { size: 25, top: '50%', right: '5%', delay: 4, duration: 8.5, icon: '??' },
 ];
 
 const particles = Array.from({ length: 30 }, (_, i) => ({
@@ -59,7 +59,7 @@ export default function HeroSection() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url("${settings.backgroundImage}")` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/70 via-emerald-950/50 to-dark-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-icc-900/70 via-icc-950/50 to-dark-900/90" />
       </motion.div>
 
       <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
@@ -104,7 +104,7 @@ export default function HeroSection() {
       >
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-icc-500/10 blur-[120px]" />
         <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] rounded-full bg-gold-500/5 blur-[150px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-emerald-500/3 blur-[180px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-icc-500/3 blur-[180px]" />
       </motion.div>
 
       <motion.div className="relative z-10 max-w-6xl mx-auto px-4 text-center" style={{ opacity, y: textY }}>
@@ -143,7 +143,7 @@ export default function HeroSection() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
               >
-                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+                ?????? ??????? ??????????? ??????????
               </motion.span>
               <motion.div
                 className="h-px w-16 bg-gradient-to-l from-transparent to-icc-500"
@@ -186,12 +186,12 @@ export default function HeroSection() {
           <motion.div
             variants={fadeInUp}
             transition={{ duration: 0.8 }}
-            className="mb-8 px-6 py-3 rounded-2xl border border-gold-500/20 bg-emerald-900/30 backdrop-blur-sm inline-block"
+            className="mb-8 px-6 py-3 rounded-2xl border border-gold-500/20 bg-icc-900/30 backdrop-blur-sm inline-block"
           >
             <p className="text-gold-300 font-cairo text-lg md:text-xl" dir="rtl">
-              <span className="text-white/60 text-sm">—</span>{' '}
-              الشيخ محمد زبور{' '}
-              <span className="text-white/60 text-sm">—</span>
+              <span className="text-white/60 text-sm">�</span>{' '}
+              ????? ???? ????{' '}
+              <span className="text-white/60 text-sm">�</span>
             </p>
             <p className="text-gold-400/80 text-xs md:text-sm tracking-widest uppercase mt-0.5">
               Sheikh Mohammed Zabuur

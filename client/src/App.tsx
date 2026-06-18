@@ -77,9 +77,9 @@ function PageFallback() {
   return (
     <div className="min-h-screen bg-dark-900 flex items-center justify-center">
       <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
       </div>
     </div>
   );
@@ -89,9 +89,9 @@ function AdminFallback() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex items-center justify-center">
       <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
       </div>
     </div>
   );
@@ -101,9 +101,9 @@ function DashboardFallback() {
   return (
     <div className="min-h-screen bg-dark-900 flex items-center justify-center">
       <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.15s' }} />
+        <div className="w-2 h-2 rounded-full bg-icc-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
       </div>
     </div>
   );

@@ -3,12 +3,13 @@ import {
   Search, Trash2, Copy, Eye, Download, FileText,
   Music, Video, Image, HardDrive, RefreshCw,
   Upload, X, CheckCircle, AlertCircle, Edit3, Save,
-  MoveRight, Wand2, Star, Globe, Globe2,
+  MoveRight, Wand2, Star, Globe, Globe2, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { admin, teachers, books } from '../../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Teacher, Book } from '../../types';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface ResourceItem {
   id: number;
@@ -49,11 +50,11 @@ const TYPE_COLORS: Record<string, string> = {
   pdf: 'text-red-400 bg-red-500/10 border-red-500/20',
   audio: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
   video: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
-  image: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  image: 'text-icc-400 bg-icc-500/10 border-icc-500/20',
   PDF: 'text-red-400 bg-red-500/10 border-red-500/20',
   AUDIO: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
   VIDEO: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
-  IMAGE: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  IMAGE: 'text-icc-400 bg-icc-500/10 border-icc-500/20',
 };
 
 function humanSize(bytes: number): string {
@@ -70,11 +71,13 @@ function totalSize(files: ResourceItem[]): string {
 }
 
 export default function AdminResources() {
+  const { isMobile } = useResponsive();
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [teacherList, setTeacherList] = useState<Teacher[]>([]);
   const [bookList, setBookList] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
   const [filterType, setFilterType] = useState<string>('all');
   const [deleteTarget, setDeleteTarget] = useState<ResourceItem | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -352,7 +355,7 @@ export default function AdminResources() {
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+              className={`flex items-center gap-3 p-3 rounded-xl border text-start transition-all ${
                 filterType === type
                   ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800'
                   : 'bg-white dark:bg-dark-800 border-gray-200 dark:border-gray-700 hover:border-gray-300'
@@ -372,20 +375,20 @@ export default function AdminResources() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search resources by name, title, category, teacher, or book..."
-          className="input-field pl-10"
+          className="input-field ps-10"
         />
       </div>
 
       {/* Bulk Actions */}
       {selectedIds.length > 0 && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
-          <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-icc-50 dark:bg-icc-900/20 border border-icc-200 dark:border-icc-800">
+          <span className="text-sm font-medium text-icc-700 dark:text-icc-300">
             {selectedIds.length} selected
           </span>
           <div className="flex-1" />
@@ -427,7 +430,7 @@ export default function AdminResources() {
                 load();
               } catch {}
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-icc-500/10 text-icc-600 dark:text-icc-400 text-xs font-medium hover:bg-icc-500/20 transition-all"
           >
             <Globe className="w-3.5 h-3.5" /> Publish
           </button>
@@ -498,6 +501,126 @@ export default function AdminResources() {
             <HardDrive className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>No resources found</p>
           </div>
+        ) : isMobile ? (
+          <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+            {filtered.map((file, i) => {
+              const Icon = TYPE_ICONS[file.resourceType] || FileText;
+              const colorClass = TYPE_COLORS[file.resourceType] || TYPE_COLORS.image;
+              const isExpanded = expandedCards.has(file.id);
+              const toggleExpand = () => {
+                const next = new Set(expandedCards);
+                if (next.has(file.id)) next.delete(file.id); else next.add(file.id);
+                setExpandedCards(next);
+              };
+              return (
+                <div key={file.id || file.url + i} className="p-3 sm:p-4">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg border shrink-0 ${colorClass}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-gray-900 dark:text-white break-words">
+                        {file.title || file.name}
+                      </div>
+                      {file.title && file.name !== file.title && (
+                        <div className="text-xs text-gray-400 truncate mt-0.5">{file.name}</div>
+                      )}
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border uppercase ${colorClass}`}>
+                          {file.resourceType?.toLowerCase() || file.type}
+                        </span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                          file.category ? 'text-icc-400 bg-icc-500/10 border-icc-500/20' : 'text-gray-500'
+                        }`}>
+                          {file.category || '-'}
+                        </span>
+                        <span className="text-xs text-gray-400">{humanSize(file.size)}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(file.id)}
+                        onChange={() => {
+                          setSelectedIds(prev =>
+                            prev.includes(file.id) ? prev.filter(id => id !== file.id) : [...prev, file.id]
+                          );
+                        }}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <button onClick={toggleExpand} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all" title="More details">
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/50 space-y-2">
+                      {file.collection && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500 dark:text-gray-400">Collection</span>
+                          <span>{(() => {
+                            const col = getCollectionBySlug(file.collection);
+                            return col ? `${col?.icon} ${col?.name || file.collection}` : file.collection;
+                          })()}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Teacher</span>
+                        <span className="text-gray-900 dark:text-gray-100">{file.teacher?.name || '-'}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Book</span>
+                        <span className="text-gray-900 dark:text-gray-100">{file.book?.title || '-'}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Date</span>
+                        <span className="text-gray-900 dark:text-gray-100 text-xs">
+                          {new Date(file.createdAt).toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'short', year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 pt-2">
+                        <button
+                          onClick={() => setEditTarget(file)}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-amber-500 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all min-h-[44px]"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => setPreviewUrl(file.url)}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-blue-500 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all min-h-[44px]"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </button>
+                        <button
+                          onClick={() => handleCopy(file.url)}
+                          className="flex items-center justify-center px-3 py-2 rounded-xl text-xs font-medium text-icc-500 bg-icc-500/10 border border-icc-500/20 hover:bg-icc-500/20 transition-all min-h-[44px]"
+                        >
+                          {copiedUrl === file.url ? <CheckCircle className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                        <a
+                          href={file.url}
+                          download={file.name}
+                          className="flex items-center justify-center px-3 py-2 rounded-xl text-xs font-medium text-icc-500 bg-icc-500/10 border border-icc-500/20 hover:bg-icc-500/20 transition-all min-h-[44px]"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </a>
+                        <button
+                          onClick={() => setDeleteTarget(file)}
+                          className="flex items-center justify-center px-3 py-2 rounded-xl text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all min-h-[44px]"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -514,15 +637,15 @@ export default function AdminResources() {
                       className="rounded border-gray-300 dark:border-gray-600"
                     />
                   </th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Resource</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Type</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Collection</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Teacher</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Book</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Date</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Actions</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Resource</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Collection</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Teacher</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Book</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Date</th>
+                  <th className="text-end px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -530,7 +653,7 @@ export default function AdminResources() {
                   const Icon = TYPE_ICONS[file.resourceType] || FileText;
                   const colorClass = TYPE_COLORS[file.resourceType] || TYPE_COLORS.image;
                   return (
-                    <tr key={file.id || file.url + i} className={`hover:bg-gray-50 dark:hover:bg-white/2 transition-colors ${selectedIds.includes(file.id) ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : ''}`}>
+                    <tr key={file.id || file.url + i} className={`hover:bg-gray-50 dark:hover:bg-white/2 transition-colors ${selectedIds.includes(file.id) ? 'bg-icc-50/50 dark:bg-icc-900/10' : ''}`}>
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
@@ -560,7 +683,7 @@ export default function AdminResources() {
                       </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
-                          file.category ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-gray-500'
+                          file.category ? 'text-icc-400 bg-icc-500/10 border-icc-500/20' : 'text-gray-500'
                         }`}>
                           {file.category || '-'}
                         </span>
@@ -616,11 +739,11 @@ export default function AdminResources() {
                           {/* Copy URL */}
                           <button
                             onClick={() => handleCopy(file.url)}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all"
                             title="Copy URL"
                           >
                             {copiedUrl === file.url ? (
-                              <CheckCircle className="w-4 h-4 text-emerald-500" />
+                              <CheckCircle className="w-4 h-4 text-icc-500" />
                             ) : (
                               <Copy className="w-4 h-4" />
                             )}
@@ -760,7 +883,7 @@ export default function AdminResources() {
                   <select
                     value={uploadCollection}
                     onChange={(e) => setUploadCollection(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
                   >
                     <option value="">None (General)</option>
                     {COLLECTIONS.map((c) => (
@@ -805,7 +928,7 @@ export default function AdminResources() {
                     type="button"
                     onClick={() => setUploadFeatured(!uploadFeatured)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      uploadFeatured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -818,8 +941,8 @@ export default function AdminResources() {
                 {/* Teacher - auto-assigned */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teacher</label>
-                  <div className="input-field w-full flex items-center gap-2 text-sm text-emerald-400">
-                    <CheckCircle className="w-4 h-4 text-emerald-500" />
+                  <div className="input-field w-full flex items-center gap-2 text-sm text-icc-400">
+                    <CheckCircle className="w-4 h-4 text-icc-500" />
                     Auto-assigned: Sheikh Mohammed Zabuur
                   </div>
                 </div>
@@ -864,7 +987,7 @@ export default function AdminResources() {
                     </div>
                     <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                        className="h-full bg-icc-500 rounded-full transition-all duration-300"
                         style={{ width: `${uploadProgress}%` }}
                       />
                     </div>
@@ -972,7 +1095,7 @@ export default function AdminResources() {
                   <select
                     value={editTarget.collection || ''}
                     onChange={(e) => setEditTarget({ ...editTarget, collection: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
                   >
                     <option value="">None</option>
                     {COLLECTIONS.map((c) => (
@@ -1016,7 +1139,7 @@ export default function AdminResources() {
                     type="button"
                     onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      editTarget.featured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -1029,8 +1152,8 @@ export default function AdminResources() {
                 {/* Teacher - auto-assigned */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teacher</label>
-                  <div className="input-field w-full flex items-center gap-2 text-sm text-emerald-400">
-                    <CheckCircle className="w-4 h-4 text-emerald-500" />
+                  <div className="input-field w-full flex items-center gap-2 text-sm text-icc-400">
+                    <CheckCircle className="w-4 h-4 text-icc-500" />
                     Sheikh Mohammed Zabuur
                   </div>
                 </div>
@@ -1281,7 +1404,7 @@ export default function AdminResources() {
                 </div>
               ) : duplicateGroups.length === 0 ? (
                 <div className="py-16 text-center text-gray-400">
-                  <CheckCircle className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
+                  <CheckCircle className="w-10 h-10 mx-auto mb-3 text-icc-400" />
                   <p>No duplicates found!</p>
                 </div>
               ) : (
@@ -1305,7 +1428,7 @@ export default function AdminResources() {
                                   item.resourceType === 'PDF' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
                                   item.resourceType === 'AUDIO' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' :
                                   item.resourceType === 'VIDEO' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20' :
-                                  'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                                  'text-icc-400 bg-icc-500/10 border-icc-500/20'
                                 }`}>{item.resourceType}</span>
                               </div>
                               <div className="text-xs text-gray-400 mt-0.5">
@@ -1324,7 +1447,7 @@ export default function AdminResources() {
                                     setDuplicateGroups(res.data);
                                   } catch {}
                                 }}
-                                className="px-2 py-1 text-xs font-semibold rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                                className="px-2 py-1 text-xs font-semibold rounded-lg bg-icc-500/10 text-icc-500 border border-icc-500/20 hover:bg-icc-500/20 transition-colors"
                               >
                                 Keep This
                               </button>

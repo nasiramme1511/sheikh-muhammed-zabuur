@@ -7,31 +7,24 @@ import { resources as resourcesApi } from '../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/collections';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useTranslation } from '../i18n';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
 
-const CATEGORIES = [
-  'All Recordings',
-  'Aqeedah',
-  'Hadith',
-  'Tafsir',
-  'Fiqh',
-  'Seerah',
-  'Arabic',
-  'Tajweed',
-  'General Lectures'
-];
-
 export default function Recordings() {
+  const { t } = useTranslation();
+  const ALL_RECORDINGS = t('recordings.badge');
+  const CATEGORIES = [ALL_RECORDINGS, 'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed', 'General Lectures'];
+
   useSEO({
-    title: 'Live Recordings',
-    description: 'Watch recorded live sessions, Friday reminders, and Q&A broadcasts by Sheikh Mohammed Zabuur. Catch up on past streams anytime.',
+    title: t('recordings.title'),
+    description: t('recordings.subtitle'),
   });
 
   const [recordings, setRecordings] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Recordings');
+  const [selectedCategory, setSelectedCategory] = useState(ALL_RECORDINGS);
   const [selectedCollection, setSelectedCollection] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'most_viewed'>('newest');
   const [activeRecording, setActiveRecording] = useState<Resource | null>(null);
@@ -81,7 +74,7 @@ export default function Recordings() {
         (rec.description && rec.description.toLowerCase().includes(searchQuery.toLowerCase()));
 
       const matchesCategory =
-        selectedCategory === 'All Recordings' ||
+        selectedCategory === ALL_RECORDINGS ||
         rec.category.toLowerCase() === selectedCategory.toLowerCase();
 
       const matchesCollection =
@@ -104,10 +97,10 @@ export default function Recordings() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Live Recordings
+            {t('recordings.badge')}
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: -10 }}
@@ -115,7 +108,7 @@ export default function Recordings() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold mb-4 tracking-tight"
           >
-            Recorded Live Sessions
+            {t('recordings.heading')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -123,7 +116,7 @@ export default function Recordings() {
             transition={{ delay: 0.2 }}
             className="text-white/60 max-w-2xl mx-auto text-base md:text-lg"
           >
-            Catch up on previous streams, weekly Friday reminders, and Q&A sessions broadcasted by Sheikh Mohammed Zabuur.
+            {t('recordings.description')}
           </motion.p>
         </div>
 
@@ -133,10 +126,10 @@ export default function Recordings() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/40" />
             <input
               type="text"
-              placeholder="Search recordings..."
+              placeholder={t('recordings.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-dark-900 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-dark-900 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-icc-500/50 transition-all text-sm"
             />
           </div>
 
@@ -145,9 +138,9 @@ export default function Recordings() {
             <select
               value={selectedCollection}
               onChange={(e) => setSelectedCollection(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-dark-900 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500/50"
+              className="px-3 py-2 rounded-xl bg-dark-900 border border-white/10 text-white text-xs focus:outline-none focus:border-icc-500/50"
             >
-              <option value="">All Collections</option>
+              <option value="">{t('recordings.all_collections')}</option>
               {COLLECTIONS.map((c) => (
                 <option key={c.slug} value={c.slug}>{c.icon} {c.name}</option>
               ))}
@@ -157,11 +150,11 @@ export default function Recordings() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 rounded-xl bg-dark-900 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500/50"
+              className="px-3 py-2 rounded-xl bg-dark-900 border border-white/10 text-white text-xs focus:outline-none focus:border-icc-500/50"
             >
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="most_viewed">Most Viewed</option>
+              <option value="newest">{t('recordings.sort_newest')}</option>
+              <option value="oldest">{t('recordings.sort_oldest')}</option>
+              <option value="most_viewed">{t('recordings.sort_most_viewed')}</option>
             </select>
           </div>
 
@@ -174,7 +167,7 @@ export default function Recordings() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-xs font-medium shrink-0 transition-all ${
                     active
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                      ? 'bg-icc-500 text-white shadow-lg shadow-icc-500/20'
                       : 'bg-dark-900/60 text-white/60 hover:text-white border border-white/5 hover:bg-dark-900'
                   }`}
                 >
@@ -200,23 +193,23 @@ export default function Recordings() {
           </div>
         ) : processedRecordings.length === 0 ? (
           <div className="text-center py-24 bg-dark-800/20 rounded-3xl border border-white/5 backdrop-blur-sm">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/10 flex items-center justify-center mx-auto mb-5">
-              <Tv className="w-10 h-10 text-emerald-400/60" />
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-icc-500/10 to-icc-600/10 border border-icc-500/10 flex items-center justify-center mx-auto mb-5">
+              <Tv className="w-10 h-10 text-icc-400/60" />
             </div>
             <h3 className="text-xl font-bold text-white/80 mb-2">
-              {searchQuery || selectedCategory !== 'All Recordings' ? 'No Recordings Found' : 'No Live Sessions Yet'}
+              {searchQuery || selectedCategory !== ALL_RECORDINGS ? t('recordings.empty_title') : t('recordings.empty_coming_soon')}
             </h3>
             <p className="text-sm text-white/40 max-w-md mx-auto mb-6">
-              {searchQuery || selectedCategory !== 'All Recordings'
-                ? 'No recordings match your current search. Try different keywords or browse another category.'
-                : 'Live session recordings will appear here once broadcasts are completed. Stay connected for upcoming live streams.'}
+              {searchQuery || selectedCategory !== ALL_RECORDINGS
+                ? t('recordings.empty_search_desc')
+                : t('recordings.empty_desc')}
             </p>
-            {(searchQuery || selectedCategory !== 'All Recordings') && (
+            {(searchQuery || selectedCategory !== ALL_RECORDINGS) && (
               <button
-                onClick={() => { setSearchQuery(''); setSelectedCategory('All Recordings'); }}
-                className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all text-xs font-medium"
+                onClick={() => { setSearchQuery(''); setSelectedCategory(ALL_RECORDINGS); }}
+                className="px-4 py-2 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-400 hover:bg-icc-500/20 transition-all text-xs font-medium"
               >
-                Clear All Filters
+                {t('recordings.clear_filters')}
               </button>
             )}
           </div>
@@ -249,31 +242,31 @@ export default function Recordings() {
                   {isYoutube ? (
                     <img src={thumbUrl} alt={rec.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }} />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-dark-950">
-                      <Tv className="w-10 h-10 text-emerald-500/40" />
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-950 to-dark-950">
+                      <Tv className="w-10 h-10 text-icc-500/40" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-90 group-hover:scale-100 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-full bg-icc-500 text-white flex items-center justify-center shadow-lg shadow-icc-500/30 scale-90 group-hover:scale-100 transition-all duration-300">
                       <Play className="w-5 h-5 pl-0.5" />
                     </div>
                   </div>
-                  <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 font-medium uppercase tracking-wider">Broadcast Replay</span>
+                  <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 font-medium uppercase tracking-wider">{t('recordings.replay_badge')}</span>
                 </div>
                 <div className="p-5 flex flex-col justify-between flex-grow">
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{rec.category}</span>
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-icc-500/10 text-icc-400 border border-icc-500/20">{rec.category}</span>
                       <span className="text-[10px] text-white/40 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {new Date(rec.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                     </div>
-                    <h3 className="text-base font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors">{rec.title}</h3>
-                    <p className="text-xs text-white/50 line-clamp-2">{rec.description || 'Watch previous broadcast live replay from Sheikh Mohammed Zabuur.'}</p>
+                    <h3 className="text-base font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-icc-400 transition-colors">{rec.title}</h3>
+                    <p className="text-xs text-white/50 line-clamp-2">{rec.description || t('recordings.no_description')}</p>
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/5 flex items-center gap-3 text-xs text-white/40">
-                    <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{rec.views} views</span>
+                    <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{rec.views} {t('recordings.views_suffix')}</span>
                   </div>
                 </div>
               </motion.div>
@@ -288,7 +281,7 @@ export default function Recordings() {
                     <div className={`inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-5 ${COLLECTION_COLORS[slug] || 'bg-white/5 text-white/60 border border-white/10'}`}>
                       <span className="text-lg">{col?.icon || '📖'}</span>
                       <h3 className="text-lg font-bold">{col?.name || slug}</h3>
-                      <span className="text-sm opacity-60">({recs.length} recording{recs.length !== 1 ? 's' : ''})</span>
+                      <span className="text-sm opacity-60">{recs.length === 1 ? t('recordings.recording_count', { count: recs.length }) : t('recordings.recording_count_plural', { count: recs.length })}</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {recs.map((rec, idx) => card(rec, idx))}
@@ -300,8 +293,8 @@ export default function Recordings() {
                 <div>
                   <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl mb-5 bg-white/5 text-white/60 border border-white/10">
                     <span className="text-lg">📚</span>
-                    <h3 className="text-lg font-bold">Other Recordings</h3>
-                    <span className="text-sm opacity-60">({other.length} recording{other.length !== 1 ? 's' : ''})</span>
+                    <h3 className="text-lg font-bold">{t('recordings.other_recordings')}</h3>
+                    <span className="text-sm opacity-60">{other.length === 1 ? t('recordings.recording_count', { count: other.length }) : t('recordings.recording_count_plural', { count: other.length })}</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {other.map((rec, idx) => card(rec, idx))}
@@ -365,11 +358,11 @@ export default function Recordings() {
               {/* Video Info Footer */}
               <div className="p-6 bg-dark-900 border-t border-white/5">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-icc-500/10 text-icc-400 border border-icc-500/20">
                     {activeRecording.category}
                   </span>
                 </div>
-                <p className="text-sm text-white/60">{activeRecording.description || 'Watch previous broadcast live replay from Sheikh Mohammed Zabuur.'}</p>
+                <p className="text-sm text-white/60">{activeRecording.description || t('recordings.no_description')}</p>
               </div>
             </motion.div>
           </motion.div>

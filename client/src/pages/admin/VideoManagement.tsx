@@ -6,6 +6,7 @@ import {
 import { admin } from '../../lib/api';
 import { COLLECTIONS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface VideoResource {
   id: number;
@@ -78,6 +79,7 @@ export default function VideoManagement() {
   const [uploadCollection, setUploadCollection] = useState('');
 
   const [stats, setStats] = useState({ totalVideo: 0, totalViews: 0, totalStorage: 0 });
+  const { isMobile } = useResponsive();
 
   const load = () => {
     setLoading(true);
@@ -203,14 +205,14 @@ export default function VideoManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Video Management</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">Video Management</h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {resources.length} videos · {totalSize(resources)} total
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
             onClick={() => setShowUploadModal(true)}
             className="btn-primary inline-flex items-center gap-2"
@@ -218,14 +220,14 @@ export default function VideoManagement() {
             <Upload className="w-4 h-4" />
             Upload Video
           </button>
-          <button onClick={load} className="btn-secondary p-2" title="Refresh">
+          <button onClick={load} className="btn-secondary p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Refresh">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <div className="glass-card-dark rounded-xl p-4 flex items-center gap-4">
           <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
             <Video className="w-6 h-6 text-purple-400" />
@@ -236,8 +238,8 @@ export default function VideoManagement() {
           </div>
         </div>
         <div className="glass-card-dark rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <Film className="w-6 h-6 text-emerald-400" />
+          <div className="p-3 rounded-xl bg-icc-500/10 border border-icc-500/20">
+            <Film className="w-6 h-6 text-icc-400" />
           </div>
           <div>
             <p className="text-sm text-gray-400">Total Views</p>
@@ -257,26 +259,86 @@ export default function VideoManagement() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search videos by title, filename, or category..."
-          className="input-field pl-10"
+          className="input-field ps-10 w-full"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden w-full min-w-0">
         {loading ? (
           <div className="py-16 flex justify-center">
             <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-16 text-center text-gray-400">
+          <div className="py-16 text-center text-gray-400 px-4">
             <Video className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>No video resources found</p>
+          </div>
+        ) : isMobile ? (
+          /* Mobile Card View */
+          <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+            {filtered.map((file, i) => {
+              const isYT = isYouTubeUrl(file.url);
+              return (
+                <div key={file.id || file.url + i} className="p-3 space-y-2">
+                  <div className="flex items-start gap-3">
+                    {file.thumbnail ? (
+                      <img src={file.thumbnail} alt="" className="w-14 h-10 rounded object-cover shrink-0" />
+                    ) : (
+                      <div className="w-14 h-10 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+                        <Video className="w-4 h-4 text-purple-400" />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm break-words">{file.title || file.name}</p>
+                      {file.title && file.name !== file.title && (
+                        <p className="text-xs text-gray-400 break-all">{file.name}</p>
+                      )}
+                    </div>
+                    {file.featured && (
+                      <Star className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" />
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                    <span className="font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
+                      {file.category || '-'}
+                    </span>
+                    {isYT ? (
+                      <span className="inline-flex items-center gap-1 text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
+                        <ExternalLink className="w-3 h-3" /> YouTube
+                      </span>
+                    ) : (
+                      <span>Local</span>
+                    )}
+                    <span>{file.views?.toLocaleString() || 0} views</span>
+                    <span>{file.downloads?.toLocaleString() || 0} downloads</span>
+                  </div>
+                  <div className="flex items-center gap-1 pt-1">
+                    <button onClick={() => toggleFeatured(file)} className={`p-2 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${file.featured ? 'text-amber-400 bg-amber-500/10' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'}`} title={file.featured ? 'Unfeature' : 'Feature'}>
+                      <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
+                    </button>
+                    <button onClick={() => setEditTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Edit">
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handlePreview(file)} className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Preview">
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <a href={file.url} download={file.name} className="p-2 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Download">
+                      <Download className="w-4 h-4" />
+                    </a>
+                    <button onClick={() => setDeleteTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto" title="Delete">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -321,7 +383,7 @@ export default function VideoManagement() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
                           {file.category || '-'}
                         </span>
                       </td>
@@ -369,7 +431,7 @@ export default function VideoManagement() {
                           <a
                             href={file.url}
                             download={file.name}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all"
                             title="Download"
                           >
                             <Download className="w-4 h-4" />
@@ -407,7 +469,7 @@ export default function VideoManagement() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh]"
+              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-lg w-full shadow-2xl overflow-y-auto max-h-[85vh]"
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
@@ -455,7 +517,7 @@ export default function VideoManagement() {
                     type="file"
                     accept="image/*"
                     onChange={(e) => setUploadThumbnail(e.target.files?.[0] || null)}
-                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-500 hover:file:bg-emerald-500/20 file:cursor-pointer"
+                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-icc-500/10 file:text-icc-500 hover:file:bg-icc-500/20 file:cursor-pointer"
                   />
                 </div>
 
@@ -499,7 +561,7 @@ export default function VideoManagement() {
                   <select
                     value={uploadCollection}
                     onChange={(e) => setUploadCollection(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
                   >
                     <option value="">None (General)</option>
                     {COLLECTIONS.map((c) => (
@@ -526,7 +588,7 @@ export default function VideoManagement() {
                     type="button"
                     onClick={() => setUploadFeatured(!uploadFeatured)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      uploadFeatured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -536,7 +598,7 @@ export default function VideoManagement() {
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Feature on Homepage</label>
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button type="button" onClick={() => setShowUploadModal(false)} className="btn-secondary">Cancel</button>
                   <button type="submit" disabled={uploading} className="btn-primary inline-flex items-center gap-2">
                     {uploading && <RefreshCw className="w-4 h-4 animate-spin" />}
@@ -564,7 +626,7 @@ export default function VideoManagement() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh]"
+              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-lg w-full shadow-2xl overflow-y-auto max-h-[85vh]"
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
@@ -625,7 +687,7 @@ export default function VideoManagement() {
                     type="button"
                     onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      editTarget.featured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -664,7 +726,7 @@ export default function VideoManagement() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl h-[80vh] bg-dark-800 rounded-2xl border border-white/10 overflow-hidden flex flex-col"
+              className="relative w-full max-w-4xl h-[70vh] sm:h-[80vh] bg-dark-800 rounded-2xl border border-white/10 overflow-hidden flex flex-col"
             >
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-dark-900/50 shrink-0">
                 <span className="text-sm text-white/60 truncate">{previewItem.title || previewItem.name}</span>

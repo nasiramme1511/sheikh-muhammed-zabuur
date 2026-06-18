@@ -21,7 +21,7 @@ const TYPE_CONFIG: Record<string, { icon: any; color: string; bg: string; border
 
 const CATEGORY_COLORS: Record<string, string> = {
   Tafsir: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  Aqeedah: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  Aqeedah: 'bg-icc-500/20 text-icc-300 border-icc-500/30',
   Hadith: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
   Fiqh: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
   Seerah: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
@@ -284,7 +284,7 @@ export default function Resources() {
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
                 Learning{' '}
-                <span className="bg-gradient-to-r from-icc-400 to-emerald-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-icc-400 to-icc-300 bg-clip-text text-transparent">
                   Resources
                 </span>
               </h1>
@@ -348,8 +348,8 @@ export default function Resources() {
                     {allResources.reduce((sum, r) => sum + (r.views || 0), 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="rounded-xl bg-emerald-500/5 border border-emerald-500/10 p-4">
-                  <div className="flex items-center gap-2 text-emerald-400 text-xs font-medium mb-1">
+                <div className="rounded-xl bg-icc-500/5 border border-icc-500/10 p-4">
+                  <div className="flex items-center gap-2 text-icc-400 text-xs font-medium mb-1">
                     <BookOpen className="w-3.5 h-3.5" />
                     Categories
                   </div>
@@ -420,7 +420,7 @@ export default function Resources() {
                 className="rounded-2xl bg-dark-800/40 border border-white/5 overflow-hidden"
               >
                 <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5">
-                  <Clock className="w-4 h-4 text-emerald-400" />
+                  <Clock className="w-4 h-4 text-icc-400" />
                   <span className="text-sm font-medium text-white">Recently Added Resources</span>
                 </div>
                 <div className="p-3">

@@ -50,8 +50,8 @@ export default function LoginWallModal({ isOpen, onClose }: LoginWallModalProps)
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="relative w-full max-w-md bg-dark-800 border border-white/10 rounded-2xl shadow-2xl p-8 text-center"
           >
-            <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <Lock className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center">
+              <Lock className="w-8 h-8 text-icc-400" />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">{t('login_wall.title')}</h2>
             <p className="text-sm text-white/60 mb-7 leading-relaxed">
@@ -61,7 +61,7 @@ export default function LoginWallModal({ isOpen, onClose }: LoginWallModalProps)
               <Link
                 to="/login"
                 onClick={onClose}
-                className="block w-full py-3 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm transition-all shadow-lg shadow-emerald-500/20"
+                className="block w-full py-3 px-6 rounded-xl bg-icc-500 hover:bg-icc-600 text-white font-medium text-sm transition-all shadow-lg shadow-icc-500/20"
               >
                 {t('nav.sign_in')}
               </Link>

@@ -95,7 +95,7 @@ export default function AdminCollections() {
       </div>
 
       {message && (
-        <div className="px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-2">
+        <div className="px-4 py-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-600 dark:text-icc-400 text-sm flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           {message}
           <button onClick={() => setMessage('')} className="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
@@ -126,7 +126,7 @@ export default function AdminCollections() {
           <button
             onClick={handleMove}
             disabled={!moveFrom || !moveTo || moving}
-            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-sm font-medium transition-all"
+            className="px-4 py-2 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:opacity-50 text-white text-sm font-medium transition-all"
           >
             {moving ? 'Moving...' : 'Move'}
           </button>
@@ -164,7 +164,7 @@ export default function AdminCollections() {
                     {s.video > 0 && <div className="text-center p-1.5 rounded-lg bg-purple-500/5"><p className="text-xs font-medium text-purple-400">{s.video}</p><p className="text-[10px] text-gray-400">Video</p></div>}
                     {s.pdf > 0 && <div className="text-center p-1.5 rounded-lg bg-red-500/5"><p className="text-xs font-medium text-red-400">{s.pdf}</p><p className="text-[10px] text-gray-400">PDF</p></div>}
                     {s.recording > 0 && <div className="text-center p-1.5 rounded-lg bg-amber-500/5"><p className="text-xs font-medium text-amber-400">{s.recording}</p><p className="text-[10px] text-gray-400">Rec</p></div>}
-                    {s.image > 0 && <div className="text-center p-1.5 rounded-lg bg-emerald-500/5"><p className="text-xs font-medium text-emerald-400">{s.image}</p><p className="text-[10px] text-gray-400">Img</p></div>}
+                    {s.image > 0 && <div className="text-center p-1.5 rounded-lg bg-icc-500/5"><p className="text-xs font-medium text-icc-400">{s.image}</p><p className="text-[10px] text-gray-400">Img</p></div>}
                   </div>
                 )}
 

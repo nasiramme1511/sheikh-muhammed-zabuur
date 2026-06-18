@@ -30,7 +30,7 @@ function getIconForChannel(name: string): ElementType {
 }
 
 const iconColors = [
-  '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#3B82F6',
+  '#0EA5E9', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#3B82F6',
 ];
 
 const containerVariants = {
@@ -70,7 +70,7 @@ export default function TelegramSection() {
       <div className="absolute inset-0 bg-dark-900" />
       <div className="absolute inset-0 opacity-20"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.05) 0%, transparent 50%)`,
+          backgroundImage: `radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.05) 0%, transparent 50%)`,
         }}
       />
 
@@ -130,8 +130,8 @@ export default function TelegramSection() {
                             </span>
                           )}
                           {user && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-icc-500/10 text-icc-400 border border-icc-500/20">
+                              <span className="w-1.5 h-1.5 rounded-full bg-icc-400 animate-pulse" />
                               {t('telegram.active')}
                             </span>
                           )}

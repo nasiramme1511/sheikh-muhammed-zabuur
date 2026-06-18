@@ -83,7 +83,7 @@ export default function AdminBulkUpload() {
         onClick={() => inputRef.current?.click()}
         className={`relative cursor-pointer rounded-2xl border-2 border-dashed p-12 text-center transition-all ${
           dragOver
-            ? 'border-emerald-500 bg-emerald-500/5'
+            ? 'border-icc-500 bg-icc-500/5'
             : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-900'
         }`}
       >
@@ -119,7 +119,7 @@ export default function AdminBulkUpload() {
             {files.map((file, i) => {
               const ext = file.name.split('.').pop()?.toLowerCase();
               const Icon = ext === 'pdf' ? FileText : ['mp3', 'wav', 'm4a', 'ogg', 'aac'].includes(ext || '') ? Music : ['mp4', 'webm', 'mov', 'mkv'].includes(ext || '') ? Video : ext === 'zip' ? Archive : Image;
-              const color = ext === 'pdf' ? 'text-red-400' : ['mp3', 'wav', 'm4a', 'ogg', 'aac'].includes(ext || '') ? 'text-blue-400' : ['mp4', 'webm', 'mov', 'mkv'].includes(ext || '') ? 'text-purple-400' : ext === 'zip' ? 'text-amber-400' : 'text-emerald-400';
+              const color = ext === 'pdf' ? 'text-red-400' : ['mp3', 'wav', 'm4a', 'ogg', 'aac'].includes(ext || '') ? 'text-blue-400' : ['mp4', 'webm', 'mov', 'mkv'].includes(ext || '') ? 'text-purple-400' : ext === 'zip' ? 'text-amber-400' : 'text-icc-400';
               return (
                 <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                   <Icon className={`w-4 h-4 shrink-0 ${color}`} />
@@ -154,7 +154,7 @@ export default function AdminBulkUpload() {
           <button
             onClick={upload}
             disabled={uploading}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-sm font-semibold transition-all"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:opacity-50 text-white text-sm font-semibold transition-all"
           >
             {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploading ? `Uploading ${files.length} files...` : `Upload ${files.length} Files`}
@@ -170,7 +170,7 @@ export default function AdminBulkUpload() {
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-center gap-4 text-sm">
-              {totalCreated > 0 && <span className="flex items-center gap-1.5 text-emerald-500"><CheckCircle className="w-4 h-4" /> {totalCreated} created</span>}
+              {totalCreated > 0 && <span className="flex items-center gap-1.5 text-icc-500"><CheckCircle className="w-4 h-4" /> {totalCreated} created</span>}
               {totalSkipped > 0 && <span className="flex items-center gap-1.5 text-amber-500"><AlertCircle className="w-4 h-4" /> {totalSkipped} skipped</span>}
               {totalReplaced > 0 && <span className="flex items-center gap-1.5 text-blue-500"><RefreshCw className="w-4 h-4" /> {totalReplaced} replaced</span>}
               {totalExtracted > 0 && <span className="flex items-center gap-1.5 text-purple-500"><Archive className="w-4 h-4" /> {totalExtracted} ZIPs extracted</span>}
@@ -180,7 +180,7 @@ export default function AdminBulkUpload() {
               <AnimatePresence>
                 {results.map((r, i) => (
                   <motion.div key={i} initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 py-2">
-                    {r.status === 'created' && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+                    {r.status === 'created' && <CheckCircle className="w-4 h-4 text-icc-500 shrink-0" />}
                     {r.status === 'skipped' && <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />}
                     {r.status === 'replaced' && <RefreshCw className="w-4 h-4 text-blue-500 shrink-0" />}
                     {r.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />}

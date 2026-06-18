@@ -41,7 +41,7 @@ export default function TeacherDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -50,7 +50,7 @@ export default function TeacherDetail() {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
         <p className="text-white/40">{t('teacher_detail_page.not_found')}</p>
-        <Link to="/teachers" className="text-emerald-400 hover:underline mt-4 inline-block">{t('teacher_detail_page.back')}</Link>
+        <Link to="/teachers" className="text-icc-400 hover:underline mt-4 inline-block">{t('teacher_detail_page.back')}</Link>
       </div>
     );
   }
@@ -64,7 +64,7 @@ export default function TeacherDetail() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      <Link to="/teachers" className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-emerald-400 transition-colors">
+      <Link to="/teachers" className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-icc-400 transition-colors">
         <HiArrowLeft className="w-3.5 h-3.5" />
         {t('teacher_detail_page.back')}
       </Link>

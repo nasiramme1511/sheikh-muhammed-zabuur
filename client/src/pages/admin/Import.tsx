@@ -56,7 +56,7 @@ function humanSize(bytes: number): string {
 
 function getFileIcon(type?: string) {
   switch (type) {
-    case 'audio': case 'AUDIO': return <Music className="w-5 h-5 text-emerald-400" />;
+    case 'audio': case 'AUDIO': return <Music className="w-5 h-5 text-icc-400" />;
     case 'video': case 'VIDEO': return <Video className="w-5 h-5 text-blue-400" />;
     case 'pdf': case 'PDF': return <FileText className="w-5 h-5 text-red-400" />;
     case 'image': case 'IMAGE': return <Image className="w-5 h-5 text-purple-400" />;
@@ -201,7 +201,7 @@ export default function AdminImport() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Upload className="w-6 h-6 text-emerald-400" />
+          <Upload className="w-6 h-6 text-icc-400" />
           Content Importer
         </h1>
         <div className="flex items-center gap-2">
@@ -227,14 +227,14 @@ export default function AdminImport() {
           <div>
             <label className="block text-sm font-medium text-white/70 mb-1.5">Language</label>
             <select value={language} onChange={e => setLanguage(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50">
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-icc-500/50">
               {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-white/70 mb-1.5">Duplicate Action</label>
             <select value={duplicateAction} onChange={e => setDuplicateAction(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50">
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-icc-500/50">
               {DUPLICATE_ACTIONS.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
             </select>
           </div>
@@ -242,7 +242,7 @@ export default function AdminImport() {
             <label className="block text-sm font-medium text-white/70 mb-1.5">Featured</label>
             <label className="flex items-center gap-2 h-full pt-1">
               <input type="checkbox" checked={featured} onChange={e => setFeatured(e.target.checked)}
-                className="w-4 h-4 rounded border-white/10 bg-white/5 text-emerald-500 focus:ring-emerald-500" />
+                className="w-4 h-4 rounded border-white/10 bg-white/5 text-icc-500 focus:ring-icc-500" />
               <span className="text-sm text-white/50">Mark as featured</span>
             </label>
           </div>
@@ -250,9 +250,9 @@ export default function AdminImport() {
 
         {/* File Drop Zone */}
         <div
-          className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-emerald-500/30 transition-all cursor-pointer"
+          className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-icc-500/30 transition-all cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
-          onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; }}
+          onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(14,165,233,0.5)'; }}
           onDragLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
           onDrop={e => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; if (e.dataTransfer.files) setFiles(prev => [...prev, ...Array.from(e.dataTransfer.files)]); }}
         >
@@ -284,7 +284,7 @@ export default function AdminImport() {
                   {getFileIcon(file.type.startsWith('audio') ? 'audio' : file.type.startsWith('video') ? 'video' : file.type === 'application/pdf' ? 'pdf' : 'image')}
                   <span className="text-sm text-white/70 flex-1 truncate">{file.webkitRelativePath || file.name}</span>
                   {col && (
-                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{col.icon} {col.name}</span>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20">{col.icon} {col.name}</span>
                   )}
                   <span className="text-xs text-white/30">{humanSize(file.size)}</span>
                   <button onClick={() => removeFile(i)} className="p-1 hover:bg-red-500/10 rounded text-white/30 hover:text-red-400 transition-all">
@@ -313,12 +313,12 @@ export default function AdminImport() {
         {uploading && progress > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-emerald-400">{progressLabel}</span>
+              <span className="text-icc-400">{progressLabel}</span>
               <span className="text-white/50">{progress}%</span>
             </div>
             <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+                className="h-full bg-gradient-to-r from-icc-500 to-icc-400 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5 }}
@@ -338,11 +338,11 @@ export default function AdminImport() {
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                <CheckCircle className="w-5 h-5 text-icc-400" />
                 Imported Resources ({results.length})
               </h2>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-emerald-400">{results.filter(r => r.status === 'created').length} imported</span>
+                <span className="text-icc-400">{results.filter(r => r.status === 'created').length} imported</span>
                 <span className="text-white/30">|</span>
                 <span className="text-yellow-400">{results.filter(r => r.status === 'skipped').length} skipped</span>
                 <span className="text-white/30">|</span>
@@ -359,14 +359,14 @@ export default function AdminImport() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
               <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search imported files..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50" />
+                className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-icc-500/50" />
             </div>
 
             {/* Bulk Select */}
             <div className="flex items-center gap-2 mb-3">
               <label className="flex items-center gap-2 text-sm text-white/50">
                 <input type="checkbox" checked={selectedIds.size === results.filter(r => r.id).length && results.length > 0}
-                  onChange={toggleSelectAll} className="rounded border-white/10 bg-white/5 text-emerald-500" />
+                  onChange={toggleSelectAll} className="rounded border-white/10 bg-white/5 text-icc-500" />
                 Select All
               </label>
               {selectedIds.size > 0 && (
@@ -394,7 +394,7 @@ export default function AdminImport() {
                       <td className="px-2 py-2">
                         {r.id && (
                           <input type="checkbox" checked={selectedIds.has(r.id)} onChange={() => toggleSelect(r.id)}
-                            className="rounded border-white/10 bg-white/5 text-emerald-500" />
+                            className="rounded border-white/10 bg-white/5 text-icc-500" />
                         )}
                       </td>
                       <td className="px-3 py-2">
@@ -405,7 +405,7 @@ export default function AdminImport() {
                       </td>
                       <td className="px-3 py-2">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          r.resourceType === 'AUDIO' ? 'bg-emerald-500/10 text-emerald-400' :
+                          r.resourceType === 'AUDIO' ? 'bg-icc-500/10 text-icc-400' :
                           r.resourceType === 'VIDEO' ? 'bg-blue-500/10 text-blue-400' :
                           r.resourceType === 'PDF' ? 'bg-red-500/10 text-red-400' :
                           'bg-purple-500/10 text-purple-400'
@@ -418,7 +418,7 @@ export default function AdminImport() {
                         <span className="text-xs text-white/40">{r.language || 'en'}</span>
                       </td>
                       <td className="px-3 py-2">
-                        {r.status === 'created' ? <CheckCircle className="w-4 h-4 text-emerald-400" /> :
+                        {r.status === 'created' ? <CheckCircle className="w-4 h-4 text-icc-400" /> :
                          r.status === 'skipped' ? <SkipForward className="w-4 h-4 text-yellow-400" /> :
                          r.status === 'error' ? <AlertCircle className="w-4 h-4 text-red-400" /> :
                          <RefreshCw className="w-4 h-4 text-blue-400" />}
@@ -426,7 +426,7 @@ export default function AdminImport() {
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => { setEditItem(r); setEditTitle(r.title || ''); setEditCategory(r.category || ''); }}
-                            className="p-1.5 rounded-lg hover:bg-white/5 text-white/30 hover:text-emerald-400 transition-all" title="Edit">
+                            className="p-1.5 rounded-lg hover:bg-white/5 text-white/30 hover:text-icc-400 transition-all" title="Edit">
                             <Save className="w-3.5 h-3.5" />
                           </button>
                           <a href={r.url} target="_blank" rel="noopener noreferrer"

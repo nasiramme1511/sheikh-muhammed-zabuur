@@ -107,7 +107,7 @@ export default function RecordingsPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recordings</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Manage recorded lectures</p>
         </div>
-        <button onClick={fetchRecordings} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-emerald-500 text-sm font-medium transition-all">
+        <button onClick={fetchRecordings} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-icc-500 text-sm font-medium transition-all">
           <RefreshCw className="w-4 h-4" />
           Refresh
         </button>
@@ -134,8 +134,8 @@ export default function RecordingsPage() {
         </div>
         <div className="glass-card rounded-xl p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <Eye className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 rounded-xl bg-icc-500/10 flex items-center justify-center">
+              <Eye className="w-5 h-5 text-icc-400" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -179,7 +179,7 @@ export default function RecordingsPage() {
           placeholder="Search recordings by title..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
         />
       </div>
 
@@ -230,7 +230,7 @@ export default function RecordingsPage() {
                         <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
                           (() => {
                             const col = getCollectionBySlug(item.collection!);
-                            return col ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-white/50 border-white/10';
+                            return col ? 'bg-icc-500/10 text-icc-400 border-icc-500/20' : 'bg-white/5 text-white/50 border-white/10';
                           })()
                         }`}>
                           {getCollectionBySlug(item.collection)?.name || item.collection}
@@ -249,7 +249,7 @@ export default function RecordingsPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => window.open(item.url, '_blank')} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-emerald-400 transition-all">
+                        <button onClick={() => window.open(item.url, '_blank')} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-icc-400 transition-all">
                           <Eye className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(item)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-400 transition-all">

@@ -88,7 +88,7 @@ export default function VideoHistory() {
             <Video className="w-8 h-8 text-blue-400/60" />
           </div>
           <p className="text-lg font-semibold text-white/70 mb-2">{t('dashboard.no_history')}</p>
-          <Link to="/videos" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-all mt-4">
+          <Link to="/videos" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-medium transition-all mt-4">
             {t('dashboard.browse_videos')} <ExternalLink className="w-4 h-4" />
           </Link>
         </motion.div>

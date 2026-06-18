@@ -25,8 +25,8 @@ export default function LevelCard({ level, index, userProgress, isLocked }: Prop
     <div className={`relative group ${isLocked ? 'opacity-60' : ''}`}>
       <Link
         to={isLocked ? '#' : `/levels/${level.slug}`}
-        className={`block bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 transition-all duration-300 ${
-          isLocked ? '' : 'hover:shadow-lg hover:border-green-200 dark:hover:border-green-700 hover:-translate-y-1'
+        className={`block glass-card rounded-2xl border border-white/10 p-6 transition-all duration-300 ${
+          isLocked ? '' : 'hover:border-gold-500/40 hover:-translate-y-1'
         }`}
         onClick={(e) => { if (isLocked) e.preventDefault(); }}
       >
@@ -38,47 +38,47 @@ export default function LevelCard({ level, index, userProgress, isLocked }: Prop
             {level.icon || '📚'}
           </div>
           {isLocked ? (
-            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-              <HiLockClosed className="w-4 h-4 text-gray-400" />
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+              <HiLockClosed className="w-4 h-4 text-white/40" />
             </div>
           ) : pct === 100 ? (
-            <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
-              <HiCheck className="w-4 h-4 text-green-600" />
+            <div className="w-8 h-8 rounded-full bg-green-500/15 flex items-center justify-center">
+              <HiCheck className="w-4 h-4 text-green-400" />
             </div>
           ) : (
-            <span className="text-xs font-bold text-gray-400 dark:text-gray-500">Level {index + 1}</span>
+            <span className="text-xs font-bold text-white/40">Level {index + 1}</span>
           )}
         </div>
 
         <h3 className="text-lg font-bold mb-1.5">{localizedName}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4 line-clamp-2">
+        <p className="text-sm text-white/60 leading-relaxed mb-4 line-clamp-2">
           {localizedDesc}
         </p>
 
         {total > 0 && (
           <div className="mb-3">
-            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1.5">
+            <div className="flex items-center justify-between text-xs text-white/60 mb-1.5">
               <span>{completed}/{total} {t('levels.lessons')}</span>
               <span>{pct}%</span>
             </div>
-            <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
                   width: `${pct}%`,
-                  backgroundColor: level.color || '#059669',
+                  backgroundColor: level.color || '#0284C7',
                 }}
               />
             </div>
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
-          <span className="text-xs text-gray-400 dark:text-gray-500">
+        <div className="flex items-center justify-between pt-2 border-t border-white/10">
+          <span className="text-xs text-white/40">
             {total} {t('levels.lessons')}
           </span>
           {!isLocked && (
-            <span className="flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400 group-hover:gap-2 transition-all">
+            <span className="flex items-center gap-1 text-sm font-medium text-green-400 group-hover:gap-2 transition-all">
               {pct > 0 ? t('levels.continue_level') : t('levels.start_level')}
               <HiArrowRight className="w-4 h-4" />
             </span>

@@ -20,22 +20,22 @@ export default function TeacherCard({ teacher }: Props) {
   const lessonCount = teacher._count?.lessons ?? 0;
 
   return (
-    <Link to={`/teachers/${teacher.slug}`} className="group block rounded-2xl bg-dark-800/50 border border-white/5 p-5 hover:border-emerald-500/20 hover:bg-dark-800/70 transition-all">
+    <Link to={`/teachers/${teacher.slug}`} className="group block rounded-2xl bg-dark-800/50 border border-white/5 p-5 hover:border-icc-500/20 hover:bg-dark-800/70 transition-all">
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-white/5">
+        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gradient-to-br from-icc-500/10 to-icc-600/10 border border-white/5">
           {teacher.image ? (
             <img src={teacher.image} alt={teacher.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <HiPlay className="w-7 h-7 text-emerald-400" />
+              <HiPlay className="w-7 h-7 text-icc-400" />
             </div>
           )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-semibold text-sm text-white group-hover:text-emerald-400 transition-colors truncate">{name}</h3>
+            <h3 className="font-semibold text-sm text-white group-hover:text-icc-400 transition-colors truncate">{name}</h3>
             {teacher.verified && (
-              <BadgeCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <BadgeCheck className="w-4 h-4 text-icc-400 shrink-0" />
             )}
             {teacher.telegram && (
               <FaTelegramPlane className="w-3.5 h-3.5 text-[#0088cc] shrink-0" />

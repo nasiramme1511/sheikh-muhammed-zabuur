@@ -12,7 +12,7 @@ import {
 import { FaTelegramPlane } from 'react-icons/fa';
 import { dashboard, live, resources, telegram, telegramAccess } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from '../../i18n';
+import { useTranslation, TranslationKey } from '../../i18n';
 import { COLLECTIONS, getCollectionBySlug } from '../../config/collections';
 
 interface DashboardData {
@@ -32,14 +32,15 @@ interface LiveStreamData {
 }
 
 const dhikrList = [
-  { arabic: 'سُبْحَانَ اللَّهِ', transliteration: 'SubhanAllah', meaning: 'Glory be to Allah' },
-  { arabic: 'الْحَمْدُ لِلَّهِ', transliteration: 'Alhamdulillah', meaning: 'All praise be to Allah' },
-  { arabic: 'اللَّهُ أَكْبَرُ', transliteration: 'Allahu Akbar', meaning: 'Allah is the Greatest' },
-  { arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ', transliteration: 'La ilaha illallah', meaning: 'There is no god but Allah' },
-  { arabic: 'أَسْتَغْفِرُ اللَّهَ', transliteration: 'Astaghfirullah', meaning: 'I seek forgiveness from Allah' },
+  { arabic: 'سُبْحَانَ اللَّهِ', transliteration: 'SubhanAllah', meaningKey: 'dashboard.dhikr_glory' },
+  { arabic: 'الْحَمْدُ لِلَّهِ', transliteration: 'Alhamdulillah', meaningKey: 'dashboard.dhikr_praise' },
+  { arabic: 'اللَّهُ أَكْبَرُ', transliteration: 'Allahu Akbar', meaningKey: 'dashboard.dhikr_greatest' },
+  { arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ', transliteration: 'La ilaha illallah', meaningKey: 'dashboard.dhikr_nogod' },
+  { arabic: 'أَسْتَغْفِرُ اللَّهَ', transliteration: 'Astaghfirullah', meaningKey: 'dashboard.dhikr_forgive' },
 ];
 
 function DhikrCard() {
+  const { t } = useTranslation();
   const [idx, setIdx] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setIdx(i => (i + 1) % dhikrList.length), 8000);
@@ -49,19 +50,19 @@ function DhikrCard() {
   return (
     <div className="glass-premium p-5 relative overflow-hidden">
       <div className="flex items-center gap-2 mb-3">
-        <Heart className="w-4 h-5 text-emerald-400" />
-        <h3 className="text-sm font-semibold text-white">Daily Reminder</h3>
+        <Heart className="w-4 h-5 text-icc-400" />
+        <h3 className="text-sm font-semibold text-white">{t('dashboard.daily_reminder')}</h3>
       </div>
       <AnimatePresence mode="wait">
         <motion.div key={idx} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4 }} className="text-center py-2">
           <p className="text-2xl font-arabic text-white mb-1 leading-relaxed">{dhikr.arabic}</p>
-          <p className="text-sm text-emerald-400 font-medium italic">{dhikr.transliteration}</p>
-          <p className="text-xs text-white/40 mt-1">{dhikr.meaning}</p>
+          <p className="text-sm text-icc-400 font-medium italic">{dhikr.transliteration}</p>
+          <p className="text-xs text-white/40 mt-1">{t(dhikr.meaningKey as TranslationKey)}</p>
         </motion.div>
       </AnimatePresence>
       <div className="flex justify-center gap-1 mt-3">
         {dhikrList.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)} className={`w-1.5 h-1.5 rounded-full transition-all ${i === idx ? 'bg-emerald-500 w-4' : 'bg-white/20'}`} />
+          <button key={i} onClick={() => setIdx(i)} className={`w-1.5 h-1.5 rounded-full transition-all ${i === idx ? 'bg-icc-500 w-4' : 'bg-white/20'}`} />
         ))}
       </div>
     </div>
@@ -80,7 +81,7 @@ function CollectionProgress({ slug }: { slug: string }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-white truncate">{col?.name || slug}</p>
         <div className="mt-1 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-          <motion.div initial={{ width: 0 }} animate={{ width: data?.total ? `${Math.min(100, data.total * 10)}%` : '0%' }} transition={{ duration: 1 }} className="h-full rounded-full bg-emerald-500" />
+          <motion.div initial={{ width: 0 }} animate={{ width: data?.total ? `${Math.min(100, data.total * 10)}%` : '0%' }} transition={{ duration: 1 }} className="h-full rounded-full bg-icc-500" />
         </div>
       </div>
       <ChevronRight className="w-4 h-4 text-white/30" />
@@ -134,7 +135,7 @@ export default function DashboardHome() {
   }
 
   const stats = data?.stats || {};
-  const memberDate = data?.memberSince ? new Date(data.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 'N/A';
+  const memberDate = data?.memberSince ? new Date(data.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : t('dashboard.member_since_fallback');
   const totalEngagement = (stats.audioListened || 0) + (stats.videosWatched || 0) + (stats.pdfsDownloaded || 0);
 
   const collectionSlugs = ['riyadhus-salihin', 'tafsir-al-quran', 'bulugh-al-maram', 'usul-ath-thalatha', 'tajweed', 'fiqh', 'kitab-at-tawheed', 'hadith', 'seerah-nabawiyyah', 'arabic-grammar'];
@@ -144,18 +145,18 @@ export default function DashboardHome() {
 
       {/* Welcome Banner */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-premium p-6 md:p-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
-        <p className="text-lg text-emerald-400 font-arabic mb-2">السلام عليكم ورحمة الله وبركاته</p>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-icc-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <p className="text-lg text-icc-400 font-arabic mb-2">السلام عليكم ورحمة الله وبركاته</p>
         <h1 className="text-2xl md:text-3xl font-bold text-white">
-          Assalamu Alaikum, <span className="text-emerald-400">{user?.name || 'Student'}</span>
+          {t('dashboard.welcome_prefix')}<span className="text-icc-400">{user?.name || t('dashboard.role_student')}</span>
         </h1>
         <p className="text-white/50 text-sm mt-1 mb-5">{t('dashboard.welcome_subtitle')}</p>
         <div className="flex flex-wrap gap-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
-            <Calendar className="w-3.5 h-3.5 text-emerald-400" /> {t('dashboard.member_since', { date: memberDate })}
+            <Calendar className="w-3.5 h-3.5 text-icc-400" /> {t('dashboard.member_since', { date: memberDate })}
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
-            <Activity className="w-3.5 h-3.5 text-blue-400" /> {totalEngagement} lectures
+            <Activity className="w-3.5 h-3.5 text-blue-400" /> {totalEngagement} {t('dashboard.lectures_suffix')}
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
             <Flame className="w-3.5 h-3.5 text-amber-400" /> {t('dashboard.days_streak', { count: stats.streak || 0 })}
@@ -174,7 +175,7 @@ export default function DashboardHome() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Headphones, label: t('dashboard.stat_audio_progress'), primary: `${stats.audioListened || 0}`, secondary: `${stats.audioInProgress || 0} ${t('dashboard.in_progress')}`, gradient: 'from-emerald-500/20 to-emerald-600/10', iconBg: 'bg-emerald-500' },
+          { icon: Headphones, label: t('dashboard.stat_audio_progress'), primary: `${stats.audioListened || 0}`, secondary: `${stats.audioInProgress || 0} ${t('dashboard.in_progress')}`, gradient: 'from-icc-500/20 to-icc-600/10', iconBg: 'bg-icc-500' },
           { icon: Video, label: t('dashboard.stat_videos_count'), primary: `${stats.videosWatched || 0}`, gradient: 'from-blue-500/20 to-blue-600/10', iconBg: 'bg-blue-500' },
           { icon: FileText, label: t('dashboard.stat_pdfs_count'), primary: `${stats.pdfsDownloaded || 0}`, gradient: 'from-purple-500/20 to-purple-600/10', iconBg: 'bg-purple-500' },
           { icon: Bookmark, label: t('dashboard.saved_resources'), primary: `${stats.bookmarksSaved || 0}`, gradient: 'from-amber-500/20 to-amber-600/10', iconBg: 'bg-amber-500' },
@@ -189,7 +190,7 @@ export default function DashboardHome() {
               <div>
                 <p className="text-2xl font-bold text-white">{card.primary}</p>
                 <p className="text-xs text-white/50 mt-0.5">{card.label}</p>
-                {card.secondary && <p className="text-xs text-emerald-400 mt-0.5">{card.secondary}</p>}
+                {card.secondary && <p className="text-xs text-icc-400 mt-0.5">{card.secondary}</p>}
               </div>
             </div>
           </motion.div>
@@ -200,7 +201,7 @@ export default function DashboardHome() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass-premium p-5">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Play className="w-4 h-4 text-emerald-400" /> {t('dashboard.continue_learning')}
+            <Play className="w-4 h-4 text-icc-400" /> {t('dashboard.continue_learning')}
           </h2>
           {(!data?.continueLearning || data.continueLearning.length === 0) ? (
             <p className="text-sm text-white/40 py-4 text-center">{t('dashboard.no_in_progress')}</p>
@@ -212,7 +213,7 @@ export default function DashboardHome() {
                 const hasVideo = !!lesson.videoUrl;
                 const hasPdf = !!lesson.pdfUrl;
                 const Icon = hasAudio ? Headphones : hasVideo ? Video : FileText;
-                const color = hasAudio ? 'text-emerald-400 bg-emerald-500/10' : hasVideo ? 'text-blue-400 bg-blue-500/10' : 'text-purple-400 bg-purple-500/10';
+                const color = hasAudio ? 'text-icc-400 bg-icc-500/10' : hasVideo ? 'text-blue-400 bg-blue-500/10' : 'text-purple-400 bg-purple-500/10';
                 const progress = item.completed ? 100 : Math.min(95, Math.floor(Math.random() * 60 + 20));
                 return (
                   <Link key={i} to={`/lessons/${lesson.slug || lesson.id}`} className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group">
@@ -221,11 +222,11 @@ export default function DashboardHome() {
                       <p className="text-sm font-medium text-white truncate">{lesson.title}</p>
                       <p className="text-xs text-white/40 mt-0.5">{t('dashboard.last_opened')}: {new Date(item.updatedAt || lesson.createdAt).toLocaleDateString()}</p>
                       <div className="mt-1.5 h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style={{ width: `${progress}%` }} />
+                        <div className="h-full bg-gradient-to-r from-icc-500 to-icc-400 rounded-full" style={{ width: `${progress}%` }} />
                       </div>
                     </div>
                     <span className="text-xs text-white/40 shrink-0">{progress}%</span>
-                    <span className="text-xs font-medium text-emerald-400 shrink-0">{t('dashboard.type_continue')}</span>
+                    <span className="text-xs font-medium text-icc-400 shrink-0">{t('dashboard.type_continue')}</span>
                   </Link>
                 );
               })}
@@ -257,7 +258,7 @@ export default function DashboardHome() {
       <div className="glass-premium p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider flex items-center gap-2">
-            <Library className="w-4 h-5 text-emerald-400" /> {t('dashboard.my_collections')}
+            <Library className="w-4 h-5 text-icc-400" /> {t('dashboard.my_collections')}
           </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -271,12 +272,12 @@ export default function DashboardHome() {
         <div className="lg:col-span-2 glass-premium p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider flex items-center gap-2">
-              <History className="w-4 h-5 text-emerald-400" /> {t('dashboard.learning_history')}
+              <History className="w-4 h-5 text-icc-400" /> {t('dashboard.learning_history')}
             </h2>
           </div>
           <div className="space-y-1 mb-4">
             <Link to="/dashboard/audio-history" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all">
-              <Headphones className="w-4 h-5 text-emerald-400" />
+              <Headphones className="w-4 h-5 text-icc-400" />
               <span className="text-sm text-white/80">{t('dashboard.audio_history')}</span>
               <span className="ml-auto text-xs text-white/40">{stats.audioListened || 0} {t('dashboard.completed')}</span>
               <ChevronRight className="w-4 h-4 text-white/30" />
@@ -315,7 +316,7 @@ export default function DashboardHome() {
               <span className="ml-auto text-xs text-white/40">{stats.bookmarksSaved || 0}</span>
             </Link>
             {(stats.bookmarksSaved || 0) > 0 ? (
-              <Link to="/dashboard/bookmarks" className="text-xs text-emerald-400 hover:underline">{t('dashboard.view_all')}</Link>
+              <Link to="/dashboard/bookmarks" className="text-xs text-icc-400 hover:underline">{t('dashboard.view_all')}</Link>
             ) : (
               <p className="text-xs text-white/40">{t('dashboard.no_bookmarks_yet')}</p>
             )}
@@ -339,11 +340,11 @@ export default function DashboardHome() {
           {/* Recommended */}
           <div className="glass-premium p-5">
             <h2 className="text-sm font-semibold text-white/70 flex items-center gap-2 mb-3">
-              <Compass className="w-4 h-5 text-emerald-400" /> {t('dashboard.recommended_content')}
+              <Compass className="w-4 h-5 text-icc-400" /> {t('dashboard.recommended_content')}
             </h2>
             {recommended.length > 0 ? recommended.slice(0, 3).map((r: any, i: number) => (
               <Link key={i} to={`/lessons/${r.slug || r.id}`} className="flex items-center gap-2 py-2 border-b border-white/5 last:border-0">
-                <Play className="w-3 h-4 text-emerald-400 shrink-0" />
+                <Play className="w-3 h-4 text-icc-400 shrink-0" />
                 <span className="text-xs text-white/60 truncate">{r.title}</span>
               </Link>
             )) : <p className="text-xs text-white/40">{t('dashboard.no_recent_lessons')}</p>}
@@ -368,11 +369,11 @@ export default function DashboardHome() {
           </Link>
         </div>
         {telegramData?.latestName && (
-          <p className="text-xs text-white/40 mt-2 truncate">Latest: {telegramData.latestName}</p>
+          <p className="text-xs text-white/40 mt-2 truncate">{t('dashboard.latest_prefix')}{telegramData.latestName}</p>
         )}
         <div className="mt-3 pt-3 border-t border-white/5">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${telegramData?.subscribed ? 'bg-emerald-500' : 'bg-white/20'}`} />
+            <span className={`w-2 h-2 rounded-full ${telegramData?.subscribed ? 'bg-icc-500' : 'bg-white/20'}`} />
             <span className="text-xs text-white/50">{telegramData?.subscribed ? t('telegram.subscribed') : t('telegram.not_subscribed')}</span>
           </div>
         </div>
@@ -381,16 +382,16 @@ export default function DashboardHome() {
       {/* Profile Summary */}
       <div className="glass-premium p-5">
         <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider flex items-center gap-2 mb-4">
-          <User className="w-4 h-5 text-emerald-400" /> {t('dashboard.profile_summary')}
+          <User className="w-4 h-5 text-icc-400" /> {t('dashboard.profile_summary')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div><p className="text-xs text-white/40">{t('admin.name')}</p><p className="text-sm font-medium text-white">{user?.name}</p></div>
           <div><p className="text-xs text-white/40">{t('admin.email')}</p><p className="text-sm font-medium text-white">{user?.email}</p></div>
-          <div><p className="text-xs text-white/40">{t('settings.language')}</p><p className="text-sm font-medium text-white">{(user as any)?.language || 'English'}</p></div>
+          <div><p className="text-xs text-white/40">{t('settings.language')}</p><p className="text-sm font-medium text-white">{(user as any)?.language || t('dashboard.language_fallback')}</p></div>
           <div><p className="text-xs text-white/40">{t('dashboard.member_since', { date: '' }).replace(', ' + memberDate, '')}</p><p className="text-sm font-medium text-white">{memberDate}</p></div>
         </div>
         <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-white/5">
-          <Link to="/dashboard/profile" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium transition-all">
+          <Link to="/dashboard/profile" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-xs font-medium transition-all">
             <User className="w-3.5 h-3.5" /> {t('dashboard.edit_profile')}
           </Link>
           <Link to="/dashboard/downloads" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 text-xs font-medium border border-white/10 transition-all">

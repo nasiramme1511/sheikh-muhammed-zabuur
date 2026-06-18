@@ -48,7 +48,7 @@ export default function HomepageManager() {
     featuredSortOrder: 'recent',
     statisticsEnabled: true,
     counterAnimationSpeed: 2000,
-    counterColor: '#10b981',
+    counterColor: '#0EA5E9',
     categoriesEnabled: true,
     categoriesGridColumns: 3,
     categoriesMaxItems: 12,
@@ -134,7 +134,7 @@ export default function HomepageManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -144,7 +144,7 @@ export default function HomepageManager() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Layout className="w-6 h-6 text-emerald-500" />
+            <Layout className="w-6 h-6 text-icc-500" />
             Homepage Manager
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -154,7 +154,7 @@ export default function HomepageManager() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-icc-500/20"
         >
           {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {saving ? 'Saving...' : 'Save All Settings'}
@@ -167,7 +167,7 @@ export default function HomepageManager() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" /> Settings saved successfully!
         </div>
       )}
@@ -192,7 +192,7 @@ export default function HomepageManager() {
                 </div>
               )}
             </div>
-            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-colors">
               <Upload className="w-4 h-4" />
               {uploading ? 'Uploading...' : 'Upload Image'}
               <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={uploading} className="hidden" />
@@ -280,7 +280,7 @@ function SectionCard({ icon: Icon, title, subtitle, children }: { icon: any; tit
     <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+          <div className="p-2 rounded-lg bg-icc-500/10 text-icc-400">
             <Icon className="w-4 h-4" />
           </div>
           <div>
@@ -304,7 +304,7 @@ function ToggleRow({ label, desc, checked, onChange }: { label: string; desc?: s
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}
       >
         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${checked ? 'translate-x-[18px]' : 'translate-x-1'}`} />
       </button>
@@ -320,12 +320,12 @@ function RangeRow({ label, value, min, max, step, format, onChange }: {
     <div>
       <div className="flex justify-between items-center mb-1.5">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
-        <span className="text-xs font-mono font-bold text-emerald-500">{format(value)}</span>
+        <span className="text-xs font-mono font-bold text-icc-500">{format(value)}</span>
       </div>
       <input
         type="range" min={min} max={max} step={step} value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-icc-500"
       />
     </div>
   );
@@ -338,7 +338,7 @@ function TextField({ label, value, onChange }: { label: string; value: string; o
       <input
         type="text" value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
       />
     </div>
   );
@@ -351,7 +351,7 @@ function SelectRow({ label, value, options, onChange }: { label: string; value: 
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
       >
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>

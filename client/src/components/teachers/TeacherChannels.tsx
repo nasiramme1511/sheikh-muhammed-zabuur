@@ -40,8 +40,8 @@ export default function TeacherChannels({ channels }: Props) {
                 <div className="w-10 h-10 rounded-xl bg-[#0088cc]/10 border border-[#0088cc]/20 flex items-center justify-center">
                   <FaTelegramPlane className="w-5 h-5 text-[#0088cc]" />
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-icc-500/10 text-icc-400 border border-icc-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-icc-400 animate-pulse" />
                   {t('telegram.active')}
                 </span>
               </div>

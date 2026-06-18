@@ -180,7 +180,7 @@ export default function MediaLibrary() {
               Delete ({selected.size})
             </button>
           )}
-          <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             <Upload className="w-4 h-4" />
             Upload
           </button>
@@ -206,7 +206,7 @@ export default function MediaLibrary() {
             placeholder="Search by title, filename, or category..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
           />
         </div>
         <div className="flex gap-2">
@@ -216,7 +216,7 @@ export default function MediaLibrary() {
               onClick={() => { setTypeFilter(type); setPage(1); }}
               className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                 typeFilter === type
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  ? 'bg-icc-500/10 text-icc-400 border border-icc-500/20'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-transparent hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
@@ -224,10 +224,10 @@ export default function MediaLibrary() {
             </button>
           ))}
           <div className="flex border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-            <button onClick={() => setViewMode('grid')} className={`p-2.5 transition-all ${viewMode === 'grid' ? 'bg-emerald-500/10 text-emerald-400' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+            <button onClick={() => setViewMode('grid')} className={`p-2.5 transition-all ${viewMode === 'grid' ? 'bg-icc-500/10 text-icc-400' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
               <Grid className="w-4 h-4" />
             </button>
-            <button onClick={() => setViewMode('list')} className={`p-2.5 transition-all ${viewMode === 'list' ? 'bg-emerald-500/10 text-emerald-400' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+            <button onClick={() => setViewMode('list')} className={`p-2.5 transition-all ${viewMode === 'list' ? 'bg-icc-500/10 text-icc-400' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
               <List className="w-4 h-4" />
             </button>
           </div>
@@ -249,7 +249,7 @@ export default function MediaLibrary() {
             {paged.map((item) => (
               <div
                 key={item.id}
-                className={`glass-card rounded-xl overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/5 ${selected.has(item.id) ? 'ring-2 ring-emerald-500' : ''}`}
+                className={`glass-card rounded-xl overflow-hidden group cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-icc-500/5 ${selected.has(item.id) ? 'ring-2 ring-icc-500' : ''}`}
                 onClick={() => toggleSelect(item.id)}
               >
                 {/* Preview */}
@@ -284,7 +284,7 @@ export default function MediaLibrary() {
                   </span>
                   {/* Selection checkbox */}
                   <div className={`absolute top-2 right-2 w-5 h-5 rounded border-2 transition-all ${
-                    selected.has(item.id) ? 'bg-emerald-500 border-emerald-500' : 'border-white/40 group-hover:border-white/80'
+                    selected.has(item.id) ? 'bg-icc-500 border-icc-500' : 'border-white/40 group-hover:border-white/80'
                   }`}>
                     {selected.has(item.id) && (
                       <svg className="w-full h-full text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
@@ -320,7 +320,7 @@ export default function MediaLibrary() {
               </thead>
               <tbody>
                 {paged.map((item) => (
-                  <tr key={item.id} className={`border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${selected.has(item.id) ? 'bg-emerald-500/5' : ''}`}>
+                  <tr key={item.id} className={`border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors ${selected.has(item.id) ? 'bg-icc-500/5' : ''}`}>
                     <td className="px-4 py-3">
                       <input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} className="rounded border-gray-600" />
                     </td>
@@ -336,7 +336,7 @@ export default function MediaLibrary() {
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{formatDate(item.createdAt)}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => setPreviewItem(item)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-emerald-400 transition-all">
+                        <button onClick={() => setPreviewItem(item)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-icc-400 transition-all">
                           <Eye className="w-4 h-4" />
                         </button>
                         <button onClick={() => { if (confirm('Delete this item?')) { admin.resources.delete(item.url).then(fetchItems).catch(() => {}); } }} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-400 transition-all">
@@ -363,7 +363,7 @@ export default function MediaLibrary() {
               <ChevronLeft className="w-4 h-4" />
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <button key={p} onClick={() => setPage(p)} className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${p === page ? 'bg-emerald-500 text-white' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+              <button key={p} onClick={() => setPage(p)} className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${p === page ? 'bg-icc-500 text-white' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                 {p}
               </button>
             ))}

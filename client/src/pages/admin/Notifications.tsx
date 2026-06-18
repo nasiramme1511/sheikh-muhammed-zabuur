@@ -230,7 +230,7 @@ export default function AdminNotifications() {
                     onClick={() => setAudience('ALL')}
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
                       audience === 'ALL'
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                        ? 'border-icc-500 bg-icc-50 dark:bg-icc-900/20 text-icc-700 dark:text-icc-400'
                         : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >
@@ -241,7 +241,7 @@ export default function AdminNotifications() {
                     onClick={() => setAudience('SPECIFIC')}
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
                       audience === 'SPECIFIC'
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                        ? 'border-icc-500 bg-icc-50 dark:bg-icc-900/20 text-icc-700 dark:text-icc-400'
                         : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >
@@ -257,7 +257,7 @@ export default function AdminNotifications() {
                     onClick={() => setType('SITE')}
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
                       type === 'SITE'
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                        ? 'border-icc-500 bg-icc-50 dark:bg-icc-900/20 text-icc-700 dark:text-icc-400'
                         : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >
@@ -268,7 +268,7 @@ export default function AdminNotifications() {
                     onClick={() => setType('EMAIL')}
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
                       type === 'EMAIL'
-                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                        ? 'border-icc-500 bg-icc-50 dark:bg-icc-900/20 text-icc-700 dark:text-icc-400'
                         : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }`}
                   >

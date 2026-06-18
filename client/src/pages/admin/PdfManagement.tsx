@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
   FileText, Upload, RefreshCw, Search, Star, Edit3, Trash2, Eye, Download,
-  X, AlertCircle, Save, BookOpen, HardDrive,
+  X, AlertCircle, Save, BookOpen, HardDrive, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { admin } from '../../lib/api';
 import { COLLECTIONS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface PdfResource {
   id: number;
@@ -50,9 +51,11 @@ function totalSize(files: PdfResource[]): string {
 }
 
 export default function PdfManagement() {
+  const { isMobile } = useResponsive();
   const [resources, setResources] = useState<PdfResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<PdfResource | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -228,8 +231,8 @@ export default function PdfManagement() {
           </div>
         </div>
         <div className="glass-card-dark rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <Download className="w-6 h-6 text-emerald-400" />
+          <div className="p-3 rounded-xl bg-icc-500/10 border border-icc-500/20">
+            <Download className="w-6 h-6 text-icc-400" />
           </div>
           <div>
             <p className="text-sm text-gray-400">Total Downloads</p>
@@ -249,13 +252,13 @@ export default function PdfManagement() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search PDFs by title, filename, or category..."
-          className="input-field pl-10"
+          className="input-field ps-10"
         />
       </div>
 
@@ -270,19 +273,115 @@ export default function PdfManagement() {
             <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>No PDF resources found</p>
           </div>
+        ) : isMobile ? (
+          <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+            {filtered.map((file, i) => {
+              const isExpanded = expandedCards.has(file.id || i);
+              const toggleExpand = () => {
+                const next = new Set(expandedCards);
+                const key = file.id || i;
+                if (next.has(key)) next.delete(key); else next.add(key);
+                setExpandedCards(next);
+              };
+              return (
+                <div key={file.id || file.url + i} className="p-3 sm:p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg border border-red-500/20 bg-red-500/10 shrink-0">
+                      <FileText className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-gray-900 dark:text-white break-words">
+                        {file.title || file.name}
+                      </div>
+                      {file.title && file.name !== file.title && (
+                        <div className="text-xs text-gray-400 truncate mt-0.5">{file.name}</div>
+                      )}
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
+                          {file.category || '-'}
+                        </span>
+                        <span className="text-xs text-gray-400 uppercase">{file.language || '-'}</span>
+                        <span className="text-xs text-gray-400">{humanSize(file.size)}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => toggleFeatured(file)}
+                        className={`p-1.5 rounded-lg transition-all ${
+                          file.featured
+                            ? 'text-amber-400 bg-amber-500/10'
+                            : 'text-gray-400 hover:text-amber-400'
+                        }`}
+                        title={file.featured ? 'Unfeature' : 'Feature'}
+                      >
+                        <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
+                      </button>
+                      <button onClick={toggleExpand} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all" title="More actions">
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/50 space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Downloads</span>
+                        <span className="text-gray-900 dark:text-gray-100">{file.downloads?.toLocaleString() || 0}</span>
+                      </div>
+                      {file.pages && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500 dark:text-gray-400">Pages</span>
+                          <span className="text-gray-900 dark:text-gray-100">{file.pages}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 pt-2">
+                        <button
+                          onClick={() => setEditTarget(file)}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-amber-500 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all min-h-[44px]"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handlePreview(file)}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-blue-500 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all min-h-[44px]"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </button>
+                        <a
+                          href={file.url}
+                          download={file.name}
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-icc-500 bg-icc-500/10 border border-icc-500/20 hover:bg-icc-500/20 transition-all min-h-[44px]"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          Download
+                        </a>
+                        <button
+                          onClick={() => setDeleteTarget(file)}
+                          className="flex items-center justify-center px-3 py-2 rounded-xl text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all min-h-[44px]"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 dark:bg-dark-900/50 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Title</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Language</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Pages</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Downloads</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Featured</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Actions</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Title</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Language</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Pages</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Downloads</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Size</th>
+                  <th className="text-start px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Featured</th>
+                  <th className="text-end px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -304,7 +403,7 @@ export default function PdfManagement() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
                         {file.category || '-'}
                       </span>
                     </td>
@@ -344,7 +443,7 @@ export default function PdfManagement() {
                         <a
                           href={file.url}
                           download={file.name}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all"
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all"
                           title="Download"
                         >
                           <Download className="w-4 h-4" />
@@ -463,7 +562,7 @@ export default function PdfManagement() {
                   <select
                     value={uploadCollection}
                     onChange={(e) => setUploadCollection(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
                   >
                     <option value="">None (General)</option>
                     {COLLECTIONS.map((c) => (
@@ -490,7 +589,7 @@ export default function PdfManagement() {
                     type="button"
                     onClick={() => setUploadFeatured(!uploadFeatured)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      uploadFeatured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -589,7 +688,7 @@ export default function PdfManagement() {
                     type="button"
                     onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      editTarget.featured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${

@@ -43,7 +43,7 @@ export function getCollectionBySlug(slug: string): CollectionDef | undefined {
 }
 
 export const COLLECTION_COLORS: Record<string, string> = {
-  'riyadhus-salihin': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'riyadhus-salihin': 'bg-icc-500/10 text-icc-400 border-icc-500/20',
   'bulugh-al-maram': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   'umdat-al-ahkam': 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
   'tafsir-ibn-kathir': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
@@ -56,7 +56,7 @@ export const COLLECTION_COLORS: Record<string, string> = {
   'arabic-grammar': 'bg-red-500/10 text-red-400 border-red-500/20',
   'seerah-nabawiyyah': 'bg-green-500/10 text-green-400 border-green-500/20',
   'fiqh': 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-  'ramadan': 'bg-emerald-600/10 text-emerald-300 border-emerald-600/20',
+  'ramadan': 'bg-icc-600/10 text-icc-300 border-icc-600/20',
   'khutbah': 'bg-amber-600/10 text-amber-300 border-amber-600/20',
   'bayquniyyah': 'bg-rose-500/10 text-rose-400 border-rose-500/20',
   'tajreed': 'bg-lime-500/10 text-lime-400 border-lime-500/20',

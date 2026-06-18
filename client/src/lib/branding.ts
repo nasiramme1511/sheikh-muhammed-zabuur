@@ -21,9 +21,9 @@ export const BRAND = {
     specialties: ['Aqeedah', 'Tafsir', 'Hadith', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed'],
   },
   colors: {
-    primary: '#10B981',
-    primaryDark: '#047857',
-    primaryLight: '#34D399',
+    primary: '#0EA5E9',
+    primaryDark: '#0369A1',
+    primaryLight: '#38BDF8',
     gold: '#F59E0B',
     goldDark: '#D97706',
     goldLight: '#FCD34D',

@@ -60,22 +60,22 @@ export default function RelatedTeachers({ currentTeacherId }: Props) {
             <Link
               key={teacher.id}
               to={`/teachers/${teacher.slug}`}
-              className="shrink-0 w-44 rounded-2xl bg-dark-800/50 border border-white/5 p-4 hover:border-emerald-500/20 hover:bg-dark-800/70 transition-all group"
+              className="shrink-0 w-44 rounded-2xl bg-dark-800/50 border border-white/5 p-4 hover:border-icc-500/20 hover:bg-dark-800/70 transition-all group"
             >
-              <div className="w-16 h-16 rounded-xl overflow-hidden mx-auto mb-3 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-white/5">
+              <div className="w-16 h-16 rounded-xl overflow-hidden mx-auto mb-3 bg-gradient-to-br from-icc-500/10 to-icc-600/10 border border-white/5">
                 {teacher.image ? (
                   <img src={teacher.image} alt={name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <HiPlay className="w-6 h-6 text-emerald-400" />
+                    <HiPlay className="w-6 h-6 text-icc-400" />
                   </div>
                 )}
               </div>
-              <h3 className="text-sm font-semibold text-white text-center group-hover:text-emerald-400 transition-colors line-clamp-1">{name}</h3>
+              <h3 className="text-sm font-semibold text-white text-center group-hover:text-icc-400 transition-colors line-clamp-1">{name}</h3>
               <p className="text-xs text-white/40 text-center mt-1">{lessonCount} {t('teacher_detail_page.lessons')}</p>
               {teacher.verified && (
                 <div className="flex justify-center mt-1">
-                  <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <BadgeCheck className="w-3.5 h-3.5 text-icc-400" />
                 </div>
               )}
             </Link>

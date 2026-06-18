@@ -29,7 +29,7 @@ export default function CategoryCard({ category }: Props) {
           {localizedName}
         </h3>
         {showEnglishFallback && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{category.name}</p>
+          <p className="text-sm text-white/50 truncate">{category.name}</p>
         )}
         <div className="flex items-center gap-3 mt-1">
           <span className="text-xs text-gray-400">{category._count?.lessons || 0} {t('admin.lessons_suffix')}</span>

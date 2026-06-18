@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../i18n';
 import {
   Search, FileText, Download, Eye, X, Sparkles, Maximize2, Filter, BookOpen,
   Grid3X3, List, ChevronLeft, ChevronRight, Book, Star, Clock
@@ -11,17 +12,20 @@ import { useSEO } from '../seo/metadata';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
 
+const ALL_PDFS = 'All PDFs';
+
 const CATEGORIES = [
-  'All PDFs',
+  ALL_PDFS,
   'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
   'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
   'Questions & Answers', 'General',
 ];
 
 export default function PdfLibrary() {
+  const { t } = useTranslation();
   useSEO({
-    title: 'PDF Library',
-    description: 'Browse and download authentic Islamic books and PDFs on Aqeedah, Tafsir, Hadith, Fiqh, Seerah and more by Sheikh Mohammed Zabuur. Free Islamic PDF library.',
+    title: t('pdf_library.title'),
+    description: t('pdf_library.subtitle'),
     canonical: '/pdfs',
     keywords: 'Islamic PDF books, download Islamic books, Aqeedah PDF, Tafsir PDF, Hadith books, Fiqh PDF, Islamic library, Sheikh Mohammed Zabuur PDF, free Islamic ebooks',
   });
@@ -29,7 +33,7 @@ export default function PdfLibrary() {
   const [pdfs, setPdfs] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All PDFs');
+  const [selectedCategory, setSelectedCategory] = useState(ALL_PDFS);
   const [sortBy, setSortBy] = useState<'latest' | 'downloads' | 'views'>('latest');
   const [previewPdf, setPreviewPdf] = useState<Resource | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
@@ -119,7 +123,7 @@ export default function PdfLibrary() {
         (pdf.description && pdf.description.toLowerCase().includes(searchQuery.toLowerCase()));
 
       const matchesCategory =
-        selectedCategory === 'All PDFs' ||
+        selectedCategory === ALL_PDFS ||
         pdf.category.toLowerCase() === selectedCategory.toLowerCase();
 
       return matchesSearch && matchesCategory;
@@ -138,14 +142,14 @@ export default function PdfLibrary() {
 
   const getCategoryColor = (cat: string) => {
     const colors: Record<string, string> = {
-      'Aqeedah': 'from-emerald-500/20 to-emerald-600/10',
+      'Aqeedah': 'from-icc-500/20 to-icc-600/10',
       'Hadith': 'from-amber-500/20 to-amber-600/10',
       'Tafsir': 'from-blue-500/20 to-blue-600/10',
       'Fiqh': 'from-purple-500/20 to-purple-600/10',
       'Seerah': 'from-rose-500/20 to-rose-600/10',
       'Tajweed': 'from-cyan-500/20 to-cyan-600/10',
     };
-    return colors[cat] || 'from-emerald-500/20 to-emerald-600/10';
+    return colors[cat] || 'from-icc-500/20 to-icc-600/10';
   };
 
   return (
@@ -156,10 +160,10 @@ export default function PdfLibrary() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            PDF Library
+            {t('pdf_library.badge')}
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: -10 }}
@@ -167,7 +171,7 @@ export default function PdfLibrary() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold mb-3 tracking-tight"
           >
-            Browse Books & PDFs
+            {t('pdf_library.browse_title')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -175,7 +179,7 @@ export default function PdfLibrary() {
             transition={{ delay: 0.2 }}
             className="text-white/60 max-w-2xl mx-auto text-base"
           >
-            Download and preview books, articles, summaries, and classroom notes authored or recommended by Sheikh Mohammed Zabuur.
+            {t('pdf_library.subtitle')}
           </motion.p>
         </div>
 
@@ -183,8 +187,8 @@ export default function PdfLibrary() {
         {Object.keys(collectionStats).length > 0 && (
           <div className="mb-5">
             <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-400" />
-              Browse By Collection
+              <BookOpen className="w-5 h-5 text-icc-400" />
+              {t('pdf_library.browse_collections')}
             </h3>
             <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
               {COLLECTIONS.filter(c => (collectionStats[c.slug] || 0) > 0).map(c => (
@@ -193,7 +197,7 @@ export default function PdfLibrary() {
                   onClick={() => setSelectedCollection(c.slug)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm shrink-0 transition-all border ${
                     selectedCollection === c.slug
-                      ? 'bg-emerald-500 text-white border-emerald-500'
+                      ? 'bg-icc-500 text-white border-icc-500'
                       : `${COLLECTION_COLORS[c.slug] || 'bg-white/5 text-white/60 border-white/10'} hover:brightness-125`
                   }`}
                 >
@@ -212,15 +216,15 @@ export default function PdfLibrary() {
 
         {selectedCollection && (
           <div className="mb-4 flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/5">
-            <span className="text-white/60">Showing only:</span>
-            <span className="font-semibold text-emerald-400">
+            <span className="text-white/60">{t('pdf_library.showing_only')}</span>
+            <span className="font-semibold text-icc-400">
               {getCollectionBySlug(selectedCollection)?.icon} {getCollectionBySlug(selectedCollection)?.name || selectedCollection}
             </span>
             <button
               onClick={handleClearCollection}
               className="ml-auto px-3 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-xs font-medium transition-all"
             >
-              Clear Collection Filter
+              {t('pdf_library.clear_collection')}
             </button>
           </div>
         )}
@@ -231,10 +235,10 @@ export default function PdfLibrary() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/40" />
             <input
               type="text"
-              placeholder="Search PDF books and notes..."
+              placeholder={t('pdf_library.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-icc-500/50 transition-all text-sm"
             />
           </div>
 
@@ -245,10 +249,10 @@ export default function PdfLibrary() {
                   key={s}
                   onClick={() => setSortBy(s)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    sortBy === s ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'
+                    sortBy === s ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'
                   }`}
                 >
-                  {s === 'latest' ? 'Latest' : s === 'downloads' ? 'Top Downloads' : 'Most Viewed'}
+                  {s === 'latest' ? t('pdf_library.sort_latest') : s === 'downloads' ? t('pdf_library.sort_top_downloads') : t('pdf_library.sort_most_viewed')}
                 </button>
               ))}
             </div>
@@ -256,15 +260,15 @@ export default function PdfLibrary() {
             <div className="flex gap-1 bg-white/5 border border-white/5 rounded-xl p-0.5">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
-                title="Grid View"
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title={t('pdf_library.grid_view')}
               >
                 <Grid3X3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
-                title="List View"
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title={t('pdf_library.list_view')}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -292,11 +296,11 @@ export default function PdfLibrary() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-xs font-medium shrink-0 transition-all whitespace-nowrap ${
                     active
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                      ? 'bg-icc-500 text-white shadow-lg shadow-icc-500/20'
                       : 'bg-white/5 text-white/60 hover:text-white border border-white/5 hover:bg-white/10'
                   }`}
                 >
-                  {cat}
+                  {cat === ALL_PDFS ? t('pdf_library.all_pdfs') : cat}
                 </button>
               );
             })}
@@ -332,33 +336,33 @@ export default function PdfLibrary() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-24 bg-white/5 rounded-3xl border border-white/5 backdrop-blur-sm relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-icc-500/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="relative z-10">
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
-                className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/10 flex items-center justify-center"
+                className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-icc-500/10 to-icc-600/10 border border-icc-500/10 flex items-center justify-center"
               >
                 <motion.div animate={{ rotateY: [0, 180, 360] }} transition={{ duration: 6, repeat: Infinity, ease: 'linear' }} style={{ transformStyle: 'preserve-3d' }}>
-                  <FileText className="w-12 h-12 text-emerald-400/60" />
+                  <FileText className="w-12 h-12 text-icc-400/60" />
                 </motion.div>
               </motion.div>
               <h3 className="text-2xl font-bold text-white/80 mb-3">
-                {searchQuery || selectedCategory !== 'All PDFs' ? 'No Books Found' : 'PDF Library Coming Soon'}
+                {searchQuery || selectedCategory !== ALL_PDFS ? t('pdf_library.no_books_found') : t('pdf_library.empty_coming_soon')}
               </h3>
               <p className="text-sm text-white/40 max-w-md mx-auto mb-8 leading-relaxed">
-                {searchQuery || selectedCategory !== 'All PDFs'
-                  ? 'No books match your current search. Try different keywords or browse another category to find Islamic PDFs and books.'
-                  : 'Islamic books and PDFs by Sheikh Mohammed Zabuur are being added. Check back soon for new releases covering various Islamic sciences.'}
+                {searchQuery || selectedCategory !== ALL_PDFS
+                  ? t('pdf_library.empty_search_desc')
+                  : t('pdf_library.empty_coming_soon_desc')}
               </p>
-              {(searchQuery || selectedCategory !== 'All PDFs') && (
+              {(searchQuery || selectedCategory !== ALL_PDFS) && (
                 <motion.div>
                   <button
-                    onClick={() => { setSearchQuery(''); setSelectedCategory('All PDFs'); }}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all text-sm font-medium flex items-center gap-2 mx-auto"
+                    onClick={() => { setSearchQuery(''); setSelectedCategory(ALL_PDFS); }}
+                    className="px-5 py-2.5 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-400 hover:bg-icc-500/20 transition-all text-sm font-medium flex items-center gap-2 mx-auto"
                   >
                     <Filter className="w-4 h-4" />
-                    Clear All Filters
+                    {t('pdf_library.clear_filters')}
                   </button>
                 </motion.div>
               )}
@@ -380,7 +384,7 @@ export default function PdfLibrary() {
 
                 <div>
                   <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 text-emerald-400 border border-emerald-500/20">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-icc-500/10 to-icc-600/10 text-icc-400 border border-icc-500/20">
                       <Book className="w-5 h-5" />
                     </div>
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/5 border border-white/10 text-white/60">
@@ -388,11 +392,11 @@ export default function PdfLibrary() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-icc-400 transition-colors">
                     {pdf.title}
                   </h3>
                   <p className="text-sm text-white/50 mb-4 line-clamp-2">
-                    {pdf.description || 'No summary or notes description is attached to this book.'}
+                    {pdf.description || t('pdf_library.no_description')}
                   </p>
                 </div>
 
@@ -401,7 +405,7 @@ export default function PdfLibrary() {
                     <div className="flex justify-between">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        Uploaded:
+                        {t('pdf_library.uploaded')}
                       </span>
                       <span className="text-white/60">
                         {new Date(pdf.createdAt).toLocaleDateString(undefined, {
@@ -414,7 +418,7 @@ export default function PdfLibrary() {
                     <div className="flex justify-between">
                       <span className="flex items-center gap-1">
                         <Download className="w-3 h-3" />
-                        Downloads:
+                        {t('pdf_library.downloads_label')}
                       </span>
                       <span className="text-white/60">{pdf.downloads}</span>
                     </div>
@@ -425,13 +429,13 @@ export default function PdfLibrary() {
                       onClick={() => handlePreview(pdf)}
                       className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white/90 flex items-center justify-center gap-1.5 transition-all"
                     >
-                      <Eye className="w-4 h-4" /> Preview
+                      <Eye className="w-4 h-4" /> {t('pdf_library.preview')}
                     </button>
                     <button
                       onClick={() => handleDownloadGuarded(pdf.id, pdf.url)}
                       className="flex-1 btn-icc py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-none"
                     >
-                      <Download className="w-4 h-4" /> Download
+                      <Download className="w-4 h-4" /> {t('pdf_library.download')}
                     </button>
                   </div>
                 </div>
@@ -449,13 +453,13 @@ export default function PdfLibrary() {
                 key={pdf.id}
                 className="glass-premium p-4 flex items-center gap-4 group"
               >
-                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-icc-500/10 to-icc-600/10 text-icc-400 border border-icc-500/20 shrink-0">
                   <Book className="w-4 h-4" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">
+                    <h3 className="text-sm font-bold text-white truncate group-hover:text-icc-400 transition-colors">
                       {pdf.title}
                     </h3>
                     <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/5 border border-white/10 text-white/50 shrink-0">
@@ -464,7 +468,7 @@ export default function PdfLibrary() {
                   </div>
                   <div className="flex items-center gap-3 text-xs text-white/40">
                     <span>{new Date(pdf.createdAt).toLocaleDateString()}</span>
-                    <span>{pdf.downloads} downloads</span>
+                    <span>{pdf.downloads} {t('pdf_library.downloads_suffix')}</span>
                   </div>
                 </div>
 
@@ -473,13 +477,13 @@ export default function PdfLibrary() {
                     onClick={() => handlePreview(pdf)}
                     className="px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white/80 flex items-center gap-1.5 transition-all"
                   >
-                    <Eye className="w-3.5 h-3.5" /> Preview
+                    <Eye className="w-3.5 h-3.5" /> {t('pdf_library.preview')}
                   </button>
                   <button
                     onClick={() => handleDownloadGuarded(pdf.id, pdf.url)}
                     className="px-3 py-2 rounded-lg btn-icc text-xs font-semibold flex items-center gap-1.5 transition-all shadow-none"
                   >
-                    <Download className="w-3.5 h-3.5" /> Download
+                    <Download className="w-3.5 h-3.5" /> {t('pdf_library.download')}
                   </button>
                 </div>
               </motion.div>
@@ -511,21 +515,21 @@ export default function PdfLibrary() {
             >
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-surface-800 shrink-0">
                 <div className="flex items-center gap-2 min-w-0">
-                  <FileText className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
+                  <FileText className="w-4.5 h-4.5 text-icc-400 shrink-0" />
                   <span className="text-sm font-semibold text-white truncate max-w-md">{previewPdf.title}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDownloadGuarded(previewPdf.id, previewPdf.url)}
-                    className="w-8 h-8 rounded-lg bg-white/5 hover:bg-emerald-500/20 border border-white/5 flex items-center justify-center transition-all"
-                    title="Download Book"
+                    className="w-8 h-8 rounded-lg bg-white/5 hover:bg-icc-500/20 border border-white/5 flex items-center justify-center transition-all"
+                    title={t('pdf_library.download_book')}
                   >
                     <Download className="w-4 h-4 text-white/70" />
                   </button>
                   <button
                     onClick={() => setFullscreen(!fullscreen)}
                     className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center transition-all"
-                    title="Fullscreen"
+                    title={t('pdf_library.fullscreen')}
                   >
                     <Maximize2 className="w-4 h-4 text-white/70" />
                   </button>

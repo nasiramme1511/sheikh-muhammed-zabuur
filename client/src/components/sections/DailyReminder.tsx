@@ -92,9 +92,9 @@ export default function DailyReminder() {
             <div className="relative">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-6"
                 style={{
-                  background: reminder.type === 'Quran' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                  color: reminder.type === 'Quran' ? '#10B981' : '#F59E0B',
-                  border: `1px solid ${reminder.type === 'Quran' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)'}`,
+                  background: reminder.type === 'Quran' ? 'rgba(14, 165, 233, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                  color: reminder.type === 'Quran' ? '#0EA5E9' : '#F59E0B',
+                  border: `1px solid ${reminder.type === 'Quran' ? 'rgba(14, 165, 233, 0.2)' : 'rgba(245, 158, 11, 0.2)'}`,
                 }}
               >
                 {reminder.type === 'Quran' ? '📖' : '📜'} {reminder.type}

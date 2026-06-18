@@ -94,12 +94,12 @@ export default function DashboardProfile() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <User className="w-6 h-6 text-emerald-400" />
+          <User className="w-6 h-6 text-icc-400" />
           {t('dashboard.my_profile')}
         </h1>
         <div className="flex items-center gap-2 text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-          <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
-          {user?.role || 'Student'}
+          <BadgeCheck className="w-3.5 h-3.5 text-icc-400" />
+          {user?.role || t('dashboard.role_fallback')}
         </div>
       </div>
 
@@ -111,14 +111,14 @@ export default function DashboardProfile() {
       >
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold overflow-hidden ring-2 ring-emerald-500/20">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-icc-400 to-icc-600 flex items-center justify-center text-white text-2xl font-bold overflow-hidden ring-2 ring-icc-500/20">
               {image ? (
                 <img src={image} alt="" className="w-full h-full object-cover" />
               ) : (
-                user?.name?.charAt(0)?.toUpperCase() || 'U'
+                user?.name?.charAt(0)?.toUpperCase() || t('dashboard.avatar_fallback')
               )}
             </div>
-            <label className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center cursor-pointer hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20">
+            <label className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-icc-500 flex items-center justify-center cursor-pointer hover:bg-icc-400 transition-colors shadow-lg shadow-icc-500/20">
               <HiCamera className="w-4 h-4 text-white" />
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
@@ -137,7 +137,7 @@ export default function DashboardProfile() {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 text-sm"
                 required
               />
             </div>
@@ -150,7 +150,7 @@ export default function DashboardProfile() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 text-sm"
                 required
               />
             </div>
@@ -174,7 +174,7 @@ export default function DashboardProfile() {
         className="glass-premium p-6 space-y-4"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-emerald-400" />
+          <ShieldCheck className="w-5 h-5 text-icc-400" />
           {t('dashboard.change_password')}
         </h2>
 
@@ -186,7 +186,7 @@ export default function DashboardProfile() {
                 type={showCurrent ? 'text' : 'password'}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full pr-10 pl-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
+                className="w-full pr-10 pl-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 text-sm"
                 placeholder={t('dashboard.current_password_placeholder')}
               />
               <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/50">
@@ -201,7 +201,7 @@ export default function DashboardProfile() {
                 type={showNew ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full pr-10 pl-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
+                className="w-full pr-10 pl-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 text-sm"
                 placeholder={t('dashboard.new_password_placeholder')}
               />
               <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/50">

@@ -25,7 +25,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(name, email, password);
+      await register(email, password, name);
       navigate('/dashboard');
     } catch (err: any) {
       toast.error(err.response?.data?.error || t('auth.registration_failed'));

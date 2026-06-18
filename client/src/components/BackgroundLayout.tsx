@@ -16,9 +16,7 @@ export default function BackgroundLayout({ children }: BackgroundLayoutProps) {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'fixed' as const,
-  } : {
-    backgroundColor: '#020617',
-  };
+  } : {};
 
   const overlayOpacity = bgEnabled && settings.enableOverlay ? settings.overlayOpacity : 0;
   const blurStyle = bgEnabled && settings.enableOverlay ? `${settings.blurStrength}px` : '0px';

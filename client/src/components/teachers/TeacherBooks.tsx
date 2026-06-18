@@ -77,7 +77,7 @@ export default function TeacherBooks({ books }: Props) {
                     <div className="flex items-center gap-1 mt-1.5">
                       <Globe className="w-3 h-3 text-white/30" />
                       {availableLangs.map((l) => (
-                        <span key={l} className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${l === lang ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-white/30'}`}>
+                        <span key={l} className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${l === lang ? 'bg-icc-500/20 text-icc-400' : 'bg-white/5 text-white/30'}`}>
                           {l.toUpperCase()}
                         </span>
                       ))}

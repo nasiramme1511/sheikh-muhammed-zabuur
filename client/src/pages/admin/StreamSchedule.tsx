@@ -157,7 +157,7 @@ export default function StreamSchedule() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -167,7 +167,7 @@ export default function StreamSchedule() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-emerald-500" />
+            <Calendar className="w-6 h-6 text-icc-500" />
             Stream Schedule
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -175,10 +175,10 @@ export default function StreamSchedule() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={loadData} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-emerald-500 hover:border-emerald-500 transition-all" title="Refresh">
+          <button onClick={loadData} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-icc-500 hover:border-icc-500 transition-all" title="Refresh">
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-all">
+          <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-all">
             <Plus className="w-4 h-4" /> Add Stream
           </button>
         </div>
@@ -190,7 +190,7 @@ export default function StreamSchedule() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" /> Schedule saved!
         </div>
       )}
@@ -215,7 +215,7 @@ export default function StreamSchedule() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
           <h2 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Clock className="w-4 h-4 text-emerald-500" />
+            <Clock className="w-4 h-4 text-icc-500" />
             Scheduled Streams
           </h2>
         </div>
@@ -231,12 +231,12 @@ export default function StreamSchedule() {
             {sortedDates.map((dateKey) => (
               <div key={dateKey}>
                 <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-emerald-500" />
+                  <Calendar className="w-4 h-4 text-icc-500" />
                   {dateKey}
                 </h3>
                 <div className="space-y-2">
                   {groupedByDate[dateKey].map((entry) => (
-                    <div key={entry.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800 hover:border-emerald-500/30 transition-all group">
+                    <div key={entry.id} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800 hover:border-icc-500/30 transition-all group">
                       <div className={`px-2 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider shrink-0 ${STATUS_STYLES[entry.status] || STATUS_STYLES.upcoming}`}>
                         {entry.status === 'live' && (
                           <span className="relative flex h-2 w-2 mr-1 inline-block">
@@ -250,7 +250,7 @@ export default function StreamSchedule() {
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-semibold text-gray-900 dark:text-white">{entry.title}</span>
                           {entry.category && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{entry.category}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20">{entry.category}</span>
                           )}
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
@@ -264,7 +264,7 @@ export default function StreamSchedule() {
                       </div>
                       <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
                         {entry.youtubeUrl && (
-                          <a href={entry.youtubeUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all" title="Open YouTube">
+                          <a href={entry.youtubeUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all" title="Open YouTube">
                             <ExternalLink className="w-4 h-4" />
                           </a>
                         )}
@@ -359,35 +359,35 @@ function StreamFormModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Title</label>
-            <input type="text" value={data.title} onChange={(e) => onChange({ ...data, title: e.target.value })} placeholder="e.g. Weekly Tafsir Lesson" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+            <input type="text" value={data.title} onChange={(e) => onChange({ ...data, title: e.target.value })} placeholder="e.g. Weekly Tafsir Lesson" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
-            <textarea value={data.description} onChange={(e) => onChange({ ...data, description: e.target.value })} placeholder="Stream description..." rows={3} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none" />
+            <textarea value={data.description} onChange={(e) => onChange({ ...data, description: e.target.value })} placeholder="Stream description..." rows={3} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all resize-none" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">YouTube URL</label>
-            <input type="url" value={data.youtubeUrl} onChange={(e) => onChange({ ...data, youtubeUrl: e.target.value })} placeholder="https://youtube.com/watch?v=..." className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+            <input type="url" value={data.youtubeUrl} onChange={(e) => onChange({ ...data, youtubeUrl: e.target.value })} placeholder="https://youtube.com/watch?v=..." className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Start Date & Time</label>
-              <input type="datetime-local" value={data.startDate} onChange={(e) => onChange({ ...data, startDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+              <input type="datetime-local" value={data.startDate} onChange={(e) => onChange({ ...data, startDate: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Duration (minutes)</label>
-              <input type="number" min={5} max={480} value={data.duration} onChange={(e) => onChange({ ...data, duration: Number(e.target.value) })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+              <input type="number" min={5} max={480} value={data.duration} onChange={(e) => onChange({ ...data, duration: Number(e.target.value) })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
-            <select value={data.category} onChange={(e) => onChange({ ...data, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+            <select value={data.category} onChange={(e) => onChange({ ...data, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
               {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-            <select value={data.status} onChange={(e) => onChange({ ...data, status: e.target.value as ScheduleEntry['status'] })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+            <select value={data.status} onChange={(e) => onChange({ ...data, status: e.target.value as ScheduleEntry['status'] })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
               <option value="upcoming">Upcoming</option>
               <option value="live">Live</option>
               <option value="ended">Ended</option>
@@ -396,7 +396,7 @@ function StreamFormModal({
         </div>
         <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button onClick={onClose} className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">Cancel</button>
-          <button onClick={onSave} disabled={!data.title.trim() || !data.startDate} className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white text-sm font-semibold transition-all flex items-center gap-2">
+          <button onClick={onSave} disabled={!data.title.trim() || !data.startDate} className="px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-40 text-white text-sm font-semibold transition-all flex items-center gap-2">
             <Save className="w-4 h-4" /> {saveLabel}
           </button>
         </div>

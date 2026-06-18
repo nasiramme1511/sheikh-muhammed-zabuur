@@ -19,7 +19,7 @@ function formatDuration(seconds?: number): string {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  aqeedah: '#1E40AF', tawheed: '#059669', tafsir: '#7C3AED',
+  aqeedah: '#1E40AF', tawheed: '#0284C7', tafsir: '#7C3AED',
   hadith: '#B45309', fiqh: '#DC2626', seerah: '#0891B2',
   tajweed: '#4F46E5', nahw: '#0D9488', sarf: '#9333EA',
   adab: '#DB2777', tarbiyah: '#65A30D', manhaj: '#CA8A04',
@@ -30,17 +30,17 @@ export default function LessonCard({ lesson, highlightQuery }: Props) {
   const { play } = usePlayer();
   const localizedTitle = getLocalizedField(lesson, 'title', language);
   const localizedTeacher = lesson.teacher ? getLocalizedField(lesson.teacher, 'name', language) : '';
-  const catColor = lesson.category ? CATEGORY_COLORS[lesson.category.slug] || '#059669' : '#059669';
+  const catColor = lesson.category ? CATEGORY_COLORS[lesson.category.slug] || '#0284C7' : '#0284C7';
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden group hover:shadow-lg hover:border-green-200 dark:hover:border-green-700 transition-all duration-300">
+    <div className="glass-card rounded-2xl border border-white/10 overflow-hidden group hover:border-gold-500/40 transition-all duration-300">
       <Link to={`/lessons/${lesson.slug}`} className="block">
-        <div className="relative h-36 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 flex items-center justify-center">
-          <div className="w-14 h-14 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
-            <HiPlay className="w-7 h-7 text-green-600 ml-0.5" />
+        <div className="relative h-36 bg-gradient-to-br from-icc-500/10 to-icc-600/5 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-sm">
+            <HiPlay className="w-7 h-7 text-icc-400 ml-0.5" />
           </div>
           {lesson.difficulty && (
-            <span className="absolute top-3 left-3 text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-600 dark:text-gray-300">
+            <span className="absolute top-3 left-3 text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-sm text-white/60">
               {lesson.difficulty}
             </span>
           )}
@@ -50,19 +50,19 @@ export default function LessonCard({ lesson, highlightQuery }: Props) {
               e.stopPropagation();
               play(lesson);
             }}
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10"
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30"
           >
-            <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-icc-500 text-white flex items-center justify-center shadow-lg shadow-icc-500/20 transform scale-90 group-hover:scale-100 transition-transform">
               <HiPlay className="w-6 h-6 ml-0.5" />
             </div>
           </button>
         </div>
         <div className="p-4">
-          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-green-600 transition-colors leading-snug">
+          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-icc-400 transition-colors leading-snug">
             {localizedTitle}
           </h3>
           {lesson.teacher && (
-            <div className="flex items-center gap-1 mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-1 mt-2 text-xs text-white/50">
               <HiUser className="w-3 h-3 shrink-0" />
               <span className="truncate">{localizedTeacher}</span>
             </div>
@@ -70,7 +70,7 @@ export default function LessonCard({ lesson, highlightQuery }: Props) {
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
               {lesson.duration && (
-                <span className="flex items-center gap-1 text-xs text-gray-400">
+                <span className="flex items-center gap-1 text-xs text-white/40">
                   <HiClock className="w-3 h-3" />
                   {formatDuration(lesson.duration)}
                 </span>

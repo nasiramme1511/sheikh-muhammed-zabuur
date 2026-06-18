@@ -65,20 +65,20 @@ const typeLabel: Record<string, string> = {
 export default function IslamHouse() {
   return (
     <div className="min-h-screen">
-      <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-icc-900 via-icc-800 to-teal-900 text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-icc-500/10 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative">
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
             <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl">
-              <FaQuran className="w-10 h-10 md:w-14 md:h-14 text-emerald-300" />
+              <FaQuran className="w-10 h-10 md:w-14 md:h-14 text-icc-300" />
             </div>
             <div className="text-center md:text-left">
               <h1 className="text-3xl md:text-5xl font-bold mb-2">IslamHouse.com</h1>
-              <p className="text-emerald-200/80 text-lg md:text-xl">afaan oromoo &mdash; fuula hangafaa</p>
-              <p className="text-emerald-300/60 text-sm mt-2 max-w-xl">
+              <p className="text-icc-200/80 text-lg md:text-xl">afaan oromoo &mdash; fuula hangafaa</p>
+              <p className="text-icc-300/60 text-sm mt-2 max-w-xl">
                 Qabeenya Islaamichaa &mdash; kitaabota, sagalee, fi vidiyoolee afaan Oromoo
               </p>
             </div>
@@ -237,7 +237,7 @@ export default function IslamHouse() {
               <div className="p-4 space-y-3">
                 <a href="https://quranenc.com" target="_blank" rel="noopener noreferrer" className="block p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-700 transition-all group">
                   <div className="flex items-center gap-3">
-                    <FaQuran className="w-6 h-6 text-emerald-600" />
+                    <FaQuran className="w-6 h-6 text-icc-600" />
                     <div>
                       <p className="text-xs font-semibold group-hover:text-primary-600 transition-colors">QuranEnc.com</p>
                       <p className="text-[10px] text-gray-500">Qur'aana marsarittii</p>

@@ -66,7 +66,7 @@ export default function AudioHistory() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <History className="w-6 h-6 text-emerald-400" />
+          <History className="w-6 h-6 text-icc-400" />
           {t('dashboard.audio_history')}
         </h1>
         <span className="text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
@@ -84,11 +84,11 @@ export default function AudioHistory() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-20 bg-white/5 rounded-3xl border border-white/5"
         >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-            <Headphones className="w-8 h-8 text-emerald-400/60" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center">
+            <Headphones className="w-8 h-8 text-icc-400/60" />
           </div>
           <p className="text-lg font-semibold text-white/70 mb-2">{t('dashboard.no_history')}</p>
-          <Link to="/audio" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-all mt-4">
+          <Link to="/audio" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-medium transition-all mt-4">
             {t('dashboard.browse_audio')} <ExternalLink className="w-4 h-4" />
           </Link>
         </motion.div>
@@ -107,7 +107,7 @@ export default function AudioHistory() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                    <Headphones className="w-5 h-5 text-emerald-400" />
+                    <Headphones className="w-5 h-5 text-icc-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white truncate">{title}</p>
@@ -116,7 +116,7 @@ export default function AudioHistory() {
                         <Clock className="w-3 h-3" />
                         {new Date(item.createdAt).toLocaleDateString()}
                       </span>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20">
                         {getActionLabel(item.action)}
                       </span>
                     </div>
@@ -124,7 +124,7 @@ export default function AudioHistory() {
                   {item.lesson?.slug && (
                     <Link
                       to={`/lessons/${item.lesson.slug}`}
-                      className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-emerald-500/10 text-white/30 hover:text-emerald-400 transition-all"
+                      className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-icc-500/10 text-white/30 hover:text-icc-400 transition-all"
                     >
                       <Play className="w-4 h-4" />
                     </Link>

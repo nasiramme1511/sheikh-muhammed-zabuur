@@ -78,7 +78,7 @@ export default function Dashboard() {
     { icon: HiCollection, labelKey: 'dashboard.enrollments', value: stats?.enrollments ?? enrollments.length, color: 'text-cyan-600', bg: 'bg-cyan-100 dark:bg-cyan-900/30' },
     { icon: HiClipboardList, labelKey: 'dashboard.pending_tasks', value: stats?.pendingTasks ?? pendingTasks.length, color: 'text-rose-600', bg: 'bg-rose-100 dark:bg-rose-900/30' },
     { icon: HiBadgeCheck, labelKey: 'dashboard.certificates', value: stats?.certificates ?? certificates.length, color: 'text-amber-600', bg: 'bg-amber-100 dark:bg-amber-900/30' },
-    { icon: HiTrendingUp, labelKey: 'dashboard.streak', value: stats?.streak ?? 0, color: 'text-emerald-600', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+    { icon: HiTrendingUp, labelKey: 'dashboard.streak', value: stats?.streak ?? 0, color: 'text-icc-600', bg: 'bg-icc-100 dark:bg-icc-900/30' },
   ];
 
   function getPriorityColor(p: string) {
@@ -183,7 +183,7 @@ export default function Dashboard() {
                       )}
                     </div>
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getPriorityColor(task.priority)}`}>
-                      {task.priority}
+                      {t('dashboard.priority_' + task.priority.toLowerCase() as TranslationKey)}
                     </span>
                   </div>
                 ))}
@@ -203,7 +203,7 @@ export default function Dashboard() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{sub.assignment?.title}</p>
                       <p className="text-xs text-gray-400">
-                        Due {sub.assignment?.dueDate ? new Date(sub.assignment.dueDate).toLocaleDateString() : ''}
+                        {t('dashboard.due_prefix')}{sub.assignment?.dueDate ? new Date(sub.assignment.dueDate).toLocaleDateString() : ''}
                       </p>
                     </div>
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getStatusColor(sub.status)}`}>
@@ -288,7 +288,7 @@ export default function Dashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">{t('dashboard.recent_activity')}</h2>
-            <span className="text-xs text-gray-500">{stats.recentActivity.length} entries</span>
+            <span className="text-xs text-gray-500">{t('dashboard.entries_count', { count: stats.recentActivity.length })}</span>
           </div>
           <div className="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4">
             <div className="space-y-2">

@@ -40,7 +40,7 @@ function SidebarNav({ activeSection, setActiveSection }: AppearanceNavProps) {
             onClick={() => setActiveSection(sec.id)}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
               activeSection === sec.id
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                ? 'bg-icc-500/10 text-icc-400 border border-icc-500/20'
                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-800'
             }`}
           >
@@ -141,7 +141,7 @@ export default function AdminAppearance() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Palette className="w-6 h-6 text-emerald-500" />
+            <Palette className="w-6 h-6 text-icc-500" />
             Visual Branding Center
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -169,7 +169,7 @@ export default function AdminAppearance() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" /> Settings saved successfully!
         </div>
       )}
@@ -207,7 +207,7 @@ export default function AdminAppearance() {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-colors">
                     <Upload className="w-4 h-4" />
                     {uploading ? 'Uploading...' : 'Upload Image'}
                     <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileUpload} disabled={uploading} className="hidden" />
@@ -255,7 +255,7 @@ export default function AdminAppearance() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {local.backgrounds.map((bg) => (
                         <div key={bg.id} className={`relative rounded-xl overflow-hidden border-2 aspect-video cursor-pointer group ${
-                          local.activeBackgroundId === bg.id ? 'border-emerald-500' : 'border-transparent'
+                          local.activeBackgroundId === bg.id ? 'border-icc-500' : 'border-transparent'
                         }`} onClick={() => {
                           update({ activeBackgroundId: bg.id, backgroundImage: bg.url });
                           const updated = local.backgrounds.map(b => ({ ...b, active: b.id === bg.id }));
@@ -263,7 +263,7 @@ export default function AdminAppearance() {
                         }}>
                           <img src={bg.url} alt={bg.name} className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                            {local.activeBackgroundId === bg.id && <CheckCircle className="w-5 h-5 text-emerald-400" />}
+                            {local.activeBackgroundId === bg.id && <CheckCircle className="w-5 h-5 text-icc-400" />}
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-gradient-to-t from-black/60 to-transparent">
                             <p className="text-[10px] text-white truncate font-medium">{bg.name}</p>
@@ -315,9 +315,9 @@ export default function AdminAppearance() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overlay Color</label>
                   <div className="flex flex-wrap gap-2">
                     {COLOR_OPTIONS.map((c) => (
-                      <button key={c.value} onClick={() => update({ overlayColor: c.value })} className={`w-8 h-8 rounded-lg border-2 transition-all ${local.overlayColor === c.value ? 'border-emerald-500 scale-110' : 'border-gray-300 dark:border-gray-600'}`} style={{ backgroundColor: c.value }} title={c.label} />
+                      <button key={c.value} onClick={() => update({ overlayColor: c.value })} className={`w-8 h-8 rounded-lg border-2 transition-all ${local.overlayColor === c.value ? 'border-icc-500 scale-110' : 'border-gray-300 dark:border-gray-600'}`} style={{ backgroundColor: c.value }} title={c.label} />
                     ))}
-                    <button onClick={() => setBgColorPicker(!bgColorPicker)} className="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-400 hover:text-emerald-500">
+                    <button onClick={() => setBgColorPicker(!bgColorPicker)} className="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-400 hover:text-icc-500">
                       <Palette className="w-4 h-4" />
                     </button>
                     {bgColorPicker && <input type="color" value={local.overlayColor} onChange={(e) => update({ overlayColor: e.target.value })} className="w-8 h-8 rounded cursor-pointer" />}
@@ -385,10 +385,10 @@ export default function AdminAppearance() {
                   const active = local.defaultMode === opt.id;
                   return (
                     <button key={opt.id} onClick={() => update({ defaultMode: opt.id as any })} className={`p-4 rounded-xl border-2 text-center transition-all ${
-                      active ? 'border-emerald-500 bg-emerald-500/5' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                      active ? 'border-icc-500 bg-icc-500/5' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                     }`}>
-                      <Icon className={`w-8 h-8 mx-auto mb-2 ${active ? 'text-emerald-400' : 'text-gray-400'}`} />
-                      <p className={`text-sm font-semibold ${active ? 'text-emerald-400' : 'text-gray-700 dark:text-gray-300'}`}>{opt.label}</p>
+                      <Icon className={`w-8 h-8 mx-auto mb-2 ${active ? 'text-icc-400' : 'text-gray-400'}`} />
+                      <p className={`text-sm font-semibold ${active ? 'text-icc-400' : 'text-gray-700 dark:text-gray-300'}`}>{opt.label}</p>
                       <p className="text-xs text-gray-400 mt-1">{opt.desc}</p>
                     </button>
                   );
@@ -463,9 +463,9 @@ export default function AdminAppearance() {
                   const active = local.backgroundBehavior === opt.id;
                   return (
                     <button key={opt.id} onClick={() => update({ backgroundBehavior: opt.id as any })} className={`p-4 rounded-xl border-2 text-center transition-all ${
-                      active ? 'border-emerald-500 bg-emerald-500/5' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                      active ? 'border-icc-500 bg-icc-500/5' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                     }`}>
-                      <p className={`text-sm font-semibold ${active ? 'text-emerald-400' : 'text-gray-700 dark:text-gray-300'}`}>{opt.label}</p>
+                      <p className={`text-sm font-semibold ${active ? 'text-icc-400' : 'text-gray-700 dark:text-gray-300'}`}>{opt.label}</p>
                       <p className="text-[10px] text-gray-400 mt-1">{opt.desc}</p>
                     </button>
                   );
@@ -504,7 +504,7 @@ export default function AdminAppearance() {
                   <div className="flex gap-3">
                     {(['default', 'glass', 'solid'] as const).map((style) => (
                       <button key={style} onClick={() => update({ counterCardStyle: style })} className={`px-4 py-2 rounded-xl border-2 text-sm font-medium capitalize transition-all ${
-                        local.counterCardStyle === style ? 'border-emerald-500 bg-emerald-500/5 text-emerald-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
+                        local.counterCardStyle === style ? 'border-icc-500 bg-icc-500/5 text-icc-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
                       }`}>{style}</button>
                     ))}
                   </div>
@@ -519,7 +519,7 @@ export default function AdminAppearance() {
           <div className="sticky top-6 space-y-4">
             <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-                <Eye className="w-4 h-4 text-emerald-500" />
+                <Eye className="w-4 h-4 text-icc-500" />
                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Live Preview</span>
               </div>
               <div className="p-4">
@@ -547,7 +547,7 @@ export default function AdminAppearance() {
                       {local.logoUrl ? (
                         <img src={local.logoUrl} className="w-5 h-5 rounded" alt="" />
                       ) : (
-                        <div className="w-4 h-4 rounded bg-emerald-500" />
+                        <div className="w-4 h-4 rounded bg-icc-500" />
                       )}
                       <span className="text-[7px] font-bold text-white drop-shadow-lg truncate max-w-[80px]">{local.platformName.substring(0, 30)}</span>
                     </div>
@@ -566,7 +566,7 @@ export default function AdminAppearance() {
                       padding: '6px 8px',
                     }}>
                       <div className="flex items-center gap-2">
-                        <Music className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <Music className="w-3 h-3 text-icc-400 shrink-0" />
                         <span className="text-[7px] text-white truncate">Tafsir Surah Al-Fatihah — Lesson 7</span>
                       </div>
                     </div>
@@ -613,7 +613,7 @@ function SectionCard({ icon: Icon, title, subtitle, children }: { icon: any; tit
     <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+          <div className="p-2 rounded-lg bg-icc-500/10 text-icc-400">
             <Icon className="w-4 h-4" />
           </div>
           <div>
@@ -639,7 +639,7 @@ function ToggleRow({ label, desc, checked, onChange }: { label: string; desc?: s
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}
       >
         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${checked ? 'translate-x-[18px]' : 'translate-x-1'}`} />
       </button>
@@ -658,12 +658,12 @@ function RangeRow({ label, desc, value, min, max, step, format, onChange }: {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
           {desc && <p className="text-xs text-gray-400">{desc}</p>}
         </div>
-        <span className="text-xs font-mono font-bold text-emerald-500">{format(value)}</span>
+        <span className="text-xs font-mono font-bold text-icc-500">{format(value)}</span>
       </div>
       <input
         type="range" min={min} max={max} step={step} value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-icc-500"
       />
     </div>
   );

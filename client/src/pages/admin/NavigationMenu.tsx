@@ -132,7 +132,7 @@ export default function NavigationMenu() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -147,7 +147,7 @@ export default function NavigationMenu() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Globe className="w-6 h-6 text-emerald-500" />
+            <Globe className="w-6 h-6 text-icc-500" />
             Navigation Menu
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -155,13 +155,13 @@ export default function NavigationMenu() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-all">
+          <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-all">
             <Plus className="w-4 h-4" /> Add Item
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-icc-500/20"
           >
             {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? 'Saving...' : 'Save Menu'}
@@ -175,7 +175,7 @@ export default function NavigationMenu() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" /> Navigation saved successfully!
         </div>
       )}
@@ -196,10 +196,10 @@ export default function NavigationMenu() {
             {items.map((item, index) => (
               <div key={item.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors group">
                 <div className="flex flex-col gap-0.5">
-                  <button onClick={() => moveItem(index, 'up')} disabled={index === 0} className="p-0.5 rounded text-gray-400 hover:text-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                  <button onClick={() => moveItem(index, 'up')} disabled={index === 0} className="p-0.5 rounded text-gray-400 hover:text-icc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                     <ChevronUp className="w-3 h-3" />
                   </button>
-                  <button onClick={() => moveItem(index, 'down')} disabled={index === items.length - 1} className="p-0.5 rounded text-gray-400 hover:text-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                  <button onClick={() => moveItem(index, 'down')} disabled={index === items.length - 1} className="p-0.5 rounded text-gray-400 hover:text-icc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </div>
@@ -217,7 +217,7 @@ export default function NavigationMenu() {
                   <p className="text-xs text-gray-400 font-mono">{item.url}</p>
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => toggleVisibility(item.id)} className={`p-1.5 rounded-lg transition-colors ${item.visible ? 'text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10' : 'text-red-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`} title={item.visible ? 'Hide' : 'Show'}>
+                  <button onClick={() => toggleVisibility(item.id)} className={`p-1.5 rounded-lg transition-colors ${item.visible ? 'text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10' : 'text-red-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`} title={item.visible ? 'Hide' : 'Show'}>
                     {item.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                   </button>
                   <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors" title="Edit">
@@ -245,31 +245,31 @@ export default function NavigationMenu() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Label</label>
-                  <input type="text" value={newItem.label} onChange={(e) => setNewItem({ ...newItem, label: e.target.value })} placeholder="e.g. Courses" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={newItem.label} onChange={(e) => setNewItem({ ...newItem, label: e.target.value })} placeholder="e.g. Courses" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Arabic Label (optional)</label>
-                  <input type="text" value={newItem.labelAr || ''} onChange={(e) => setNewItem({ ...newItem, labelAr: e.target.value })} placeholder="الدورات" dir="rtl" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={newItem.labelAr || ''} onChange={(e) => setNewItem({ ...newItem, labelAr: e.target.value })} placeholder="الدورات" dir="rtl" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">URL</label>
-                  <input type="text" value={newItem.url} onChange={(e) => setNewItem({ ...newItem, url: e.target.value })} placeholder="/courses" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={newItem.url} onChange={(e) => setNewItem({ ...newItem, url: e.target.value })} placeholder="/courses" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Icon</label>
-                  <select value={newItem.icon} onChange={(e) => setNewItem({ ...newItem, icon: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                  <select value={newItem.icon} onChange={(e) => setNewItem({ ...newItem, icon: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
                     {ICON_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Target</label>
-                  <select value={newItem.target} onChange={(e) => setNewItem({ ...newItem, target: e.target.value as '_self' | '_blank' })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                  <select value={newItem.target} onChange={(e) => setNewItem({ ...newItem, target: e.target.value as '_self' | '_blank' })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
                     <option value="_self">Same Tab (_self)</option>
                     <option value="_blank">New Tab (_blank)</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-3 py-2">
-                  <button type="button" onClick={() => setNewItem({ ...newItem, visible: !newItem.visible })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${newItem.visible ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                  <button type="button" onClick={() => setNewItem({ ...newItem, visible: !newItem.visible })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${newItem.visible ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${newItem.visible ? 'translate-x-[18px]' : 'translate-x-1'}`} />
                   </button>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Visible</label>
@@ -277,7 +277,7 @@ export default function NavigationMenu() {
               </div>
               <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button onClick={() => setShowAddModal(false)} className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">Cancel</button>
-                <button onClick={handleAdd} disabled={!newItem.label.trim()} className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white text-sm font-semibold transition-all flex items-center gap-2">
+                <button onClick={handleAdd} disabled={!newItem.label.trim()} className="px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-40 text-white text-sm font-semibold transition-all flex items-center gap-2">
                   <Plus className="w-4 h-4" /> Add Item
                 </button>
               </div>
@@ -298,34 +298,34 @@ export default function NavigationMenu() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Label</label>
-                  <input type="text" value={editTarget.label} onChange={(e) => setEditTarget({ ...editTarget, label: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={editTarget.label} onChange={(e) => setEditTarget({ ...editTarget, label: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Arabic Label</label>
-                  <input type="text" value={editTarget.labelAr || ''} onChange={(e) => setEditTarget({ ...editTarget, labelAr: e.target.value })} dir="rtl" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={editTarget.labelAr || ''} onChange={(e) => setEditTarget({ ...editTarget, labelAr: e.target.value })} dir="rtl" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">URL</label>
-                  <input type="text" value={editTarget.url} onChange={(e) => setEditTarget({ ...editTarget, url: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={editTarget.url} onChange={(e) => setEditTarget({ ...editTarget, url: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Icon</label>
                   <div className="flex items-center gap-2">
                     <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">{renderIcon(editTarget.icon, 'w-4 h-4')}</div>
-                    <select value={editTarget.icon} onChange={(e) => setEditTarget({ ...editTarget, icon: e.target.value })} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    <select value={editTarget.icon} onChange={(e) => setEditTarget({ ...editTarget, icon: e.target.value })} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
                       {ICON_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Target</label>
-                  <select value={editTarget.target} onChange={(e) => setEditTarget({ ...editTarget, target: e.target.value as '_self' | '_blank' })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                  <select value={editTarget.target} onChange={(e) => setEditTarget({ ...editTarget, target: e.target.value as '_self' | '_blank' })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
                     <option value="_self">Same Tab (_self)</option>
                     <option value="_blank">New Tab (_blank)</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-3 py-2">
-                  <button type="button" onClick={() => setEditTarget({ ...editTarget, visible: !editTarget.visible })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${editTarget.visible ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                  <button type="button" onClick={() => setEditTarget({ ...editTarget, visible: !editTarget.visible })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${editTarget.visible ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${editTarget.visible ? 'translate-x-[18px]' : 'translate-x-1'}`} />
                   </button>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Visible</label>
@@ -333,7 +333,7 @@ export default function NavigationMenu() {
               </div>
               <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button onClick={() => setEditTarget(null)} className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">Cancel</button>
-                <button onClick={handleEditSave} className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-all flex items-center gap-2">
+                <button onClick={handleEditSave} className="px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-all flex items-center gap-2">
                   <Save className="w-4 h-4" /> Save Changes
                 </button>
               </div>

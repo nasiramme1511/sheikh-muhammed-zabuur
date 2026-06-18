@@ -18,10 +18,10 @@ export default function AIChatButton() {
             className="mb-1"
           >
             <div className="relative">
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-dark-900 animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-icc-500 rounded-full border-2 border-dark-900 animate-pulse" />
               <div className="px-3 py-2 rounded-xl bg-dark-800/90 backdrop-blur-xl border border-white/10 shadow-xl whitespace-nowrap">
                 <p className="text-xs font-medium text-icc-400">
-                  <span className="text-emerald-400">{t('ai_assistant.title')}</span>
+                  <span className="text-icc-400">{t('ai_assistant.title')}</span>
                 </p>
               </div>
               <div className="absolute -bottom-1 right-4 w-2 h-2 bg-dark-800/90 border-r border-b border-white/10 rotate-45" />
@@ -40,9 +40,9 @@ export default function AIChatButton() {
             ? { rotate: 0 }
             : {
                 boxShadow: [
-                  '0 0 0 0 rgba(16, 185, 129, 0.4)',
-                  '0 0 0 12px rgba(16, 185, 129, 0)',
-                  '0 0 0 0 rgba(16, 185, 129, 0)',
+                  '0 0 0 0 rgba(14, 165, 233, 0.4)',
+                  '0 0 0 12px rgba(14, 165, 233, 0)',
+                  '0 0 0 0 rgba(14, 165, 233, 0)',
                 ],
               }
         }
@@ -60,7 +60,7 @@ export default function AIChatButton() {
         style={{
           background: isOpen
             ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-            : 'linear-gradient(135deg, #10B981, #059669)',
+            : 'linear-gradient(135deg, #0EA5E9, #0284C7)',
         }}
       >
         {isOpen ? (
@@ -69,7 +69,7 @@ export default function AIChatButton() {
           <div className="relative">
             <MessageCircle className="w-6 h-6 text-white" />
             <motion.div
-              className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-300 rounded-full"
+              className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-icc-300 rounded-full"
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -81,7 +81,7 @@ export default function AIChatButton() {
           style={{
             background: isOpen
               ? 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0))'
-              : 'linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0))',
+              : 'linear-gradient(135deg, rgba(14,165,233,0.3), rgba(2,132,199,0))',
             filter: 'blur(12px)',
             zIndex: -1,
           }}

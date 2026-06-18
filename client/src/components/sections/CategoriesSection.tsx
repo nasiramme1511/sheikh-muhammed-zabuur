@@ -5,7 +5,7 @@ import { ArrowRight, Book, Shield, BookOpen, BookMarked, Scale, Compass, Mic, Pe
 import { useTranslation, type TranslationKey } from '../../i18n';
 
 const categories = [
-  { icon: Shield, name: 'Aqeedah', slug: 'aqeedah', lessons: 8, color: '#10B981' },
+  { icon: Shield, name: 'Aqeedah', slug: 'aqeedah', lessons: 8, color: '#0EA5E9' },
   { icon: Book, name: 'Tawheed', slug: 'tawheed', lessons: 6, color: '#F59E0B' },
   { icon: BookOpen, name: 'Tafsir', slug: 'tafsir', lessons: 15, color: '#8B5CF6' },
   { icon: BookMarked, name: 'Hadith', slug: 'hadith', lessons: 12, color: '#EC4899' },

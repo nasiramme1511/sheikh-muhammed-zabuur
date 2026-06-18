@@ -50,7 +50,7 @@ type TimeRange = '7D' | '30D' | '90D' | '1Y';
 
 const TIME_RANGES: TimeRange[] = ['7D', '30D', '90D', '1Y'];
 
-const CATEGORY_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#14b8a6', '#f97316'];
+const CATEGORY_COLORS = ['#0EA5E9', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#14b8a6', '#f97316'];
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -73,7 +73,7 @@ function generateMockData(range: TimeRange): AnalyticsData {
   }
 
   const topCategories: TopCategory[] = [
-    { name: 'Tafsir', views: 15230, downloads: 3421, resources: 45, color: '#10b981' },
+    { name: 'Tafsir', views: 15230, downloads: 3421, resources: 45, color: '#0EA5E9' },
     { name: 'Hadith', views: 12100, downloads: 2890, resources: 38, color: '#3b82f6' },
     { name: 'Fiqh', views: 9870, downloads: 2150, resources: 32, color: '#8b5cf6' },
     { name: 'Seerah', views: 7650, downloads: 1890, resources: 28, color: '#f59e0b' },
@@ -136,7 +136,7 @@ function formatStorage(bytes: number): string {
   return (bytes / 1024).toFixed(1) + ' KB';
 }
 
-function BarChart({ data, color = '#10b981', height = 200, horizontal = false }: {
+function BarChart({ data, color = '#0EA5E9', height = 200, horizontal = false }: {
   data: MonthlyData[];
   color?: string;
   height?: number;
@@ -247,7 +247,7 @@ export default function AdminAnalytics() {
             <HiChartBar className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             {t('admin.retry')}
           </button>
         </div>
@@ -258,7 +258,7 @@ export default function AdminAnalytics() {
   if (!data) return null;
 
   const statCards = [
-    { icon: HiLibrary, label: 'Total Resources', value: formatNumber(data.totalResources), change: '+12%', changeUp: true, color: 'text-emerald-500', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+    { icon: HiLibrary, label: 'Total Resources', value: formatNumber(data.totalResources), change: '+12%', changeUp: true, color: 'text-icc-500', bg: 'bg-icc-500/10 border-icc-500/20' },
     { icon: HiEye, label: 'Total Views', value: formatNumber(data.totalViews), change: '+8%', changeUp: true, color: 'text-blue-500', bg: 'bg-blue-500/10 border-blue-500/20' },
     { icon: HiDownload, label: 'Total Downloads', value: formatNumber(data.totalDownloads), change: '+15%', changeUp: true, color: 'text-purple-500', bg: 'bg-purple-500/10 border-purple-500/20' },
     { icon: HiCollection, label: 'Total Storage', value: formatStorage(data.totalStorage), change: '+5%', changeUp: false, color: 'text-amber-500', bg: 'bg-amber-500/10 border-amber-500/20' },
@@ -269,7 +269,7 @@ export default function AdminAnalytics() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <HiChartBar className="w-6 h-6 text-emerald-400" />
+            <HiChartBar className="w-6 h-6 text-icc-400" />
             Content Analytics
           </h1>
           <p className="text-sm text-white/40 mt-0.5">Track resource performance and engagement</p>
@@ -282,7 +282,7 @@ export default function AdminAnalytics() {
                 onClick={() => setTimeRange(r)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   timeRange === r
-                    ? 'bg-emerald-500 text-white shadow-lg'
+                    ? 'bg-icc-500 text-white shadow-lg'
                     : 'text-white/50 hover:text-white/80'
                 }`}
               >
@@ -311,7 +311,7 @@ export default function AdminAnalytics() {
                   <p className="text-xs text-white/50 mt-0.5">{s.label}</p>
                 </div>
               </div>
-              <div className={`flex items-center gap-1 text-xs font-medium ${s.changeUp ? 'text-emerald-400' : 'text-red-400'}`}>
+              <div className={`flex items-center gap-1 text-xs font-medium ${s.changeUp ? 'text-icc-400' : 'text-red-400'}`}>
                 {s.changeUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                 {s.change}
               </div>
@@ -326,14 +326,14 @@ export default function AdminAnalytics() {
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-              <HiTrendingUp className="w-4 h-4 text-emerald-500" />
+              <HiTrendingUp className="w-4 h-4 text-icc-500" />
               Content Growth
             </h2>
             <span className="text-xs text-white/40">Resources added per month</span>
           </div>
           <div className="p-5">
             <div className="relative pt-6">
-              <BarChart data={data.monthlyGrowth} color="#10b981" height={200} />
+              <BarChart data={data.monthlyGrowth} color="#0EA5E9" height={200} />
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ export default function AdminAnalytics() {
               );
             })}
             {data.topCategories.length > 6 && (
-              <button className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors mt-2">
+              <button className="text-xs text-icc-400 hover:text-icc-300 transition-colors mt-2">
                 +{data.topCategories.length - 6} more categories
               </button>
             )}
@@ -440,7 +440,7 @@ export default function AdminAnalytics() {
                       <tr key={item.id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td className="px-3 py-2.5 text-white/40">{i + 1}</td>
                         <td className="px-3 py-2.5">
-                          <a href={item.url} className="text-gray-700 dark:text-gray-200 font-medium hover:text-emerald-400 transition-colors truncate block max-w-[250px]">
+                          <a href={item.url} className="text-gray-700 dark:text-gray-200 font-medium hover:text-icc-400 transition-colors truncate block max-w-[250px]">
                             {item.title}
                           </a>
                         </td>

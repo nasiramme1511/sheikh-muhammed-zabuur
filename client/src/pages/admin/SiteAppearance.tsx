@@ -66,8 +66,8 @@ export default function AdminSiteAppearance() {
       {/* Background Image Preview */}
       <div className="glass-card-premium p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-            <Image className="w-5 h-5 text-emerald-400" />
+          <div className="w-10 h-10 rounded-xl bg-icc-500/20 flex items-center justify-center">
+            <Image className="w-5 h-5 text-icc-400" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">Background Image</h2>
@@ -129,7 +129,7 @@ export default function AdminSiteAppearance() {
             <button
               onClick={() => updateSettings({ enableOverlay: !settings.enableOverlay })}
               className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
-                settings.enableOverlay ? 'bg-emerald-500' : 'bg-white/10'
+                settings.enableOverlay ? 'bg-icc-500' : 'bg-white/10'
               }`}
             >
               <div
@@ -156,7 +156,7 @@ export default function AdminSiteAppearance() {
               onChange={(e) => updateSettings({ overlayOpacity: Number(e.target.value) / 100 })}
               className="w-full h-2 rounded-full appearance-none cursor-pointer"
               style={{
-                background: `linear-gradient(to right, #10B981 ${settings.overlayOpacity * 100}%, rgba(255,255,255,0.1) ${settings.overlayOpacity * 100}%)`,
+                background: `linear-gradient(to right, #0EA5E9 ${settings.overlayOpacity * 100}%, rgba(255,255,255,0.1) ${settings.overlayOpacity * 100}%)`,
               }}
             />
             <div className="flex justify-between text-xs text-white/30 mt-1">
@@ -197,7 +197,7 @@ export default function AdminSiteAppearance() {
               onChange={(e) => updateSettings({ blurStrength: Number(e.target.value) })}
               className="w-full h-2 rounded-full appearance-none cursor-pointer"
               style={{
-                background: `linear-gradient(to right, #10B981 ${(settings.blurStrength / 24) * 100}%, rgba(255,255,255,0.1) ${(settings.blurStrength / 24) * 100}%)`,
+                background: `linear-gradient(to right, #0EA5E9 ${(settings.blurStrength / 24) * 100}%, rgba(255,255,255,0.1) ${(settings.blurStrength / 24) * 100}%)`,
               }}
             />
             <div className="flex justify-between text-xs text-white/30 mt-1">

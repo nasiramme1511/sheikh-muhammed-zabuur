@@ -5,7 +5,7 @@ import { BookOpen, ArrowRight, Star, BookMarked, Heart, Target, User } from 'luc
 import { useTranslation, type TranslationKey } from '../../i18n';
 
 const levels = [
-  { icon: BookMarked, titleKey: 'foundations_of_islam' as TranslationKey, descKey: 'foundations_of_islam_desc' as TranslationKey, lessons: 24, color: '#10B981', slug: 'foundations' },
+  { icon: BookMarked, titleKey: 'foundations_of_islam' as TranslationKey, descKey: 'foundations_of_islam_desc' as TranslationKey, lessons: 24, color: '#0EA5E9', slug: 'foundations' },
   { icon: Heart, titleKey: 'worship_basics' as TranslationKey, descKey: 'worship_basics_desc' as TranslationKey, lessons: 32, color: '#F59E0B', slug: 'worship' },
   { icon: User, titleKey: 'daily_muslim_life' as TranslationKey, descKey: 'daily_muslim_life_desc' as TranslationKey, lessons: 28, color: '#8B5CF6', slug: 'daily-life' },
   { icon: Star, titleKey: 'advanced_learning' as TranslationKey, descKey: 'advanced_learning_desc' as TranslationKey, lessons: 45, color: '#EC4899', slug: 'advanced' },

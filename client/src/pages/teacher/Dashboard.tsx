@@ -79,7 +79,7 @@ export default function TeacherDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -92,7 +92,7 @@ export default function TeacherDashboard() {
             <HiAcademicCap className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={() => window.location.reload()} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={() => window.location.reload()} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             {t('admin.retry')}
           </button>
         </div>
@@ -112,8 +112,8 @@ export default function TeacherDashboard() {
       icon: HiUsers,
       label: t('teacher_dashboard.total_students'),
       value: analytics?.totalStudents ?? 0,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-500/10 border-emerald-500/20',
+      color: 'text-icc-500',
+      bg: 'bg-icc-500/10 border-icc-500/20',
     },
     {
       icon: HiPlay,
@@ -170,12 +170,12 @@ export default function TeacherDashboard() {
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-                <HiBookOpen className="w-4 h-4 text-emerald-500" />
+                <HiBookOpen className="w-4 h-4 text-icc-500" />
                 {t('teacher_dashboard.my_courses')}
               </h2>
               <Link
                 to="/teacher/courses"
-                className="text-xs font-semibold text-emerald-500 hover:text-emerald-400 transition-colors"
+                className="text-xs font-semibold text-icc-500 hover:text-icc-400 transition-colors"
               >
                 {t('dashboard.view_all')}
               </Link>
@@ -192,7 +192,7 @@ export default function TeacherDashboard() {
                       <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                         <Link
                           to={`/teacher/courses/${course.slug}`}
-                          className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                          className="hover:text-icc-600 dark:hover:text-icc-400 transition-colors"
                         >
                           {course.title}
                         </Link>
@@ -203,7 +203,7 @@ export default function TeacherDashboard() {
                     </div>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border tracking-wide uppercase shrink-0 ml-3 ${
                       course.status === 'PUBLISHED'
-                        ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20'
+                        ? 'text-icc-500 bg-icc-50 dark:bg-icc-500/10 border-icc-200 dark:border-icc-500/20'
                         : 'text-yellow-500 bg-yellow-50 dark:bg-yellow-500/10 border-yellow-200 dark:border-yellow-500/20'
                     }`}>
                       {course.status}
@@ -223,7 +223,7 @@ export default function TeacherDashboard() {
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-                <HiClipboardCheck className="w-4 h-4 text-emerald-500" />
+                <HiClipboardCheck className="w-4 h-4 text-icc-500" />
                 {t('teacher_dashboard.recent_submissions')}
               </h2>
               <span className="text-xs font-semibold text-amber-500">
@@ -265,7 +265,7 @@ export default function TeacherDashboard() {
             <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-800">
               <Link
                 to="/teacher/submissions"
-                className="text-xs font-semibold text-emerald-500 hover:text-emerald-400 transition-colors"
+                className="text-xs font-semibold text-icc-500 hover:text-icc-400 transition-colors"
               >
                 Review All Submissions
               </Link>
@@ -279,12 +279,12 @@ export default function TeacherDashboard() {
         <div className="lg:col-span-2 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-                <HiTrendingUp className="w-4 h-4 text-emerald-500" />
+                <HiTrendingUp className="w-4 h-4 text-icc-500" />
                 {t('teacher_dashboard.course_analytics')}
               </h2>
               <div className="flex items-center gap-4 text-xs text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span className="w-2 h-2 rounded-full bg-icc-400" />
                   {t('teacher_dashboard.avg_completion')}
                 </span>
               </div>
@@ -302,7 +302,7 @@ export default function TeacherDashboard() {
                     </div>
                     <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-icc-500 to-icc-400 rounded-full transition-all duration-500"
                         style={{ width: `${analytics?.avgCompletion ?? 0}%` }}
                       />
                     </div>
@@ -322,14 +322,14 @@ export default function TeacherDashboard() {
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-                <HiStar className="w-4 h-4 text-emerald-500" />
+                <HiStar className="w-4 h-4 text-icc-500" />
                 {t('teacher_dashboard.quick_actions')}
               </h2>
           </div>
           <div className="p-4 space-y-3">
             <Link
               to="/teacher/courses"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all text-sm font-medium text-emerald-400"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-icc-500/10 border border-icc-500/20 hover:bg-icc-500/20 transition-all text-sm font-medium text-icc-400"
             >
               <HiBookOpen className="w-5 h-5" />
               {t('teacher_dashboard.create_course')}

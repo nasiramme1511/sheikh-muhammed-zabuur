@@ -136,7 +136,7 @@ export default function SearchPage() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" />
             Global Search
@@ -158,11 +158,11 @@ export default function SearchPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Search resources, topics, categories..."
-                className={`w-full ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3.5 text-base sm:text-lg rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:ring-2 focus:ring-emerald-500/50 focus:border-transparent outline-none shadow-sm transition-all duration-300`}
+                className={`w-full ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3.5 text-base sm:text-lg rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:ring-2 focus:ring-icc-500/50 focus:border-transparent outline-none shadow-sm transition-all duration-300`}
               />
               <button
                 type="submit"
-                className={`absolute top-1.5 bottom-1.5 ${isRTL ? 'left-1.5' : 'right-1.5'} bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-5 rounded-xl transition-all duration-200 shadow-md`}
+                className={`absolute top-1.5 bottom-1.5 ${isRTL ? 'left-1.5' : 'right-1.5'} bg-icc-500 hover:bg-icc-600 text-white font-medium px-5 rounded-xl transition-all duration-200 shadow-md`}
               >
                 Search
               </button>
@@ -174,7 +174,7 @@ export default function SearchPage() {
         {!query && !loading && !results && (
           <div className="max-w-2xl mx-auto mt-8 bg-white/5 border border-white/5 rounded-3xl p-8 shadow-sm backdrop-blur-sm text-center">
             <div className="flex items-center gap-2 mb-6 justify-center">
-              <TrendingUp className="w-5 h-5 text-emerald-500 animate-bounce" />
+              <TrendingUp className="w-5 h-5 text-icc-500 animate-bounce" />
               <h2 className="text-base font-bold text-white/80">{t('search.popular_searches')}</h2>
             </div>
             <div className="flex flex-wrap gap-2.5 justify-center">
@@ -185,7 +185,7 @@ export default function SearchPage() {
                     setInput(term);
                     setSearchParams({ q: term });
                   }}
-                  className="px-4 py-2 rounded-xl bg-surface-900 text-sm font-medium hover:bg-emerald-500/10 text-white/60 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/30 hover:scale-105 active:scale-95 transition-all duration-200"
+                  className="px-4 py-2 rounded-xl bg-surface-900 text-sm font-medium hover:bg-icc-500/10 text-white/60 hover:text-icc-400 border border-white/5 hover:border-icc-500/30 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   {term}
                 </button>
@@ -222,7 +222,7 @@ export default function SearchPage() {
                       <button
                         key={tab.id}
                         onClick={() => setSelectedTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-white/60 hover:text-white'}`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${isActive ? 'bg-icc-500 text-white shadow-lg shadow-icc-500/20' : 'text-white/60 hover:text-white'}`}
                       >
                         <span>{tab.label}</span>
                         <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-white/20 text-white' : 'bg-surface-900 text-white/40'}`}>
@@ -237,14 +237,14 @@ export default function SearchPage() {
                 <div className="flex gap-1 bg-white/5 border border-white/5 rounded-xl p-0.5">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
+                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
                     title="Grid View"
                   >
                     <Grid3X3 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
+                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
                     title="List View"
                   >
                     <List className="w-4 h-4" />
@@ -311,7 +311,7 @@ export default function SearchPage() {
             {(results.videos?.length || 0) > 0 && (selectedTab === 'all' || selectedTab === 'videos') && (
               <section className="space-y-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <span className="w-1.5 h-6 rounded-full bg-emerald-500" />
+                  <span className="w-1.5 h-6 rounded-full bg-icc-500" />
                   {t('search.videos') || 'Video Lectures'} ({results.videos.length})
                 </h2>
                 {viewMode === 'grid' ? (
@@ -326,12 +326,12 @@ export default function SearchPage() {
                               <img src={thumbUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }} />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-dark-950">
-                                <VideoIcon className="w-10 h-10 text-emerald-500/40" />
+                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-950 to-dark-950">
+                                <VideoIcon className="w-10 h-10 text-icc-500/40" />
                               </div>
                             )}
                             <div className="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors flex items-center justify-center">
-                              <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-90 group-hover:scale-100 transition-all duration-300">
+                              <div className="w-12 h-12 rounded-full bg-icc-500 text-white flex items-center justify-center shadow-lg shadow-icc-500/30 scale-90 group-hover:scale-100 transition-all duration-300">
                                 <Play className="w-5 h-5 pl-0.5 fill-current" />
                               </div>
                             </div>
@@ -339,10 +339,10 @@ export default function SearchPage() {
                           <div className="p-5 flex flex-col justify-between flex-grow">
                             <div>
                               <div className="flex justify-between items-center mb-2">
-                                <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{item.category}</span>
+                                <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-icc-500/10 text-icc-400 border border-icc-500/20">{item.category}</span>
                                 <span className="text-[10px] text-white/40">{new Date(item.createdAt).toLocaleDateString()}</span>
                               </div>
-                              <h3 className="text-base font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors">{item.title}</h3>
+                              <h3 className="text-base font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-icc-400 transition-colors">{item.title}</h3>
                               <p className="text-xs text-white/50 line-clamp-2">{item.description || 'Watch video lecture by Sheikh Mohammed Zabuur.'}</p>
                             </div>
                           </div>
@@ -361,7 +361,7 @@ export default function SearchPage() {
                             <div className="absolute inset-0 bg-black/30 flex items-center justify-center"><Play className="w-5 h-5 text-white" /></div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">{item.title}</h3>
+                            <h3 className="text-sm font-bold text-white truncate group-hover:text-icc-400 transition-colors">{item.title}</h3>
                             <p className="text-xs text-white/50 truncate mt-0.5">{item.description || 'Watch video lecture'}</p>
                           </div>
                         </motion.div>

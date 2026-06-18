@@ -43,15 +43,15 @@ const TYPE_TABS = [
 ];
 
 const STAT_CARDS = [
-  { key: 'audio', label: 'Audio Lectures', icon: Music, color: 'emerald' },
+  { key: 'audio', label: 'Audio Lectures', icon: Music, color: 'icc' },
   { key: 'video', label: 'Video Lectures', icon: Video, color: 'purple' },
   { key: 'pdfs', label: 'PDF Books', icon: FileText, color: 'red' },
-  { key: 'images', label: 'Images', icon: ImageIcon, color: 'emerald' },
+  { key: 'images', label: 'Images', icon: ImageIcon, color: 'icc' },
   { key: 'recordings', label: 'Recordings', icon: Tv, color: 'amber' },
 ];
 
 const CAT_COLORS: Record<string, string> = {
-  'Aqeedah': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'Aqeedah': 'bg-icc-500/10 text-icc-400 border-icc-500/20',
   'Hadith': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   'Tafsir': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   'Fiqh': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
@@ -145,7 +145,7 @@ export default function ResourceCategory() {
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-white/40 mb-6">
-          <Link to="/" className="hover:text-emerald-400 transition-colors">Home</Link>
+          <Link to="/" className="hover:text-icc-400 transition-colors">Home</Link>
           <span>/</span>
           {data ? (
             <span className="text-white/70 font-medium">{data.category.name}</span>
@@ -173,7 +173,7 @@ export default function ResourceCategory() {
               placeholder="Search within category..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 transition-colors"
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:border-icc-500/40 transition-colors"
             />
           </form>
         </div>
@@ -212,7 +212,7 @@ export default function ResourceCategory() {
                 onClick={() => handleTypeChange(tab.key)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
                   typeFilter === tab.key
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    ? 'bg-icc-500/10 text-icc-400 border-icc-500/20'
                     : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'
                 }`}
               >
@@ -238,7 +238,7 @@ export default function ResourceCategory() {
             {searchQuery && (
               <button
                 onClick={() => { setSearchQuery(''); setPage(1); }}
-                className="mt-4 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-semibold hover:bg-emerald-500/20 transition-colors"
+                className="mt-4 px-4 py-2 rounded-xl bg-icc-500/10 text-icc-400 border border-icc-500/20 text-sm font-semibold hover:bg-icc-500/20 transition-colors"
               >
                 Clear Search
               </button>
@@ -279,7 +279,7 @@ export default function ResourceCategory() {
                       onClick={() => setPage(pageNum)}
                       className={`w-9 h-9 rounded-xl text-xs font-semibold border transition-all ${
                         page === pageNum
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          ? 'bg-icc-500/10 text-icc-400 border-icc-500/20'
                           : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'
                       }`}
                     >
@@ -356,7 +356,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
               onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
             />
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 rounded-full bg-icc-500 flex items-center justify-center shadow-lg">
                 <Play className="w-4 h-4 text-white pl-0.5" />
               </div>
             </div>
@@ -366,7 +366,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
           <span className={`inline-block mb-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[resource.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
             {resource.category}
           </span>
-          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block text-sm font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug">
+          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block text-sm font-bold text-white group-hover:text-icc-400 transition-colors line-clamp-2 leading-snug">
             {resource.title}
           </a>
         </div>
@@ -380,17 +380,17 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="glass-card p-5 flex flex-col gap-4 group hover:border-emerald-500/30 transition-all"
+        className="glass-card p-5 flex flex-col gap-4 group hover:border-icc-500/30 transition-all"
       >
         <div className="flex items-start gap-3">
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+          <div className="w-11 h-11 rounded-xl bg-icc-500/10 text-icc-400 border border-icc-500/20 flex items-center justify-center shrink-0">
             <Music className="w-5 h-5" />
           </div>
           <div className="min-w-0">
             <span className={`inline-block mb-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[resource.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
               {resource.category}
             </span>
-            <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-emerald-400 transition-colors leading-snug">
+            <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-icc-400 transition-colors leading-snug">
               {resource.title}
             </h3>
           </div>
@@ -401,7 +401,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
             href={resource.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold"
+            className="flex items-center gap-1 text-icc-400 hover:text-icc-300 font-semibold"
           >
             <Play className="w-3.5 h-3.5" /> Listen
           </a>
@@ -451,7 +451,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="glass-card overflow-hidden group hover:border-emerald-500/30 transition-all"
+        className="glass-card overflow-hidden group hover:border-icc-500/30 transition-all"
       >
         <a href={resource.url} target="_blank" rel="noopener noreferrer">
           <div className="aspect-video bg-dark-950 relative overflow-hidden">
@@ -466,7 +466,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
           <span className={`inline-block mb-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${CAT_COLORS[resource.category] || 'bg-white/5 text-white/50 border-white/10'}`}>
             {resource.category}
           </span>
-          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block text-sm font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug">
+          <a href={resource.url} target="_blank" rel="noopener noreferrer" className="block text-sm font-bold text-white group-hover:text-icc-400 transition-colors line-clamp-2 leading-snug">
             {resource.title}
           </a>
         </div>

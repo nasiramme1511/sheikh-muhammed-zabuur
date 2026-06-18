@@ -35,7 +35,7 @@ interface ActivityLog {
 const ACTION_TYPES: { value: ActionType; label: string; color: string; icon: any }[] = [
   { value: 'All', label: 'All Actions', color: 'text-white/50', icon: Activity },
   { value: 'Login', label: 'Login', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20', icon: LogIn },
-  { value: 'Upload', label: 'Upload', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', icon: Upload },
+  { value: 'Upload', label: 'Upload', color: 'text-icc-400 bg-icc-500/10 border-icc-500/20', icon: Upload },
   { value: 'Edit', label: 'Edit', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', icon: Edit3 },
   { value: 'Delete', label: 'Delete', color: 'text-red-400 bg-red-500/10 border-red-500/20', icon: Trash2 },
   { value: 'Settings', label: 'Settings', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20', icon: Settings },
@@ -51,7 +51,7 @@ const ACTION_ICONS: Record<string, any> = {
 
 const ACTION_COLORS: Record<string, string> = {
   Login: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-  Upload: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  Upload: 'text-icc-400 bg-icc-500/10 border-icc-500/20',
   Edit: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
   Delete: 'text-red-400 bg-red-500/10 border-red-500/20',
   Settings: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
@@ -241,7 +241,7 @@ export default function ActivityLogs() {
             <Activity className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={() => loadData()} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={() => loadData()} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             Retry
           </button>
         </div>
@@ -254,7 +254,7 @@ export default function ActivityLogs() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Activity className="w-6 h-6 text-emerald-400" />
+            <Activity className="w-6 h-6 text-icc-400" />
             Activity Logs
           </h1>
           <p className="text-sm text-white/40 mt-0.5">
@@ -263,13 +263,13 @@ export default function ActivityLogs() {
         </div>
         <div className="flex items-center gap-3">
           {isPolling && (
-            <span className="text-xs text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs text-icc-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-icc-400 animate-pulse" />
               Live
             </span>
           )}
           <button onClick={handleExportLogs} disabled={filtered.length === 0}
-            className="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/50 text-white text-xs font-semibold transition-all inline-flex items-center gap-1.5">
+            className="px-3 py-2 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:bg-icc-500/50 text-white text-xs font-semibold transition-all inline-flex items-center gap-1.5">
             <Download className="w-3.5 h-3.5" />
             Export
           </button>
@@ -292,7 +292,7 @@ export default function ActivityLogs() {
                 onClick={() => setFilterAction(at.value)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   filterAction === at.value
-                    ? 'bg-emerald-500 text-white shadow-lg'
+                    ? 'bg-icc-500 text-white shadow-lg'
                     : 'text-white/50 hover:text-white/80'
                 }`}
               >
@@ -311,7 +311,7 @@ export default function ActivityLogs() {
             value={searchUser}
             onChange={e => setSearchUser(e.target.value)}
             placeholder="Search by user name or email..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 transition-colors"
           />
         </div>
 
@@ -319,7 +319,7 @@ export default function ActivityLogs() {
         <select
           value={dateRange}
           onChange={e => setDateRange(e.target.value as any)}
-          className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+          className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-icc-500/50 transition-colors"
         >
           <option value="all">All Time</option>
           <option value="7d">Last 7 Days</option>
@@ -341,7 +341,7 @@ export default function ActivityLogs() {
           Showing <span className="text-white font-medium">{paginated.length}</span> of{' '}
           <span className="text-white font-medium">{filtered.length}</span> logs
           {hasActiveFilters && (
-            <button onClick={clearFilters} className="ml-2 text-emerald-400 hover:text-emerald-300 text-xs">(clear filters)</button>
+            <button onClick={clearFilters} className="ml-2 text-icc-400 hover:text-icc-300 text-xs">(clear filters)</button>
           )}
         </p>
       </div>
@@ -382,7 +382,7 @@ export default function ActivityLogs() {
                     <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                          <div className="w-2 h-2 rounded-full bg-icc-400 shrink-0" />
                           <span className="text-xs text-white/50" title={new Date(log.timestamp).toLocaleString()}>
                             {formatTimestamp(log.timestamp)}
                           </span>
@@ -390,7 +390,7 @@ export default function ActivityLogs() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-icc-400 to-icc-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
                             {log.user.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
@@ -429,7 +429,7 @@ export default function ActivityLogs() {
             <Activity className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p>No activity logs found</p>
             {hasActiveFilters && (
-              <button onClick={clearFilters} className="text-emerald-400 hover:text-emerald-300 text-xs mt-2">
+              <button onClick={clearFilters} className="text-icc-400 hover:text-icc-300 text-xs mt-2">
                 Clear filters to see all logs
               </button>
             )}
@@ -469,7 +469,7 @@ export default function ActivityLogs() {
                     onClick={() => setPage(pageNum)}
                     className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
                       safePage === pageNum
-                        ? 'bg-emerald-500 text-white shadow-lg'
+                        ? 'bg-icc-500 text-white shadow-lg'
                         : 'text-white/50 hover:bg-white/5 hover:text-white'
                     }`}
                   >

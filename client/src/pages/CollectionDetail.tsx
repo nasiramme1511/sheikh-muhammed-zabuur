@@ -79,7 +79,7 @@ export default function CollectionDetail() {
       <div className="min-h-screen bg-dark-900 pt-24 pb-16 text-white px-4 md:px-8 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Collection not found</h1>
-          <Link to="/" className="text-emerald-400 hover:text-emerald-300">Back to Home</Link>
+          <Link to="/" className="text-icc-400 hover:text-icc-300">Back to Home</Link>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export default function CollectionDetail() {
       <div className="max-w-7xl mx-auto">
         {/* Back + Header */}
         <div className="mb-8">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-emerald-400 transition-colors mb-4">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-icc-400 transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
           <motion.div
@@ -180,7 +180,7 @@ export default function CollectionDetail() {
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.key
-                  ? 'bg-emerald-500 text-white'
+                  ? 'bg-icc-500 text-white'
                   : 'text-white/60 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -210,12 +210,12 @@ export default function CollectionDetail() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.03 }}
-                className="glass-card p-5 flex flex-col gap-3 hover:border-emerald-500/30 transition-all"
+                className="glass-card p-5 flex flex-col gap-3 hover:border-icc-500/30 transition-all"
               >
                 <div className="flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
                     r.resourceType === 'PDF' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                    r.resourceType === 'AUDIO' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                    r.resourceType === 'AUDIO' ? 'bg-icc-500/10 text-icc-400 border-icc-500/20' :
                     'bg-purple-500/10 text-purple-400 border-purple-500/20'
                   }`}>
                     {r.resourceType === 'PDF' ? <FileText className="w-5 h-5" /> :
@@ -231,7 +231,7 @@ export default function CollectionDetail() {
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-white/40">
                   <span>{r.views} views</span>
-                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold">
+                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-icc-400 hover:text-icc-300 font-semibold">
                     {r.resourceType === 'PDF' ? <Download className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                     {r.resourceType === 'PDF' ? 'Download' : 'Play'}
                   </a>

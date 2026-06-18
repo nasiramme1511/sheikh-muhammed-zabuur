@@ -27,7 +27,7 @@ export default function TeacherHero({ teacher }: Props) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-900 border border-white/5"
+      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-icc-900/40 via-dark-800 to-dark-900 border border-white/5"
     >
       <div className="absolute inset-0 opacity-10"
         style={{
@@ -41,12 +41,12 @@ export default function TeacherHero({ teacher }: Props) {
             {teacher.image ? (
               <img src={teacher.image} alt={name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center">
-                <HiPlay className="w-12 h-12 text-emerald-400" />
+              <div className="w-full h-full bg-gradient-to-br from-icc-500/20 to-icc-600/20 flex items-center justify-center">
+                <HiPlay className="w-12 h-12 text-icc-400" />
               </div>
             )}
             {teacher.verified && (
-              <div className="absolute top-2 right-2 bg-emerald-500 rounded-full p-1 shadow-lg">
+              <div className="absolute top-2 right-2 bg-icc-500 rounded-full p-1 shadow-lg">
                 <BadgeCheck className="w-4 h-4 text-white" />
               </div>
             )}
@@ -58,7 +58,7 @@ export default function TeacherHero({ teacher }: Props) {
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-bold text-white">{name}</h1>
               {teacher.verified && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-icc-500/10 text-icc-400 border border-icc-500/20">
                   <BadgeCheck className="w-3.5 h-3.5" />
                   {t('teacher_detail_page.verified')}
                 </span>
@@ -84,7 +84,7 @@ export default function TeacherHero({ teacher }: Props) {
 
           <div className="flex flex-wrap gap-4 text-xs text-white/40">
             <div className="flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+              <BookOpen className="w-3.5 h-3.5 text-icc-400" />
               <span>{lessonCount} {t('teacher_detail_page.lessons')}</span>
             </div>
             {teacher.studentsCount ? (
@@ -104,7 +104,7 @@ export default function TeacherHero({ teacher }: Props) {
           <div className="flex flex-wrap gap-3 pt-2">
             <a
               href="#lessons"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold hover:from-emerald-400 hover:to-emerald-500 transition-all hover:scale-105 shadow-lg shadow-emerald-500/20"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-icc-500 to-icc-600 text-white text-sm font-semibold hover:from-icc-400 hover:to-icc-500 transition-all hover:scale-105 shadow-lg shadow-icc-500/20"
             >
               <HiPlay className="w-4 h-4" />
               {t('teacher_detail_page.start_learning')}

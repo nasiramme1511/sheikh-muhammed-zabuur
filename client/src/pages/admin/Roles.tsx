@@ -27,7 +27,7 @@ interface ModuleGroup {
 
 const ROLE_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
   SUPER_ADMIN: { bg: 'bg-yellow-50 dark:bg-yellow-900/20', text: 'text-yellow-700 dark:text-yellow-400', border: 'border-yellow-200 dark:border-yellow-800', label: 'SUPER_ADMIN' },
-  ADMIN: { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-200 dark:border-emerald-800', label: 'ADMIN' },
+  ADMIN: { bg: 'bg-icc-50 dark:bg-icc-900/20', text: 'text-icc-700 dark:text-icc-400', border: 'border-icc-200 dark:border-icc-800', label: 'ADMIN' },
   EDITOR: { bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-700 dark:text-blue-400', border: 'border-blue-200 dark:border-blue-800', label: 'EDITOR' },
   CONTENT_MANAGER: { bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-700 dark:text-purple-400', border: 'border-purple-200 dark:border-purple-800', label: 'CONTENT_MANAGER' },
   MODERATOR: { bg: 'bg-orange-50 dark:bg-orange-900/20', text: 'text-orange-700 dark:text-orange-400', border: 'border-orange-200 dark:border-orange-800', label: 'MODERATOR' },
@@ -123,7 +123,7 @@ export default function AdminRoles() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -136,7 +136,7 @@ export default function AdminRoles() {
             <HiShieldCheck className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={loadRoles} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={loadRoles} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             Retry
           </button>
         </div>
@@ -215,7 +215,7 @@ export default function AdminRoles() {
       >
         {permLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
           </div>
         ) : permissions.length === 0 ? (
           <div className="text-center py-16 text-gray-500">No permissions configured</div>
@@ -224,7 +224,7 @@ export default function AdminRoles() {
             {permissions.map((group, mi) => (
               <div key={group.module}>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <HiShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <HiShieldCheck className="w-4 h-4 text-icc-500" />
                   {group.module}
                 </h3>
                 <div className="space-y-2">
@@ -236,7 +236,7 @@ export default function AdminRoles() {
                       <div
                         className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
                           perm.assigned
-                            ? 'bg-emerald-500 border-emerald-500'
+                            ? 'bg-icc-500 border-icc-500'
                             : 'border-gray-300 dark:border-gray-600'
                         }`}
                         onClick={() => togglePermission(mi, pi)}

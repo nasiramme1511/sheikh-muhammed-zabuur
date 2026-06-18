@@ -119,13 +119,13 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-between h-16 md:h-20" role="navigation" aria-label="Main navigation">
+          <nav className="flex items-center justify-between h-16 md:h-20" role="navigation" aria-label={t('nav.main_navigation')}>
             <Link to="/" className="flex items-center gap-3 group z-10" aria-label={t('hero.title_line1') + ' ' + t('hero.title_line2')}>
               <div className="relative shrink-0">
                 <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl overflow-hidden ring-2 ring-icc-500/30 group-hover:ring-icc-500/60 transition-all duration-300">
                   <img
                     src="/images/sheikh-zabuur.jpg"
-                    alt="Sheikh Mohammed Zabuur"
+                    alt={t('app.title')}
                     className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
                     loading="eager"
                   />
@@ -254,7 +254,7 @@ export default function Navbar() {
                         <p className="text-xs text-white/40">{user.email}</p>
                       </div>
                       <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 transition-colors">
-                        <User className="w-4 h-4" /> Dashboard
+                        <User className="w-4 h-4" /> {t('nav.dashboard')}
                       </Link>
                       {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                         <Link to="/admin" className="flex items-center gap-2 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 transition-colors">

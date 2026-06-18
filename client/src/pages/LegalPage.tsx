@@ -72,7 +72,7 @@ export default function LegalPage({ slug }: Props) {
 
         <div className="glass-card-premium p-8 md:p-12">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-icc-500/20 to-emerald-600/20 flex items-center justify-center border border-icc-500/10">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-icc-500/20 to-icc-600/20 flex items-center justify-center border border-icc-500/10">
               <Icon className="w-7 h-7 text-icc-400" />
             </div>
             <div>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HiMail, HiUsers, HiPaperAirplane, HiTrash, HiSearch, HiTemplate, HiCheck, HiX } from 'react-icons/hi';
 import { admin } from '../../lib/api';
 import api from '../../lib/api';
@@ -153,10 +153,10 @@ export default function AdminNewsletter() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-5">
+        <div className="rounded-2xl bg-gradient-to-br from-icc-500/10 to-icc-600/5 border border-icc-500/20 p-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-              <HiUsers className="w-5 h-5 text-emerald-500" />
+            <div className="w-10 h-10 rounded-xl bg-icc-500/20 flex items-center justify-center">
+              <HiUsers className="w-5 h-5 text-icc-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-white">{stats.totalSubscribers}</p>
@@ -262,15 +262,15 @@ export default function AdminNewsletter() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSendConfirmOpen(false)}>
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-md animate-scale-in" onClick={(e) => e.stopPropagation()}>
             <div className="p-6 text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                <HiPaperAirplane className="w-6 h-6 text-emerald-600" />
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-icc-100 dark:bg-icc-900/30 flex items-center justify-center">
+                <HiPaperAirplane className="w-6 h-6 text-icc-600" />
               </div>
               <h3 className="text-lg font-bold mb-2">Send Newsletter</h3>
               <p className="text-sm text-gray-500">This will send "{subject}" to {languageFilter ? `${languageFilter.toUpperCase()} ` : ''}subscribers. Continue?</p>
             </div>
             <div className="flex items-center justify-end gap-3 px-6 pb-6">
               <button onClick={() => setSendConfirmOpen(false)} className="btn-secondary">Cancel</button>
-              <button onClick={handleSend} disabled={sending} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-all duration-200 disabled:opacity-50">
+              <button onClick={handleSend} disabled={sending} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-icc-600 hover:bg-icc-700 text-white font-medium text-sm transition-all duration-200 disabled:opacity-50">
                 {sending && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />}
                 {sending ? 'Sending...' : 'Send Now'}
               </button>

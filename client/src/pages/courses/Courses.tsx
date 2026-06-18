@@ -62,7 +62,7 @@ export default function Courses() {
           </span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
             Browse Our{' '}
-            <span className="bg-gradient-to-r from-icc-400 to-emerald-300 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-icc-400 to-icc-300 bg-clip-text text-transparent">
               Structured Courses
             </span>
           </h1>
@@ -182,12 +182,12 @@ export default function Courses() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-500/10 to-emerald-950/20">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-500/10 to-icc-950/20">
                     <CourseIcon className="w-12 h-12 text-icc-500/40" />
                   </div>
                 )}
                 {/* Accent line */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-icc-500 to-emerald-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-icc-500 to-icc-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
               </div>
 
               {/* Info */}

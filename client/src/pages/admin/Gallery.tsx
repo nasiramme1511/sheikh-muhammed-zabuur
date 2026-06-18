@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from '../../i18n';
 import {
   Image, Upload, RefreshCw, Search, Star, Trash2, Edit3, X, AlertCircle,
   Save, Grid, HardDrive, Plus,
@@ -41,6 +42,7 @@ function totalSize(files: ImageResource[]): string {
 }
 
 export default function Gallery() {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<ImageResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -102,8 +104,7 @@ export default function Gallery() {
   const handleUploadFiles = (files: FileList | File[]) => {
     const images = Array.from(files).filter((f) => f.type.startsWith('image/'));
     if (images.length === 0) {
-      setUploadError('Please select image files only');
-      return;
+      setUploadError(t('admin.gallery_upload_error_type')); return;
     }
     setUploadFiles((prev) => [...prev, ...images]);
     setUploadError('');
@@ -125,7 +126,7 @@ export default function Gallery() {
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uploadFiles.length === 0) { setUploadError('Please select at least one image to upload'); return; }
+    if (uploadFiles.length === 0) { setUploadError(t('admin.gallery_upload_error_select')); return; }
     setUploading(true);
     setUploadError('');
     try {
@@ -147,7 +148,7 @@ export default function Gallery() {
       setUploadFeatured(false);
       load();
     } catch (err: any) {
-      setUploadError(err.response?.data?.error || 'Failed to upload images');
+      setUploadError(err.response?.data?.error || t('admin.gallery_upload_error_failed'));
     } finally {
       setUploading(false);
     }
@@ -196,9 +197,9 @@ export default function Gallery() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Images & Gallery</h1>
+          <h1 className="text-2xl font-bold">{t('admin.gallery_title')}</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            {resources.length} images · {totalSize(resources)} total
+            {resources.length} {t('admin.gallery_images_label')} · {totalSize(resources)} {t('admin.gallery_total_label')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -207,9 +208,9 @@ export default function Gallery() {
             className="btn-primary inline-flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
-            Upload Images
+            {t('admin.gallery_upload')}
           </button>
-          <button onClick={load} className="btn-secondary p-2" title="Refresh">
+          <button onClick={load} className="btn-secondary p-2" title={t('admin.gallery_refresh')}>
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
@@ -218,20 +219,20 @@ export default function Gallery() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="glass-card-dark rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <Image className="w-6 h-6 text-emerald-400" />
+          <div className="p-3 rounded-xl bg-icc-500/10 border border-icc-500/20">
+            <Image className="w-6 h-6 text-icc-400" />
           </div>
           <div>
-            <p className="text-sm text-gray-400">Total Images</p>
+            <p className="text-sm text-gray-400">{t('admin.gallery_total')}</p>
             <p className="text-2xl font-bold">{stats.totalImages || resources.length}</p>
           </div>
         </div>
         <div className="glass-card-dark rounded-xl p-4 flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <HardDrive className="w-6 h-6 text-emerald-400" />
+          <div className="p-3 rounded-xl bg-icc-500/10 border border-icc-500/20">
+            <HardDrive className="w-6 h-6 text-icc-400" />
           </div>
           <div>
-            <p className="text-sm text-gray-400">Storage Used</p>
+            <p className="text-sm text-gray-400">{t('admin.gallery_storage')}</p>
             <p className="text-2xl font-bold">{humanSize(stats.totalStorage)}</p>
           </div>
         </div>
@@ -245,7 +246,7 @@ export default function Gallery() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search images by title, filename, alt text..."
+            placeholder={t('admin.gallery_search')}
             className="input-field pl-10"
           />
         </div>
@@ -256,11 +257,11 @@ export default function Gallery() {
               onClick={() => setFilterCategory(cat)}
               className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
                 filterCategory === cat
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                  ? 'bg-icc-500/10 border-icc-500/30 text-icc-400'
                   : 'bg-white dark:bg-dark-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:border-gray-300'
               }`}
             >
-              {cat === 'all' ? 'All' : cat}
+              {cat === 'all' ? t('admin.gallery_all') : cat}
             </button>
           ))}
         </div>
@@ -274,7 +275,7 @@ export default function Gallery() {
       ) : filtered.length === 0 ? (
         <div className="py-16 text-center text-gray-400">
           <Image className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          <p>No images found</p>
+          <p>{t('admin.gallery_no_images')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -285,7 +286,7 @@ export default function Gallery() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: (i % 20) * 0.03 }}
-              className="group relative rounded-xl overflow-hidden bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-500/30 transition-all"
+              className="group relative rounded-xl overflow-hidden bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 hover:border-icc-500/30 transition-all"
             >
               <div
                 className="aspect-square overflow-hidden cursor-pointer"
@@ -316,21 +317,21 @@ export default function Gallery() {
                       ? 'bg-amber-500/80 text-white'
                       : 'bg-black/40 text-white/80 hover:bg-black/60'
                   }`}
-                  title={item.featured ? 'Unfeature' : 'Feature'}
+                  title={item.featured ? t('admin.gallery_unfeature') : t('admin.gallery_feature')}
                 >
                   <Star className="w-3.5 h-3.5" fill={item.featured ? 'currentColor' : 'none'} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setEditTarget(item); }}
                   className="p-1.5 rounded-lg bg-black/40 text-white/80 hover:bg-black/60 backdrop-blur-sm transition-all"
-                  title="Edit"
+                  title={t('admin.gallery_edit')}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); setDeleteTarget(item); }}
                   className="p-1.5 rounded-lg bg-black/40 text-white/80 hover:bg-red-500/80 backdrop-blur-sm transition-all"
-                  title="Delete"
+                  title={t('admin.gallery_delete')}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -340,7 +341,7 @@ export default function Gallery() {
               {item.featured && (
                 <div className="absolute top-2 left-2">
                   <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/80 text-white backdrop-blur-sm">
-                    Featured
+                    {t('admin.gallery_featured_badge')}
                   </span>
                 </div>
               )}
@@ -375,10 +376,10 @@ export default function Gallery() {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-emerald-500/10">
-                    <Upload className="w-5 h-5 text-emerald-500" />
+                  <div className="p-2 rounded-full bg-icc-500/10">
+                    <Upload className="w-5 h-5 text-icc-500" />
                   </div>
-                  <h3 className="font-bold text-lg">Upload Images</h3>
+                  <h3 className="font-bold text-lg">{t('admin.gallery_upload')}</h3>
                 </div>
                 <button
                   type="button"
@@ -405,8 +406,8 @@ export default function Gallery() {
                   onClick={() => fileInputRef.current?.click()}
                   className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
                     dragOver
-                      ? 'border-emerald-500 bg-emerald-500/5'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400'
+                      ? 'border-icc-500 bg-icc-500/5'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-icc-400'
                   }`}
                 >
                   <input
@@ -419,16 +420,16 @@ export default function Gallery() {
                   />
                   <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Drag & drop images here, or click to browse
+                    {t('admin.gallery_dropzone')}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">Supports JPG, PNG, WebP, GIF</p>
+                  <p className="text-xs text-gray-400 mt-1">{t('admin.gallery_dropzone_hint')}</p>
                 </div>
 
                 {/* Selected files */}
                 {uploadFiles.length > 0 && (
                   <div>
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {uploadFiles.length} file(s) selected
+                      {t('admin.gallery_files_selected', { count: uploadFiles.length })}
                     </p>
                     <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                       {uploadFiles.map((file, idx) => (
@@ -452,7 +453,7 @@ export default function Gallery() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category (for all)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('admin.gallery_category_label')}</label>
                   <select
                     value={uploadCategory}
                     onChange={(e) => setUploadCategory(e.target.value)}
@@ -469,21 +470,21 @@ export default function Gallery() {
                     type="button"
                     onClick={() => setUploadFeatured(!uploadFeatured)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      uploadFeatured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
                       uploadFeatured ? 'translate-x-6' : 'translate-x-1'
                     }`} />
                   </button>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Feature on Homepage</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('admin.gallery_feature_toggle')}</label>
                 </div>
 
                 <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button type="button" onClick={() => setShowUploadModal(false)} className="btn-secondary">Cancel</button>
+                  <button type="button" onClick={() => setShowUploadModal(false)} className="btn-secondary">{t('admin.gallery_cancel')}</button>
                   <button type="submit" disabled={uploading} className="btn-primary inline-flex items-center gap-2">
                     {uploading && <RefreshCw className="w-4 h-4 animate-spin" />}
-                    {uploading ? 'Uploading...' : `Upload ${uploadFiles.length > 0 ? `(${uploadFiles.length})` : ''}`}
+                    {uploading ? t('admin.gallery_uploading') : `${t('admin.gallery_upload')}${uploadFiles.length > 0 ? ` (${uploadFiles.length})` : ''}`}
                   </button>
                 </div>
               </form>
@@ -514,7 +515,7 @@ export default function Gallery() {
                   <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-500/10">
                     <Edit3 className="w-5 h-5 text-amber-500" />
                   </div>
-                  <h3 className="font-bold text-lg">Edit Image Details</h3>
+                  <h3 className="font-bold text-lg">{t('admin.gallery_edit_title')}</h3>
                 </div>
                 <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
                   <X className="w-4 h-4 text-white/60" />
@@ -533,7 +534,7 @@ export default function Gallery() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('admin.gallery_title_label')}</label>
                   <input
                     type="text"
                     value={editTarget.title}
@@ -542,26 +543,26 @@ export default function Gallery() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alt Text</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('admin.gallery_alt_label')}</label>
                   <input
                     type="text"
                     value={editTarget.altText || ''}
                     onChange={(e) => setEditTarget({ ...editTarget, altText: e.target.value })}
-                    placeholder="Descriptive text for accessibility"
+                    placeholder={t('admin.gallery_alt_placeholder')}
                     className="input-field w-full"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Caption</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('admin.gallery_caption_label')}</label>
                   <textarea
                     value={editTarget.caption || editTarget.description || ''}
                     onChange={(e) => setEditTarget({ ...editTarget, caption: e.target.value, description: e.target.value })}
-                    placeholder="Optional caption displayed with image"
+                    placeholder={t('admin.gallery_caption_placeholder')}
                     className="input-field w-full h-20 resize-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('admin.gallery_category_label_edit')}</label>
                   <select
                     value={editTarget.category}
                     onChange={(e) => setEditTarget({ ...editTarget, category: e.target.value })}
@@ -577,23 +578,23 @@ export default function Gallery() {
                     type="button"
                     onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      editTarget.featured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'
+                      editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
                       editTarget.featured ? 'translate-x-6' : 'translate-x-1'
                     }`} />
                   </button>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Featured on Homepage</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('admin.gallery_featured_toggle')}</label>
                 </div>
               </div>
 
               <div className="flex gap-3 justify-end mt-6">
-                <button onClick={() => setEditTarget(null)} className="btn-secondary">Cancel</button>
+                <button onClick={() => setEditTarget(null)} className="btn-secondary">{t('admin.gallery_cancel')}</button>
                 <button onClick={handleEdit} disabled={saving} className="btn-primary inline-flex items-center gap-2">
                   {saving && <RefreshCw className="w-4 h-4 animate-spin" />}
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('admin.gallery_save')}
                 </button>
               </div>
             </motion.div>
@@ -663,7 +664,7 @@ export default function Gallery() {
                 <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
                   <AlertCircle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-lg">Delete Image?</h3>
+                <h3 className="font-bold text-lg">{t('admin.gallery_delete_title')}</h3>
               </div>
               <div className="mb-4 rounded-xl overflow-hidden">
                 <img
@@ -672,15 +673,15 @@ export default function Gallery() {
                   className="w-full h-32 object-cover"
                 />
               </div>
-              <p className="text-sm text-gray-500 mb-2">This will permanently delete:</p>
+              <p className="text-sm text-gray-500 mb-2">{t('admin.gallery_delete_warning')}</p>
               <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
                 {deleteTarget.name}
               </p>
               <div className="flex gap-3 justify-end">
-                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">Cancel</button>
+                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">{t('admin.gallery_cancel')}</button>
                 <button onClick={handleDelete} disabled={deleting} className="btn-primary bg-red-500 hover:bg-red-600 border-red-500 inline-flex items-center gap-2">
                   {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  Delete
+                  {t('admin.gallery_delete_confirm')}
                 </button>
               </div>
             </motion.div>

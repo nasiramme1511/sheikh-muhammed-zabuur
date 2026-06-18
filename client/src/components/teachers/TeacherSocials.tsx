@@ -40,7 +40,7 @@ export default function TeacherSocials({ teacher }: Props) {
     { key: 'tiktok', icon: FaTiktok, label: label('tiktok'), color: '#ffffff', hoverBg: 'hover:bg-white/10' },
     { key: 'twitter', icon: FaTwitter, label: label('twitter'), color: '#1DA1F2', hoverBg: 'hover:bg-[#1DA1F2]/20' },
     { key: 'whatsapp', icon: FaWhatsapp, label: label('whatsapp'), color: '#25D366', hoverBg: 'hover:bg-[#25D366]/20' },
-    { key: 'website', icon: FaGlobe, label: label('website'), color: '#10B981', hoverBg: 'hover:bg-emerald-500/20' },
+    { key: 'website', icon: FaGlobe, label: label('website'), color: '#0EA5E9', hoverBg: 'hover:bg-icc-500/20' },
   ];
 
   const activeSocials = socials.filter((s) => teacher[s.key]);

@@ -114,7 +114,7 @@ function LangSection({ form, onChange, suffix, label, flag }: { form: FormData; 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
       <h4 className="text-sm font-semibold flex items-center gap-2">
-        <Globe className="w-4 h-4 text-emerald-500" />
+        <Globe className="w-4 h-4 text-icc-500" />
         {flag} {t(label as any)}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -277,7 +277,7 @@ export default function AdminBooks() {
           {/* Per-language sections */}
           <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-4 text-gray-500 uppercase tracking-wider">
-              <Globe className="w-4 h-4 text-emerald-500" />
+              <Globe className="w-4 h-4 text-icc-500" />
               {t('admin.book_localized')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

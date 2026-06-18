@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HiPlus, HiPencil, HiTrash, HiMenu } from 'react-icons/hi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { admin } from '../../lib/api';
@@ -184,7 +184,7 @@ export default function AdminTelegramChannels() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => item.id && handleToggleEnabled(item.id)}
-                        className={`${(item.enabled ?? true) ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'} relative inline-flex h-5 w-9 items-center rounded-full transition-colors`}
+                        className={`${(item.enabled ?? true) ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'} relative inline-flex h-5 w-9 items-center rounded-full transition-colors`}
                       >
                         <span className={`${(item.enabled ?? true) ? 'translate-x-[18px]' : 'translate-x-[2px]'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`} />
                       </button>
@@ -241,7 +241,7 @@ export default function AdminTelegramChannels() {
             <button
               type="button"
               onClick={() => setForm({ ...form, enabled: !form.enabled })}
-              className={`${form.enabled ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'} relative inline-flex h-5 w-9 items-center rounded-full transition-colors`}
+              className={`${form.enabled ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'} relative inline-flex h-5 w-9 items-center rounded-full transition-colors`}
             >
               <span className={`${form.enabled ? 'translate-x-[18px]' : 'translate-x-[2px]'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`} />
             </button>

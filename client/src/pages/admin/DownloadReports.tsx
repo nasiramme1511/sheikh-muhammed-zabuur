@@ -231,7 +231,7 @@ export default function DownloadReports() {
             <HiDownload className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             Retry
           </button>
         </div>
@@ -246,14 +246,14 @@ export default function DownloadReports() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <HiDownload className="w-6 h-6 text-emerald-400" />
+            <HiDownload className="w-6 h-6 text-icc-400" />
             Download Reports
           </h1>
           <p className="text-sm text-white/40 mt-0.5">Track resource downloads and trends</p>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={handleExportCSV} disabled={filtered.length === 0}
-            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="px-4 py-2 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             <Download className="w-4 h-4" />
             Export CSV
           </button>
@@ -287,10 +287,10 @@ export default function DownloadReports() {
             </div>
           </div>
         </div>
-        <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-5">
+        <div className="rounded-2xl bg-icc-500/10 border border-icc-500/20 p-5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/20">
-              <HiTrendingUp className="w-6 h-6 text-emerald-400" />
+            <div className="p-2.5 rounded-xl bg-icc-500/20">
+              <HiTrendingUp className="w-6 h-6 text-icc-400" />
             </div>
             <div className="min-w-0">
               <p className="text-2xl font-bold text-white">{formatNumber(stats.topDownloadedCount)}</p>
@@ -339,7 +339,7 @@ export default function DownloadReports() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by title or category..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 transition-colors"
           />
         </div>
         <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl p-1">
@@ -349,7 +349,7 @@ export default function DownloadReports() {
               onClick={() => setFilterType(f.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filterType === f.value
-                  ? 'bg-emerald-500 text-white shadow-lg'
+                  ? 'bg-icc-500 text-white shadow-lg'
                   : 'text-white/50 hover:text-white/80'
               }`}
             >
@@ -363,7 +363,7 @@ export default function DownloadReports() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 text-sm">
-            <HiDownload className="w-4 h-4 text-emerald-500" />
+            <HiDownload className="w-4 h-4 text-icc-500" />
             Top Downloaded Content
           </h2>
           <span className="text-xs text-white/40">{filtered.length} items</span>

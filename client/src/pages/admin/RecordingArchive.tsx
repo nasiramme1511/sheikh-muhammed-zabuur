@@ -171,14 +171,14 @@ export default function RecordingArchive() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Video className="w-6 h-6 text-emerald-500" />
+            <Video className="w-6 h-6 text-icc-500" />
             Recording Archive
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Manage video recordings — edit metadata, feature, reclassify, or delete
           </p>
         </div>
-        <button onClick={load} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-emerald-500 hover:border-emerald-500 transition-all" title="Refresh">
+        <button onClick={load} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-icc-500 hover:border-icc-500 transition-all" title="Refresh">
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
@@ -191,8 +191,8 @@ export default function RecordingArchive() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
-          <p className="text-2xl font-bold text-emerald-400">{recordings.length}</p>
+        <div className="rounded-xl bg-icc-500/10 border border-icc-500/20 p-4 text-center">
+          <p className="text-2xl font-bold text-icc-400">{recordings.length}</p>
           <p className="text-xs text-gray-400 mt-1">Total Recordings</p>
         </div>
         <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 text-center">
@@ -214,7 +214,7 @@ export default function RecordingArchive() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title, category, or teacher..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export default function RecordingArchive() {
           <select
             value={collectionFilter}
             onChange={(e) => setCollectionFilter(e.target.value)}
-            className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+            className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
           >
             <option value="">All Collections</option>
             {COLLECTIONS.map((c) => (
@@ -233,16 +233,16 @@ export default function RecordingArchive() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+            className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
           >
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="most_viewed">Most Viewed</option>
           </select>
           <Calendar className="w-4 h-4 text-gray-400" />
-          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
           <span className="text-gray-400">—</span>
-          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
           {(search || dateFrom || dateTo || collectionFilter) && (
             <button onClick={() => { setSearch(''); setDateFrom(''); setDateTo(''); setCollectionFilter(''); }} className="p-2.5 rounded-xl text-red-400 hover:bg-red-500/10 transition-all" title="Clear filters">
               <X className="w-4 h-4" />
@@ -358,20 +358,20 @@ export default function RecordingArchive() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Title</label>
-                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all" />
+                  <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
-                  <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none" />
+                  <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all resize-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
-                  <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                  <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all">
                     {CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
                   </select>
                 </div>
                 <div className="flex items-center gap-3 py-2">
-                  <button type="button" onClick={() => setEditForm({ ...editForm, featured: !editForm.featured })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${editForm.featured ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                  <button type="button" onClick={() => setEditForm({ ...editForm, featured: !editForm.featured })} className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${editForm.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${editForm.featured ? 'translate-x-[18px]' : 'translate-x-1'}`} />
                   </button>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Featured on Homepage</label>
@@ -379,7 +379,7 @@ export default function RecordingArchive() {
               </div>
               <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button onClick={() => setEditTarget(null)} className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">Cancel</button>
-                <button onClick={handleEditSave} disabled={saving} className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white text-sm font-semibold transition-all flex items-center gap-2">
+                <button onClick={handleEditSave} disabled={saving} className="px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-60 text-white text-sm font-semibold transition-all flex items-center gap-2">
                   {saving && <RefreshCw className="w-4 h-4 animate-spin" />}
                   <Save className="w-4 h-4" /> Save Changes
                 </button>

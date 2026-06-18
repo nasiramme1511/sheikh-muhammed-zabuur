@@ -178,7 +178,7 @@ export default function CourseDetail() {
             {course.thumbnail ? (
               <img src={course.thumbnail} alt={course.title} className="w-full h-40 object-cover rounded-xl mb-6 shadow-md" />
             ) : (
-              <div className="w-full h-40 rounded-xl bg-gradient-to-br from-icc-500/15 to-emerald-950/20 border border-icc-500/20 flex items-center justify-center mb-6">
+              <div className="w-full h-40 rounded-xl bg-gradient-to-br from-icc-500/15 to-icc-950/20 border border-icc-500/20 flex items-center justify-center mb-6">
                 <BookOpen className="w-12 h-12 text-icc-500/40" />
               </div>
             )}

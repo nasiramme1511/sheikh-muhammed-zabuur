@@ -44,7 +44,7 @@ const SOCIAL_COLORS: Record<string, string> = {
   facebook: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   twitter: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
   instagram: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-  whatsapp: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  whatsapp: 'bg-icc-500/10 text-icc-400 border-icc-500/20',
 };
 
 export default function FooterSettings() {
@@ -154,7 +154,7 @@ export default function FooterSettings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -164,7 +164,7 @@ export default function FooterSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Pen className="w-6 h-6 text-emerald-500" />
+            <Pen className="w-6 h-6 text-icc-500" />
             Footer Settings
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -174,7 +174,7 @@ export default function FooterSettings() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-icc-500/20"
         >
           {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {saving ? 'Saving...' : 'Save All Settings'}
@@ -187,7 +187,7 @@ export default function FooterSettings() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" /> Settings saved successfully!
         </div>
       )}
@@ -223,7 +223,7 @@ export default function FooterSettings() {
                 value={social.url}
                 onChange={(e) => updateSocial(social.platform, e.target.value)}
                 placeholder={`${social.platform} URL...`}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
               />
             </div>
           ))}
@@ -239,10 +239,10 @@ export default function FooterSettings() {
             data.quickLinks.map((link, index) => (
               <div key={link.id} className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800">
                 <div className="flex flex-col gap-0.5">
-                  <button onClick={() => moveQuickLink(index, 'up')} disabled={index === 0} className="p-0.5 rounded text-gray-400 hover:text-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                  <button onClick={() => moveQuickLink(index, 'up')} disabled={index === 0} className="p-0.5 rounded text-gray-400 hover:text-icc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                     <ChevronUp className="w-3 h-3" />
                   </button>
-                  <button onClick={() => moveQuickLink(index, 'down')} disabled={index === data.quickLinks.length - 1} className="p-0.5 rounded text-gray-400 hover:text-emerald-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                  <button onClick={() => moveQuickLink(index, 'down')} disabled={index === data.quickLinks.length - 1} className="p-0.5 rounded text-gray-400 hover:text-icc-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </div>
@@ -252,14 +252,14 @@ export default function FooterSettings() {
                   value={link.label}
                   onChange={(e) => updateQuickLink(link.id, 'label', e.target.value)}
                   placeholder="Link label"
-                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
                 />
                 <input
                   type="text"
                   value={link.url}
                   onChange={(e) => updateQuickLink(link.id, 'url', e.target.value)}
                   placeholder="/url"
-                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                  className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
                 />
                 <button onClick={() => removeQuickLink(link.id)} className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -267,7 +267,7 @@ export default function FooterSettings() {
               </div>
             ))
           )}
-          <button onClick={addQuickLink} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-all">
+          <button onClick={addQuickLink} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-semibold transition-all">
             <Plus className="w-4 h-4" /> Add Quick Link
           </button>
         </div>
@@ -288,7 +288,7 @@ function SectionCard({ icon: Icon, title, subtitle, children }: { icon: any; tit
     <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+          <div className="p-2 rounded-lg bg-icc-500/10 text-icc-400">
             <Icon className="w-4 h-4" />
           </div>
           <div>
@@ -312,7 +312,7 @@ function ToggleRow({ label, desc, checked, onChange }: { label: string; desc?: s
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}
       >
         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform mt-0.5 ${checked ? 'translate-x-[18px]' : 'translate-x-1'}`} />
       </button>
@@ -328,7 +328,7 @@ function TextField({ label, value, onChange, placeholder, type = 'text' }: { lab
         type={type} value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
       />
     </div>
   );
@@ -343,7 +343,7 @@ function TextAreaField({ label, value, onChange, placeholder }: { label: string;
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={3}
-        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none"
+        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all resize-none"
       />
     </div>
   );

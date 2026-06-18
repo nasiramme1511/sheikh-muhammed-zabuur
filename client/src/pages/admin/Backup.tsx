@@ -187,7 +187,7 @@ export default function AdminBackup() {
   const getTypeBadge = (type: string) => {
     switch (type) {
       case 'manual': return <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Manual</span>;
-      case 'auto': return <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Auto</span>;
+      case 'auto': return <span className="text-xs px-2 py-0.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20">Auto</span>;
       case 'scheduled': return <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Scheduled</span>;
       default: return null;
     }
@@ -195,7 +195,7 @@ export default function AdminBackup() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="w-4 h-4 text-emerald-400" />;
+      case 'completed': return <CheckCircle className="w-4 h-4 text-icc-400" />;
       case 'failed': return <AlertTriangle className="w-4 h-4 text-red-400" />;
       case 'in_progress': return <RefreshCw className="w-4 h-4 text-blue-400 animate-spin" />;
       default: return null;
@@ -223,7 +223,7 @@ export default function AdminBackup() {
             <HiDatabase className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={loadBackups} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">
+          <button onClick={loadBackups} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">
             Retry
           </button>
         </div>
@@ -236,7 +236,7 @@ export default function AdminBackup() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Database className="w-6 h-6 text-emerald-400" />
+            <Database className="w-6 h-6 text-icc-400" />
             Backup & Restore
           </h1>
           <p className="text-sm text-white/40 mt-0.5">Manage database and media backups</p>
@@ -262,7 +262,7 @@ export default function AdminBackup() {
         {/* Export Database */}
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-            <Download className="w-5 h-5 text-emerald-500" />
+            <Download className="w-5 h-5 text-icc-500" />
             <h2 className="font-semibold text-gray-900 dark:text-white text-sm">Export Database</h2>
           </div>
           <div className="p-5">
@@ -272,7 +272,7 @@ export default function AdminBackup() {
             </p>
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 mb-4">
               <div className="flex items-center gap-2 text-sm text-white/60">
-                <Database className="w-4 h-4 text-emerald-400" />
+                <Database className="w-4 h-4 text-icc-400" />
                 <span>Estimated size: ~4.2 MB</span>
               </div>
               <span className="text-xs text-white/30">.sql format</span>
@@ -280,7 +280,7 @@ export default function AdminBackup() {
             <button
               onClick={handleExportDB}
               disabled={exporting}
-              className="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/50 text-white text-sm font-semibold transition-all inline-flex items-center justify-center gap-2"
+              className="w-full px-4 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:bg-icc-500/50 text-white text-sm font-semibold transition-all inline-flex items-center justify-center gap-2"
             >
               {exporting ? (
                 <><RefreshCw className="w-4 h-4 animate-spin" /> Exporting...</>
@@ -303,13 +303,13 @@ export default function AdminBackup() {
             </p>
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-emerald-500/30 transition-all cursor-pointer mb-4"
+              className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-icc-500/30 transition-all cursor-pointer mb-4"
             >
               {importFile ? (
                 <div className="flex items-center gap-3 justify-center">
-                  <FileText className="w-8 h-8 text-emerald-400" />
+                  <FileText className="w-8 h-8 text-icc-400" />
                   <div className="text-left">
-                    <p className="text-sm text-emerald-300 font-medium truncate max-w-[200px]">{importFile.name}</p>
+                    <p className="text-sm text-icc-300 font-medium truncate max-w-[200px]">{importFile.name}</p>
                     <p className="text-xs text-white/40">{(importFile.size / 1024).toFixed(1)} KB</p>
                   </div>
                   <button onClick={(e) => { e.stopPropagation(); setImportFile(null); }}
@@ -386,12 +386,12 @@ export default function AdminBackup() {
             {backingUp && (
               <div className="mt-3 space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-emerald-400">Processing media files...</span>
+                  <span className="text-icc-400">Processing media files...</span>
                   <span className="text-white/50">{Math.min(backupProgress, 100)}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-purple-500 to-emerald-400 rounded-full"
+                    className="h-full bg-gradient-to-r from-purple-500 to-icc-400 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(backupProgress, 100)}%` }}
                     transition={{ duration: 0.3 }}
@@ -418,12 +418,12 @@ export default function AdminBackup() {
                   <div key={backup.id}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <div className={`p-1.5 rounded-lg border ${
-                      backup.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20' :
+                      backup.status === 'completed' ? 'bg-icc-500/10 border-icc-500/20' :
                       backup.status === 'failed' ? 'bg-red-500/10 border-red-500/20' :
                       'bg-blue-500/10 border-blue-500/20'
                     }`}>
                       {backup.status === 'completed' ? (
-                        <Database className="w-4 h-4 text-emerald-400" />
+                        <Database className="w-4 h-4 text-icc-400" />
                       ) : backup.status === 'failed' ? (
                         <AlertTriangle className="w-4 h-4 text-red-400" />
                       ) : (
@@ -447,7 +447,7 @@ export default function AdminBackup() {
                       <button
                         onClick={() => setRestoreTarget(backup)}
                         disabled={backup.status !== 'completed'}
-                        className="text-xs text-emerald-400 hover:text-emerald-300 disabled:text-white/20 disabled:cursor-not-allowed transition-colors mt-0.5"
+                        className="text-xs text-icc-400 hover:text-icc-300 disabled:text-white/20 disabled:cursor-not-allowed transition-colors mt-0.5"
                       >
                         Restore
                       </button>

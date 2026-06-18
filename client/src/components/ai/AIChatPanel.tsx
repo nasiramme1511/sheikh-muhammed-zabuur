@@ -87,18 +87,18 @@ export default function AIChatPanel() {
           <div className="relative px-4 py-3 border-b border-white/5 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-icc-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-icc-500/20">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-icc-500 to-icc-600 flex items-center justify-center shadow-lg shadow-icc-500/20">
                   <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" />
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                   </svg>
                 </div>
-                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-dark-800" />
+                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-icc-500 rounded-full border-2 border-dark-800" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white leading-tight">
-                  <span className="text-emerald-400">{t('ai_assistant.title')}</span>
+                  <span className="text-icc-400">{t('ai_assistant.title')}</span>
                 </h3>
                 <p className="text-[10px] text-white/40">{isStreaming ? t('ai_assistant.thinking') : t('ai_assistant.subtitle')}</p>
               </div>
@@ -128,10 +128,10 @@ export default function AIChatPanel() {
             {isEmpty ? (
               <div className="flex flex-col items-center justify-center h-full px-6 text-center">
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-icc-500/20 to-emerald-600/20 flex items-center justify-center border border-icc-500/10">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-icc-500/20 to-icc-600/20 flex items-center justify-center border border-icc-500/10">
                     <Sparkles className="w-10 h-10 text-icc-400" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-dark-800 flex items-center justify-center">
+                  <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-icc-500 border-2 border-dark-800 flex items-center justify-center">
                     <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -234,7 +234,7 @@ export default function AIChatPanel() {
               <button
                 type="submit"
                 disabled={!input.trim() || isStreaming}
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-icc-500 to-emerald-600 flex items-center justify-center shrink-0
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-icc-500 to-icc-600 flex items-center justify-center shrink-0
                   disabled:opacity-30 disabled:cursor-not-allowed
                   hover:shadow-lg hover:shadow-icc-500/20 transition-all"
               >

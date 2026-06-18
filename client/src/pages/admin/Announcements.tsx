@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HiPlus, HiTrash, HiPencil, HiCalendar, HiTag, HiChevronDown, HiChevronUp, HiEye } from 'react-icons/hi';
 import api from '../../lib/api';
 import { AdminModal, ConfirmDeleteModal } from '../../components/admin';
@@ -113,14 +113,14 @@ export default function AdminAnnouncements() {
     Update: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
     Event: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
     Maintenance: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400',
-    Feature: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400',
+    Feature: 'bg-icc-100 dark:bg-icc-900/30 text-icc-700 dark:text-icc-400',
     Important: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function AdminAnnouncements() {
             <HiEye className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={load} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">Retry</button>
+          <button onClick={load} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">Retry</button>
         </div>
       </div>
     );

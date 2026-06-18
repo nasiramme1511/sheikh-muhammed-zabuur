@@ -108,7 +108,7 @@ export default function AdminLiveStream() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function AdminLiveStream() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <Radio className="w-6 h-6 text-emerald-500" />
+            <Radio className="w-6 h-6 text-icc-500" />
             Live Stream Management
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -133,7 +133,7 @@ export default function AdminLiveStream() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg ${
             state.isActive
               ? 'bg-red-500 text-white hover:bg-red-600 shadow-red-500/20'
-              : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-500/20'
+              : 'bg-icc-500 text-white hover:bg-icc-600 shadow-icc-500/20'
           }`}
         >
           <span className={`relative flex h-2.5 w-2.5 ${state.isActive ? '' : 'invisible'}`}>
@@ -167,7 +167,7 @@ export default function AdminLiveStream() {
         </div>
       )}
       {saved && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-sm">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-500 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" />
           Settings saved successfully!
         </div>
@@ -177,7 +177,7 @@ export default function AdminLiveStream() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
           <h2 className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
-            <LinkIcon className="w-4 h-4 text-emerald-500" />
+            <LinkIcon className="w-4 h-4 text-icc-500" />
             Stream Configuration
           </h2>
         </div>
@@ -192,7 +192,7 @@ export default function AdminLiveStream() {
               value={state.title}
               onChange={(e) => setState(prev => ({ ...prev, title: e.target.value }))}
               placeholder="e.g. Weekly Tafsir Lesson — Surah Al-Baqarah"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
             />
           </div>
 
@@ -206,7 +206,7 @@ export default function AdminLiveStream() {
               value={state.url}
               onChange={(e) => setState(prev => ({ ...prev, url: e.target.value }))}
               placeholder="https://www.youtube.com/watch?v=..."
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all font-mono"
             />
             <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
               Supports: youtube.com/watch?v=..., youtu.be/..., or direct embed URLs
@@ -223,7 +223,7 @@ export default function AdminLiveStream() {
               value={state.youtubeChannelId}
               onChange={(e) => setState(prev => ({ ...prev, youtubeChannelId: e.target.value }))}
               placeholder="UC_xxxxxxxxxxxxx"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all font-mono"
             />
             <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
               Used for embedded live stream player. Find it in your YouTube channel URL: youtube.com/channel/<span className="font-mono">UC_...</span>
@@ -240,7 +240,7 @@ export default function AdminLiveStream() {
               value={state.chatUrl}
               onChange={(e) => setState(prev => ({ ...prev, chatUrl: e.target.value }))}
               placeholder="https://www.youtube.com/live_chat?v=..."
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all font-mono"
             />
             <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
               Shown as a "Join Chat" button on the Live page when active
@@ -255,7 +255,7 @@ export default function AdminLiveStream() {
             <select
               value={recordingCollection}
               onChange={(e) => setRecordingCollection(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
             >
               <option value="">None (General)</option>
               {COLLECTIONS.map((c) => (
@@ -273,7 +273,7 @@ export default function AdminLiveStream() {
               href={state.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-emerald-500 hover:text-emerald-400 font-medium"
+              className="inline-flex items-center gap-1.5 text-sm text-icc-500 hover:text-icc-400 font-medium"
             >
               <ExternalLink className="w-3.5 h-3.5" /> Open stream URL in new tab
             </a>
@@ -285,7 +285,7 @@ export default function AdminLiveStream() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
           <h2 className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
-            <Clock className="w-4 h-4 text-emerald-500" />
+            <Clock className="w-4 h-4 text-icc-500" />
             Upcoming Schedule
           </h2>
         </div>
@@ -302,7 +302,7 @@ export default function AdminLiveStream() {
                   key={sch.id}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
                 >
-                  <Radio className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <Radio className="w-4 h-4 text-icc-500 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{sch.title}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -333,18 +333,18 @@ export default function AdminLiveStream() {
                 value={newTitle}
                 onChange={e => setNewTitle(e.target.value)}
                 placeholder="Session title..."
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
               />
               <input
                 type="datetime-local"
                 value={newDate}
                 onChange={e => setNewDate(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-icc-500/30 focus:border-icc-500 transition-all"
               />
               <button
                 onClick={addSchedule}
                 disabled={!newTitle.trim() || !newDate}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white text-sm font-semibold flex items-center gap-1.5 transition-all shrink-0"
+                className="px-4 py-2 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-40 text-white text-sm font-semibold flex items-center gap-1.5 transition-all shrink-0"
               >
                 <Plus className="w-4 h-4" /> Add
               </button>
@@ -358,7 +358,7 @@ export default function AdminLiveStream() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/20"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-60 text-white font-semibold text-sm transition-all shadow-lg shadow-icc-500/20"
         >
           {saving ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -373,14 +373,14 @@ export default function AdminLiveStream() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
           <h2 className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
-            <Radio className="w-4 h-4 text-emerald-500" />
+            <Radio className="w-4 h-4 text-icc-500" />
             Live Stream Analytics
           </h2>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-center">
-              <p className="text-2xl font-bold text-emerald-400">{state.totalStreams || 0}</p>
+            <div className="p-4 rounded-xl bg-icc-500/5 border border-icc-500/10 text-center">
+              <p className="text-2xl font-bold text-icc-400">{state.totalStreams || 0}</p>
               <p className="text-xs text-gray-400 mt-1">Total Sessions</p>
             </div>
             <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-center">

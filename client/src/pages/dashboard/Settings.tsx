@@ -32,7 +32,7 @@ export default function DashboardSettings() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Settings2 className="w-6 h-6 text-emerald-400" />
+          <Settings2 className="w-6 h-6 text-icc-400" />
           {t('dashboard.settings')}
         </h1>
         <span className="text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
@@ -47,7 +47,7 @@ export default function DashboardSettings() {
         className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <Languages className="w-5 h-5 text-emerald-400" />
+          <Languages className="w-5 h-5 text-icc-400" />
           {t('settings.language')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -57,7 +57,7 @@ export default function DashboardSettings() {
               onClick={() => setLanguage(opt.value)}
               className={`p-3 rounded-xl text-sm font-medium transition-all border ${
                 language === opt.value
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/5'
+                  ? 'bg-icc-500/10 border-icc-500/30 text-icc-400 shadow-sm shadow-icc-500/5'
                   : 'bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
               }`}
             >
@@ -76,7 +76,7 @@ export default function DashboardSettings() {
         className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <Palette className="w-5 h-5 text-emerald-400" />
+          <Palette className="w-5 h-5 text-icc-400" />
           {t('settings.theme')}
         </h2>
         <div className="flex gap-3">
@@ -89,7 +89,7 @@ export default function DashboardSettings() {
                 onClick={() => setMode(opt.value)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all border ${
                   isActive
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/5'
+                    ? 'bg-icc-500/10 border-icc-500/30 text-icc-400 shadow-sm shadow-icc-500/5'
                     : 'bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
                 }`}
               >
@@ -109,7 +109,7 @@ export default function DashboardSettings() {
         className="glass-premium p-6"
       >
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-          <Bell className="w-5 h-5 text-emerald-400" />
+          <Bell className="w-5 h-5 text-icc-400" />
           {t('settings.notifications')}
         </h2>
         <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function DashboardSettings() {
               type="button"
               onClick={() => setNotifications(!notifications)}
               className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${
-                notifications ? 'bg-emerald-500' : 'bg-white/10'
+                notifications ? 'bg-icc-500' : 'bg-white/10'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${
@@ -146,7 +146,7 @@ export default function DashboardSettings() {
               type="button"
               onClick={() => setEmailUpdates(!emailUpdates)}
               className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${
-                emailUpdates ? 'bg-emerald-500' : 'bg-white/10'
+                emailUpdates ? 'bg-icc-500' : 'bg-white/10'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${

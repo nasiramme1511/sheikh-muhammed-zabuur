@@ -49,7 +49,7 @@ export default function TeacherLessons({ lessons }: Props) {
       id="lessons"
     >
       <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <HiPlay className="w-5 h-5 text-emerald-400" />
+        <HiPlay className="w-5 h-5 text-icc-400" />
         {t('teacher_detail_page.lessons_follow')}
       </h2>
 
@@ -61,18 +61,18 @@ export default function TeacherLessons({ lessons }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('teacher_detail_page.search_lessons')}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-800/50 border border-white/5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/30 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-800/50 border border-white/5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/30 transition-colors"
           />
         </div>
       </div>
 
       {categories.length > 1 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          <button onClick={() => setActiveCategory('all')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeCategory === 'all' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'}`}>
+          <button onClick={() => setActiveCategory('all')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeCategory === 'all' ? 'bg-icc-500/20 text-icc-400 border border-icc-500/30' : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'}`}>
             {t('teacher_detail_page.all_categories')}
           </button>
           {categories.map((cat) => (
-            <button key={cat.slug} onClick={() => setActiveCategory(cat.slug)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeCategory === cat.slug ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'}`}>
+            <button key={cat.slug} onClick={() => setActiveCategory(cat.slug)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeCategory === cat.slug ? 'bg-icc-500/20 text-icc-400 border border-icc-500/30' : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'}`}>
               {cat.name}
             </button>
           ))}

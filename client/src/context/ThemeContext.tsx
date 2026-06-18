@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { THEME_STORAGE_KEY } from '../lib/language';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -17,37 +16,14 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-function getStoredMode(): ThemeMode {
-  try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;
-  } catch {}
-  return 'system';
-}
-
-function getSystemTheme(): 'light' | 'dark' {
-  if (typeof window === 'undefined') return 'dark';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function resolveTheme(mode: ThemeMode): 'light' | 'dark' {
-  if (mode === 'system') return getSystemTheme();
-  return mode;
-}
-
-function applyTheme(resolved: 'light' | 'dark') {
-  const root = document.documentElement;
-  if (resolved === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-  root.style.colorScheme = resolved;
+function applyTheme() {
+  document.documentElement.classList.add('dark');
+  document.documentElement.style.colorScheme = 'dark';
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>(getStoredMode);
-  const [resolved, setResolved] = useState<'light' | 'dark'>(() => resolveTheme(getStoredMode()));
+  const [mode, setModeState] = useState<ThemeMode>('dark');
+  const [resolved, setResolved] = useState<'light' | 'dark'>('dark');
   const [fontSize, setFontSize] = useState(() => {
     try {
       return Number(localStorage.getItem('icc-font-size')) || 16;
@@ -58,39 +34,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setMode = useCallback((newMode: ThemeMode) => {
     setModeState(newMode);
-    try { localStorage.setItem(THEME_STORAGE_KEY, newMode); } catch {}
   }, []);
 
   const toggle = useCallback(() => {
-    setModeState(prev => {
-      const next = prev === 'dark' ? 'light' : prev === 'light' ? 'system' : 'dark';
-      try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch {}
-      const resolvedNext = resolveTheme(next);
-      setResolved(resolvedNext);
-      applyTheme(resolvedNext);
-      return next;
+    setModeState(() => {
+      setResolved('dark');
+      applyTheme();
+      return 'dark';
     });
   }, []);
 
-  // Listen for system theme changes
   useEffect(() => {
-    if (mode !== 'system') return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => {
-      const r = resolveTheme('system');
-      setResolved(r);
-      applyTheme(r);
-    };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, [mode]);
-
-  // Apply theme whenever mode or resolved changes
-  useEffect(() => {
-    const r = resolveTheme(mode);
-    setResolved(r);
-    applyTheme(r);
-  }, [mode]);
+    setResolved('dark');
+    applyTheme();
+  }, []);
 
   // Font size
   useEffect(() => {

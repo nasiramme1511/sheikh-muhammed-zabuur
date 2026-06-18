@@ -12,7 +12,7 @@ interface PrayerTime {
 }
 
 const PRAYER_TIMES: PrayerTime[] = [
-  { name: 'Fajr', nameAr: 'الفجر', time: '05:12', icon: Sunrise, color: '#10B981' },
+  { name: 'Fajr', nameAr: 'الفجر', time: '05:12', icon: Sunrise, color: '#0EA5E9' },
   { name: 'Dhuhr', nameAr: 'الظهر', time: '12:30', icon: Sun, color: '#F59E0B' },
   { name: 'Asr', nameAr: 'العصر', time: '15:45', icon: Sun, color: '#F97316' },
   { name: 'Maghrib', nameAr: 'المغرب', time: '18:30', icon: Sunset, color: '#EC4899' },

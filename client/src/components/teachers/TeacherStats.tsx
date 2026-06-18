@@ -25,7 +25,7 @@ export default function TeacherStats({ teacher, channels, booksCount }: Props) {
   const lessonCount = teacher._count?.lessons ?? teacher.lessons?.length ?? 0;
 
   const stats: Stat[] = [
-    { icon: BookOpen, label: t('teacher_detail_page.stats_lessons'), value: lessonCount, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+    { icon: BookOpen, label: t('teacher_detail_page.stats_lessons'), value: lessonCount, color: 'text-icc-400', bg: 'bg-icc-500/10 border-icc-500/20' },
     { icon: GraduationCap, label: t('teacher_detail_page.courses'), value: Math.max(1, Math.ceil(lessonCount / 5)), color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/20' },
     { icon: FaTelegramPlane, label: t('teacher_detail_page.stats_channels'), value: channels.length, color: 'text-[#0088cc]', bg: 'bg-blue-500/10 border-blue-500/20' },
     { icon: FileText, label: t('teacher_detail_page.stats_pdfs'), value: booksCount, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },

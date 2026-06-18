@@ -29,7 +29,7 @@ export default function BookDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -38,7 +38,7 @@ export default function BookDetail() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <p className="text-gray-500">{t('book_detail.not_found')}</p>
-        <Link to="/categories" className="text-emerald-500 hover:underline mt-4 inline-block">{t('book_detail.browse')}</Link>
+        <Link to="/categories" className="text-icc-500 hover:underline mt-4 inline-block">{t('book_detail.browse')}</Link>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function BookDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Link to="/categories" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-500 mb-6">
+      <Link to="/categories" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-icc-500 mb-6">
         <HiArrowLeft className="w-4 h-4" /> {t('book_detail.back')}
       </Link>
 
@@ -65,7 +65,7 @@ export default function BookDetail() {
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-4">
-            <div className={`${coverImage ? 'hidden md:flex' : 'flex'} w-16 h-16 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 items-center justify-center text-3xl shrink-0`}>
+            <div className={`${coverImage ? 'hidden md:flex' : 'flex'} w-16 h-16 rounded-xl bg-icc-100 dark:bg-icc-900/50 items-center justify-center text-3xl shrink-0`}>
               {'\uD83D\uDCD6'}
             </div>
             <div className="min-w-0">
@@ -76,7 +76,7 @@ export default function BookDetail() {
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   <span className="text-xs text-white/40 mr-1">{t('admin.available_in')}:</span>
                   {availableLangs.map((l) => (
-                    <span key={l} className={`px-2 py-0.5 rounded text-[10px] font-medium ${l === lang ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-white/40'}`}>
+                    <span key={l} className={`px-2 py-0.5 rounded text-[10px] font-medium ${l === lang ? 'bg-icc-500/20 text-icc-400 border border-icc-500/30' : 'bg-white/5 text-white/40'}`}>
                       {t(`admin.language_${l}`)}
                     </span>
                   ))}
@@ -85,12 +85,12 @@ export default function BookDetail() {
 
               <div className="flex items-center gap-4 mt-3 text-sm text-gray-400">
                 {book.teacher && (
-                  <Link to={`/teachers/${book.teacher.slug}`} className="flex items-center gap-1 hover:text-emerald-500">
+                  <Link to={`/teachers/${book.teacher.slug}`} className="flex items-center gap-1 hover:text-icc-500">
                     <HiUser className="w-4 h-4" /> {book.teacher.name}
                   </Link>
                 )}
                 {book.category && (
-                  <Link to={`/categories/${book.category.slug}`} className="flex items-center gap-1 hover:text-emerald-500">
+                  <Link to={`/categories/${book.category.slug}`} className="flex items-center gap-1 hover:text-icc-500">
                     <HiBookOpen className="w-4 h-4" /> {book.category.name}
                   </Link>
                 )}
@@ -106,7 +106,7 @@ export default function BookDetail() {
                     href={getDownloadUrl(pdfUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold hover:from-emerald-400 hover:to-emerald-500 transition-all hover:scale-105 shadow-lg shadow-emerald-500/20"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-icc-500 to-icc-600 text-white text-sm font-semibold hover:from-icc-400 hover:to-icc-500 transition-all hover:scale-105 shadow-lg shadow-icc-500/20"
                   >
                     <HiDownload className="w-4 h-4" /> {t('book_detail.download')}
                   </a>

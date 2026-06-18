@@ -76,15 +76,15 @@ export default function Terms() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-            <Scale className="w-8 h-8 text-emerald-400" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-icc-500/20 to-icc-600/20 border border-icc-500/20 flex items-center justify-center mx-auto mb-4">
+            <Scale className="w-8 h-8 text-icc-400" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">{t('legal.terms_title')}</h1>
           <p className="text-white/50 text-sm">
             {t('legal.last_updated')}: June 2026
           </p>
           <div className="flex items-center justify-center gap-3 mt-4 text-xs text-white/40">
-            <span className="text-emerald-400">Effective: June 1, 2026</span>
+            <span className="text-icc-400">Effective: June 1, 2026</span>
             <span className="text-white/10">|</span>
             <Link to="/privacy" className="hover:text-icc-400 transition-colors">Privacy Policy</Link>
             <span className="text-white/10">|</span>
@@ -96,8 +96,8 @@ export default function Terms() {
         {sections.map((section) => (
           <div key={section.title} className="glass-card-dark rounded-2xl p-6 md:p-8 mb-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <section.icon className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center shrink-0">
+                <section.icon className="w-6 h-6 text-icc-400" />
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-white mb-2">{section.title}</h2>
@@ -108,7 +108,7 @@ export default function Terms() {
                   <ul className="space-y-2">
                     {section.bullets.map((bullet) => (
                       <li key={bullet} className="flex items-center gap-2 text-white/60 text-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/60 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-icc-500/60 shrink-0" />
                         {bullet}
                       </li>
                     ))}
@@ -122,7 +122,7 @@ export default function Terms() {
         {/* Footer note */}
         <div className="text-center mt-8">
           <p className="text-white/40 text-sm">
-            By using Sheikh Mohammed Zabuur Iman Chercher College, you agree to these terms. If you have questions, please <Link to="/contact" className="text-emerald-400 hover:text-emerald-300 transition-colors">contact us</Link>.
+            By using Sheikh Mohammed Zabuur Iman Chercher College, you agree to these terms. If you have questions, please <Link to="/contact" className="text-icc-400 hover:text-icc-300 transition-colors">contact us</Link>.
           </p>
         </div>
       </div>

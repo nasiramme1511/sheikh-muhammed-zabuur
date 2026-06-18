@@ -40,7 +40,7 @@ interface PrayerTime {
 }
 
 const PRAYER_TIMES: PrayerTime[] = [
-  { name: 'Fajr', nameAr: 'الفجر', time: '05:12', icon: SunriseIcon, color: '#10B981' },
+  { name: 'Fajr', nameAr: 'الفجر', time: '05:12', icon: SunriseIcon, color: '#0EA5E9' },
   { name: 'Dhuhr', nameAr: 'الظهر', time: '12:30', icon: Sun, color: '#F59E0B' },
   { name: 'Asr', nameAr: 'العصر', time: '15:45', icon: Sun, color: '#F97316' },
   { name: 'Maghrib', nameAr: 'المغرب', time: '18:30', icon: SunsetIcon, color: '#EC4899' },
@@ -100,7 +100,7 @@ function getNextPrayerIndex(): number {
 }
 
 const CAT_COLORS: Record<string, string> = {
-  Aqeedah: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  Aqeedah: 'bg-icc-500/10 text-icc-400 border-icc-500/20',
   Hadith: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   Tafsir: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   Fiqh: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
@@ -111,27 +111,27 @@ const CAT_COLORS: Record<string, string> = {
   Manhaj: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
   Adab: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
   Khutbah: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  Ramadan: 'bg-emerald-600/10 text-emerald-300 border-emerald-600/20',
+  Ramadan: 'bg-icc-600/10 text-icc-300 border-icc-600/20',
   'Questions & Answers': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-  General: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+  General: 'bg-white/5 text-white/50 border-white/10',
 };
 
 const TRACKS = [
-  { name: 'Aqeedah', icon: '⭐', desc: 'Islamic Creed & Theology', color: 'from-emerald-500 to-emerald-700', lessons: 45, duration: '18h', difficulty: 'Beginner', featured: true },
-  { name: 'Tafsir', icon: '📜', desc: 'Quranic Exegesis', color: 'from-purple-500 to-purple-700', lessons: 60, duration: '25h', difficulty: 'Intermediate', featured: false },
-  { name: 'Hadith', icon: '📖', desc: 'Prophetic Traditions', color: 'from-blue-500 to-blue-700', lessons: 38, duration: '15h', difficulty: 'Intermediate', featured: false },
-  { name: 'Fiqh', icon: '⚖️', desc: 'Islamic Jurisprudence', color: 'from-orange-500 to-orange-700', lessons: 52, duration: '20h', difficulty: 'Advanced', featured: false },
-  { name: 'Seerah', icon: '🕌', desc: 'Prophetic Biography', color: 'from-yellow-500 to-yellow-700', lessons: 28, duration: '12h', difficulty: 'Beginner', featured: false },
-  { name: 'Tajweed', icon: '🎵', desc: 'Quranic Recitation', color: 'from-teal-500 to-teal-700', lessons: 30, duration: '10h', difficulty: 'Beginner', featured: false },
-  { name: 'Arabic', icon: '📝', desc: 'Arabic Language', color: 'from-red-500 to-red-700', lessons: 40, duration: '16h', difficulty: 'Beginner', featured: false },
-  { name: 'Manhaj', icon: '🗺️', desc: 'Islamic Methodology', color: 'from-cyan-500 to-cyan-700', lessons: 24, duration: '8h', difficulty: 'Advanced', featured: false },
+  { name: 'Aqeedah', icon: '⭐', descKey: 'home.track_aqeedah_desc' as const, color: 'from-icc-500 to-icc-700', lessons: 45, duration: '18h', difficultyKey: 'home.difficulty_beginner' as const, featured: true },
+  { name: 'Tafsir', icon: '📜', descKey: 'home.track_tafsir_desc' as const, color: 'from-purple-500 to-purple-700', lessons: 60, duration: '25h', difficultyKey: 'home.difficulty_intermediate' as const, featured: false },
+  { name: 'Hadith', icon: '📖', descKey: 'home.track_hadith_desc' as const, color: 'from-blue-500 to-blue-700', lessons: 38, duration: '15h', difficultyKey: 'home.difficulty_intermediate' as const, featured: false },
+  { name: 'Fiqh', icon: '⚖️', descKey: 'home.track_fiqh_desc' as const, color: 'from-orange-500 to-orange-700', lessons: 52, duration: '20h', difficultyKey: 'home.difficulty_advanced' as const, featured: false },
+  { name: 'Seerah', icon: '🕌', descKey: 'home.track_seerah_desc' as const, color: 'from-yellow-500 to-yellow-700', lessons: 28, duration: '12h', difficultyKey: 'home.difficulty_beginner' as const, featured: false },
+  { name: 'Tajweed', icon: '🎵', descKey: 'home.track_tajweed_desc' as const, color: 'from-teal-500 to-teal-700', lessons: 30, duration: '10h', difficultyKey: 'home.difficulty_beginner' as const, featured: false },
+  { name: 'Arabic', icon: '📝', descKey: 'home.track_arabic_desc' as const, color: 'from-red-500 to-red-700', lessons: 40, duration: '16h', difficultyKey: 'home.difficulty_beginner' as const, featured: false },
+  { name: 'Manhaj', icon: '🗺️', descKey: 'home.track_manhaj_desc' as const, color: 'from-cyan-500 to-cyan-700', lessons: 24, duration: '8h', difficultyKey: 'home.difficulty_advanced' as const, featured: false },
 ];
 
 const TRUST_FEATURES = [
-  { icon: ScrollText, label: 'Authentic Knowledge', desc: 'All materials fully verified directly from Quran & Sahih Sunnah.' },
-  { icon: BookOpenCheck, label: 'Structured Learning', desc: 'Step-by-step tracks curated from beginner levels to deep scientific studies.' },
-  { icon: Globe, label: 'Multi-language Support', desc: 'Lessons provided across English, Arabic, Amharic, and Afaan Oromo.' },
-  { icon: Heart, label: 'Free Resources', desc: 'Access to the core educational portal is entirely free, always.' },
+  { icon: ScrollText, labelKey: 'home.trust_authentic' as const, descKey: 'home.trust_authentic_desc' as const },
+  { icon: BookOpenCheck, labelKey: 'home.trust_structured' as const, descKey: 'home.trust_structured_desc' as const },
+  { icon: Globe, labelKey: 'home.trust_multilanguage' as const, descKey: 'home.trust_multilanguage_desc' as const },
+  { icon: Heart, labelKey: 'home.trust_free' as const, descKey: 'home.trust_free_desc' as const },
 ];
 
 const TESTIMONIALS = [
@@ -173,9 +173,9 @@ function ScrollCounterStat({ value, label, icon: Icon, suffix = '' }: { value: n
   }, [isInView, value]);
 
   return (
-    <div ref={ref} className="glass-premium p-6 text-center relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
+    <div ref={ref} className="glass-premium p-6 text-center relative overflow-hidden group hover:border-icc-500/30 transition-all duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-300">
+      <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-icc-500/10 text-icc-400 border border-icc-500/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-icc-500/20 transition-all duration-300">
         <Icon className="w-5 h-5" />
       </div>
       <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
@@ -217,7 +217,7 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
   const coverUrl = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null;
 
   return (
-    <div className="glass-premium shrink-0 w-[280px] md:w-[310px] overflow-hidden group hover:bg-slate-900/60 transition-all duration-500 flex flex-col justify-between border border-white/5">
+    <div className="glass-premium w-[240px] sm:w-[260px] lg:w-[280px] overflow-hidden group hover:bg-slate-900/60 transition-all duration-500 flex flex-col justify-between border border-white/5">
       <div>
         {/* Cover thumbnail wrapper */}
         <div className="aspect-[16/10] bg-slate-950/80 relative overflow-hidden flex items-center justify-center">
@@ -229,25 +229,25 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
               onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
             />
           ) : isAudio ? (
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/40 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">
+            <div className="absolute inset-0 bg-gradient-to-br from-icc-950/40 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/20">AUDIOBOOK</span>
-                <Headphones className="w-5 h-5 text-emerald-500/60" />
+                <span className="text-[10px] uppercase font-bold tracking-widest text-icc-400 bg-icc-950/60 px-2 py-0.5 rounded border border-icc-500/20">{t('home.badge_audiobook')}</span>
+                <Headphones className="w-5 h-5 text-icc-500/60" />
               </div>
               <div className="flex items-center gap-1">
-                <Music className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span className="text-[10px] text-white/40 tracking-wider">Islamic Science Lecture</span>
+                <Music className="w-4 h-4 text-icc-400 animate-pulse" />
+                <span className="text-[10px] text-white/40 tracking-wider">{t('home.badge_lecture_subtitle')}</span>
               </div>
             </div>
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-amber-950/30 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20">DOCUMENT</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20">{t('home.badge_document')}</span>
                 <FileText className="w-5 h-5 text-amber-500/60" />
               </div>
               <div className="flex items-center gap-1">
                 <Award className="w-4 h-4 text-amber-400" />
-                <span className="text-[10px] text-white/40 tracking-wider">Reference & Syllabus Notes</span>
+                <span className="text-[10px] text-white/40 tracking-wider">{t('home.badge_document_subtitle')}</span>
               </div>
             </div>
           )}
@@ -258,7 +258,7 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
               <>
                 <Link
                   to="/audio"
-                  className="w-11 h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
+                  className="w-11 h-11 rounded-2xl bg-icc-500 hover:bg-icc-600 text-white flex items-center justify-center shadow-lg shadow-icc-500/30 transition-transform active:scale-95"
                   title={t('home.listen')}
                 >
                   <Play className="w-5 h-5 fill-white pl-0.5" />
@@ -277,7 +277,7 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
             {isVideo && (
               <Link
                 to="/videos"
-                className="w-12 h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
+                className="w-12 h-12 rounded-2xl bg-icc-500 hover:bg-icc-600 text-white flex items-center justify-center shadow-lg shadow-icc-500/30 transition-transform active:scale-95"
                 title={t('home.listen')}
               >
                 <Play className="w-6 h-6 fill-white pl-0.5" />
@@ -290,8 +290,8 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform active:scale-95"
-                  title="Read Online"
+                  className="w-11 h-11 rounded-2xl bg-icc-500 hover:bg-icc-600 text-white flex items-center justify-center shadow-lg shadow-icc-500/30 transition-transform active:scale-95"
+                  title={t('home.read_online')}
                 >
                   <BookOpen className="w-5 h-5" />
                 </a>
@@ -325,7 +325,7 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
             })()}
           </div>
 
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors duration-300">
+          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-icc-400 transition-colors duration-300">
             {item.title}
           </h3>
         </div>
@@ -335,10 +335,10 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
       <div className="p-5 pt-0 border-t border-white/5 flex items-center justify-between text-[11px] text-white/40 mt-3">
         <span className="flex items-center gap-1">
           <Eye className="w-3.5 h-3.5 opacity-60" />
-          {item.views || 0} views
+          {t('home.views_suffix', { count: item.views || 0 })}
         </span>
         <span className="font-semibold text-white/30 tracking-wider">
-          {isPdf ? item.sizeHuman || 'PDF' : isAudio ? 'AUDIO' : 'VIDEO'}
+          {isPdf ? item.sizeHuman || 'PDF' : isAudio ? t('home.format_audio') : t('home.format_video')}
         </span>
       </div>
     </div>
@@ -480,7 +480,7 @@ export default function Home() {
           }}
         />
         
-        {/* Floating blurred Emerald & Gold spheres */}
+        {/* Floating blurred Sky & Gold spheres */}
         <motion.div 
           animate={{
             y: [0, -35, 0],
@@ -488,7 +488,7 @@ export default function Home() {
             scale: [1, 1.05, 1],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[8%] left-[-15%] w-[450px] h-[450px] bg-emerald-700/10 rounded-full blur-[130px]"
+          className="absolute top-[8%] left-[-15%] w-[450px] h-[450px] bg-icc-700/10 rounded-full blur-[130px]"
         />
         <motion.div 
           animate={{
@@ -497,7 +497,7 @@ export default function Home() {
             scale: [1, 1.03, 1],
           }}
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[25%] right-[-15%] w-[550px] h-[550px] bg-emerald-600/10 rounded-full blur-[150px]"
+          className="absolute bottom-[25%] right-[-15%] w-[550px] h-[550px] bg-icc-600/10 rounded-full blur-[150px]"
         />
         <motion.div 
           animate={{
@@ -544,7 +544,7 @@ export default function Home() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   {t('hero.badge')}
@@ -557,17 +557,17 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.12] text-white"
                 >
-                  Learn Authentic <br className="hidden sm:inline" />
-                  <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-300">
-                    Islamic Knowledge
+                  {t('home.hero_learn_authentic')} <br className="hidden sm:inline" />
+                  <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-icc-400 via-icc-500 to-sky-200">
+                    {t('home.hero_islamic_knowledge')}
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: '100%' }}
                       transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
-                      className="absolute bottom-1 left-0 h-[4px] bg-gradient-to-r from-emerald-500 to-amber-400 rounded-full"
+                      className="absolute bottom-1 left-0 h-[4px] bg-gradient-to-r from-icc-500 to-amber-400 rounded-full"
                     />
                   </span> <br />
-                  From <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 bg-clip-text text-transparent font-serif italic">Sheikh Muhammed Zabuur</span>
+                  {t('home.hero_from')} <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 bg-clip-text text-transparent font-serif italic">{t('home.hero_sheikh_name')}</span>
                 </motion.h1>
                 
                 <motion.p
@@ -589,7 +589,7 @@ export default function Home() {
               >
                 <Link 
                   to="/categories" 
-                  className="btn-icc px-8 py-4 text-sm font-bold tracking-wide shadow-[0_0_30px_rgba(16,185,129,0.25)] hover:shadow-[0_0_35px_rgba(16,185,129,0.45)] hover:scale-[1.03] active:scale-100 transition-all duration-300"
+                  className="btn-icc px-8 py-4 text-sm font-bold tracking-wide shadow-glow-icc hover:shadow-[0_0_35px_rgba(14,165,233,0.45)] hover:scale-[1.03] active:scale-100 transition-all duration-300"
                 >
                   <BookOpen className="w-4.5 h-4.5" />
                   {t('home.start_learning')}
@@ -597,10 +597,10 @@ export default function Home() {
 
                 <Link 
                   to="/audio" 
-                  className="btn-outline px-8 py-4 text-sm font-bold tracking-wide border-white/10 hover:border-emerald-500/40 hover:bg-emerald-500/5 hover:scale-[1.02] active:scale-100 transition-all duration-300"
+                  className="btn-outline px-8 py-4 text-sm font-bold tracking-wide border-white/10 hover:border-icc-500/40 hover:bg-icc-500/5 hover:scale-[1.02] active:scale-100 transition-all duration-300"
                 >
-                  <Library className="w-4.5 h-4.5 text-emerald-400" />
-                  Browse Resources
+                  <Library className="w-4.5 h-4.5 text-icc-400" />
+                  {t('home.browse_resources')}
                 </Link>
               </motion.div>
 
@@ -612,13 +612,13 @@ export default function Home() {
                 className="grid grid-cols-2 gap-y-3 gap-x-6 pt-6 max-w-lg border-t border-white/5"
               >
                 {[
-                  'Verified Scholar',
-                  'Authentic Teachings',
-                  'Thousands of Students',
-                  'Free Learning Resources'
+                  t('home.verified_scholar'),
+                  t('home.authentic_teachings'),
+                  t('home.thousands_students'),
+                  t('home.free_learning')
                 ].map((indicator) => (
                   <div key={indicator} className="flex items-center gap-2 text-white/50 text-xs font-medium">
-                    <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-icc-500 shrink-0" />
                     <span>{indicator}</span>
                   </div>
                 ))}
@@ -637,11 +637,11 @@ export default function Home() {
               >
                 {/* Visual accent bubbles behind/over portrait */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10 opacity-70" />
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none z-10" />
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-icc-500/5 to-transparent pointer-events-none z-10" />
 
                 <img
                   src="/images/sheikh-zabuur.jpg"
-                  alt="Sheikh Muhammed Zabuur"
+                  alt={t('home.hero_image_alt')}
                   className="w-full h-[360px] md:h-[400px] object-cover group-hover:scale-[1.03] transition-transform duration-700"
                 />
 
@@ -649,16 +649,16 @@ export default function Home() {
                 <motion.div
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-4 right-4 z-20 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-emerald-400/20"
+                  className="absolute top-4 right-4 z-20 bg-icc-500/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-icc-400/20"
                 >
-                  <CheckCircle className="w-3.5 h-3.5 fill-white text-emerald-500" />
-                  VERIFIED SCHOLAR
+                  <CheckCircle className="w-3.5 h-3.5 fill-white text-icc-500" />
+                  {t('home.scholar_badge')}
                 </motion.div>
 
                 {/* Info row */}
                 <div className="absolute bottom-6 left-6 right-6 z-20">
-                  <h3 className="text-xl font-extrabold text-white tracking-wide">Sheikh Mohammed Zabuur</h3>
-                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1">Scholar & Islamic Educator</p>
+                  <h3 className="text-xl font-extrabold text-white tracking-wide">{t('home.scholar_name')}</h3>
+                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1">{t('home.scholar_title')}</p>
                 </div>
 
                 {/* Overlay Mini Cards (Gently floating) */}
@@ -666,14 +666,14 @@ export default function Home() {
                 <motion.div 
                   animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-12 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-emerald-500/30 transition-all cursor-default"
+                  className="absolute top-12 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-icc-500/30 transition-all cursor-default"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <div className="w-8 h-8 rounded-lg bg-icc-500/20 flex items-center justify-center text-icc-400">
                     <Users className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/50 leading-none">Students Joined</p>
-                    <p className="text-xs font-extrabold text-white mt-1">10,000+</p>
+                    <p className="text-[10px] text-white/50 leading-none">{t('home.students_joined')}</p>
+                    <p className="text-xs font-extrabold text-white mt-1">{t('home.students_count_value')}</p>
                   </div>
                 </motion.div>
 
@@ -687,8 +687,8 @@ export default function Home() {
                     <Library className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/50 leading-none">Resources</p>
-                    <p className="text-xs font-extrabold text-white mt-1">500+ Lessons</p>
+                    <p className="text-[10px] text-white/50 leading-none">{t('home.resources_label')}</p>
+                    <p className="text-xs font-extrabold text-white mt-1">{t('home.resources_value')}</p>
                   </div>
                 </motion.div>
 
@@ -696,14 +696,14 @@ export default function Home() {
                 <motion.div 
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                  className="absolute bottom-16 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-emerald-500/30 transition-all cursor-default"
+                  className="absolute bottom-16 -left-6 z-20 glass-premium px-4 py-2.5 flex items-center gap-2.5 shadow-xl border border-white/10 hover:border-icc-500/30 transition-all cursor-default"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <div className="w-8 h-8 rounded-lg bg-icc-500/20 flex items-center justify-center text-icc-400">
                     <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/50 leading-none">Years Active</p>
-                    <p className="text-xs font-extrabold text-white mt-1">15+ Years</p>
+                    <p className="text-[10px] text-white/50 leading-none">{t('home.years_active_label')}</p>
+                    <p className="text-xs font-extrabold text-white mt-1">{t('home.years_active_value')}</p>
                   </div>
                 </motion.div>
               </motion.div>
@@ -725,9 +725,9 @@ export default function Home() {
                       <span>{hijriDateString}</span>
                     </div>
                   )}
-                  <span className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full animate-pulse">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    PRAYER LOGIC LIVE
+                  <span className="flex items-center gap-1.5 text-[9px] font-bold text-icc-400 bg-icc-500/10 border border-icc-500/20 px-2 py-0.5 rounded-full animate-pulse">
+                    <span className="w-1.5 h-1.5 rounded-full bg-icc-400" />
+                    {t('home.prayer_logic_live')}
                   </span>
                 </div>
 
@@ -741,7 +741,7 @@ export default function Home() {
                       <p className="text-sm font-bold text-white mt-0.5">{t(prayerKeyMap[nextPrayer.name])}</p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className="text-xl font-extrabold text-white">{nextPrayer.time}</p>
                     <p className="text-[10px] text-white/50 mt-0.5">
                       {t('prayer_times.time_left', { hours: hoursLeft, minutes: minutesLeft })}
@@ -763,17 +763,17 @@ export default function Home() {
                           isNext
                             ? 'bg-amber-500/10 border-amber-500/30 shadow-md shadow-amber-500/5'
                             : isCurrent
-                            ? 'bg-emerald-500/10 border-emerald-500/20'
+                            ? 'bg-icc-500/10 border-icc-500/20'
                             : 'bg-white/5 border-transparent hover:bg-white/10'
                         }`}
                       >
                         <Icon
                           className={`w-3.5 h-3.5 mx-auto mb-1.5 ${
-                            isNext ? 'text-amber-400' : isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/40'
+                            isNext ? 'text-amber-400' : isCurrent ? 'text-icc-400' : isPast ? 'text-white/20' : 'text-white/40'
                           }`}
                         />
                         <p className={`text-[9px] font-bold ${
-                          isNext ? 'text-amber-400' : isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/40'
+                          isNext ? 'text-amber-400' : isCurrent ? 'text-icc-400' : isPast ? 'text-white/20' : 'text-white/40'
                         }`}>
                           {t(prayerKeyMap[prayer.name])}
                         </p>
@@ -797,14 +797,14 @@ export default function Home() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              CORE PRINCIPLES
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider">
+              {t('home.core_principles')}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Why Students Trust Sheikh Muhammed Zabuur
+              {t('home.why_trust_title')}
             </h2>
             <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
-              We focus on building a pure, structured pathway of learning directly from classical traditions.
+              {t('home.why_trust_subtitle')}
             </p>
           </div>
 
@@ -813,21 +813,21 @@ export default function Home() {
               const Icon = feature.icon;
               return (
                 <motion.div
-                  key={feature.label}
+                  key={feature.labelKey}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ delay: idx * 0.08, duration: 0.6 }}
-                  className="glass-premium p-7 flex flex-col items-start text-left group border border-white/5 hover:border-emerald-500/30 hover:-translate-y-1.5 transition-all duration-300"
+                  className="glass-premium p-7 flex flex-col items-start text-start group border border-white/5 hover:border-icc-500/30 hover:-translate-y-1.5 transition-all duration-300"
                 >
                   {/* Subtle float particle effect inside the card */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-icc-500/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-icc-500/10 text-icc-400 border border-icc-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-icc-500/20 group-hover:text-icc-300 transition-all duration-300">
                     <Icon className="w-5.5 h-5.5" />
                   </div>
-                  <h3 className="text-base font-bold text-white mb-2 tracking-wide group-hover:text-emerald-400 transition-colors duration-300">{feature.label}</h3>
-                  <p className="text-xs text-white/50 leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-base font-bold text-white mb-2 tracking-wide group-hover:text-icc-400 transition-colors duration-300">{t(feature.labelKey)}</h3>
+                  <p className="text-xs text-white/50 leading-relaxed">{t(feature.descKey)}</p>
                 </motion.div>
               );
             })}
@@ -839,11 +839,11 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            <ScrollCounterStat value={stats.audio || 450} label="Audio Lessons" icon={Music} suffix="+" />
-            <ScrollCounterStat value={stats.video || 150} label="Video Classes" icon={Video} suffix="+" />
-            <ScrollCounterStat value={stats.pdf || 200} label="PDF Books & Notes" icon={FileText} suffix="+" />
-            <ScrollCounterStat value={10} label="Structured tracks" icon={BookOpenCheck} suffix="" />
-            <ScrollCounterStat value={10000} label="Students Enrolled" icon={Users} suffix="+" />
+            <ScrollCounterStat value={stats.audio || 450} label={t('home.stat_audio_lessons')} icon={Music} suffix="+" />
+            <ScrollCounterStat value={stats.video || 150} label={t('home.stat_video_classes')} icon={Video} suffix="+" />
+            <ScrollCounterStat value={stats.pdf || 200} label={t('home.stat_pdf_books')} icon={FileText} suffix="+" />
+            <ScrollCounterStat value={10} label={t('home.stat_tracks')} icon={BookOpenCheck} suffix="" />
+            <ScrollCounterStat value={10000} label={t('home.stat_students')} icon={Users} suffix="+" />
           </div>
         </div>
       </section>
@@ -853,13 +853,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-              ROADMAP
+              {t('home.roadmap_badge')}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Curated Learning Roadmaps
+              {t('home.roadmap_title')}
             </h2>
             <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
-              Follow step-by-step pathways designed by Sheikh Muhammed Zabuur to acquire solid foundations.
+              {t('home.roadmap_subtitle')}
             </p>
           </div>
 
@@ -873,8 +873,8 @@ export default function Home() {
                 transition={{ delay: idx * 0.05, duration: 0.6 }}
                 className={`group relative overflow-hidden rounded-3xl border transition-all duration-500 cursor-pointer shadow-lg ${
                   track.featured 
-                    ? 'border-emerald-500/30 bg-slate-900/60 hover:bg-slate-900/80 md:col-span-2 lg:col-span-3 p-8 flex flex-col md:flex-row md:items-center justify-between gap-6' 
-                    : 'border-white/5 hover:border-emerald-500/20 bg-[#0B0B0B]/80 hover:bg-slate-900/80 p-6'
+                    ? 'border-icc-500/30 bg-slate-900/60 hover:bg-slate-900/80 md:col-span-2 lg:col-span-3 p-8 flex flex-col md:flex-row md:items-center justify-between gap-6' 
+                    : 'border-white/5 hover:border-icc-500/20 bg-[#0B0B0B]/80 hover:bg-slate-900/80 p-6'
                 }`}
               >
                 {/* Colored accent shadows */}
@@ -885,35 +885,35 @@ export default function Home() {
                   <>
                     <div className="space-y-4 flex-1">
                       <div className="flex items-center gap-3">
-                        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
+                        <div className="w-14 h-14 rounded-2xl bg-icc-500/10 flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
                           {track.icon}
                         </div>
                         <div>
-                          <span className="text-[9px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">RECOMMENDED STARTING POINT</span>
-                          <h3 className="text-xl font-extrabold text-white mt-1 group-hover:text-emerald-400 transition-colors">{track.name}</h3>
+                          <span className="text-[9px] uppercase font-bold tracking-widest text-icc-400 bg-icc-500/10 border border-icc-500/20 px-2 py-0.5 rounded">{t('home.track_recommended')}</span>
+                          <h3 className="text-xl font-extrabold text-white mt-1 group-hover:text-icc-400 transition-colors">{track.name}</h3>
                         </div>
                       </div>
-                      <p className="text-sm text-white/60 leading-relaxed max-w-xl">{track.desc} — Learn the core fundamentals of Tawheed, the pillars of faith, and belief structures.</p>
+                      <p className="text-sm text-white/60 leading-relaxed max-w-xl">{t(track.descKey)} — Learn the core fundamentals of Tawheed, the pillars of faith, and belief structures.</p>
                       
                       <div className="flex flex-wrap items-center gap-4 text-xs text-white/40 pt-2">
-                        <span className="flex items-center gap-1"><BookOpen className="w-4 h-4 text-emerald-400" /> {track.lessons} lessons</span>
+                        <span className="flex items-center gap-1"><BookOpen className="w-4 h-4 text-icc-400" /> {t('home.lessons_count', { count: track.lessons })}</span>
                         <span className="text-white/10">•</span>
-                        <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {track.duration} duration</span>
+                        <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-400" /> {t('home.duration_value', { duration: track.duration })}</span>
                         <span className="text-white/10">•</span>
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">{track.difficulty}</span>
+                        <span className="px-2 py-0.5 rounded bg-icc-500/10 text-icc-400 border border-icc-500/20 font-semibold">{t(track.difficultyKey)}</span>
                       </div>
                     </div>
 
                     <div className="shrink-0 flex flex-col justify-center items-start md:items-end gap-3 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6">
-                      <div className="space-y-1 text-left md:text-right">
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Roadmap Progress</p>
-                        <p className="text-xs text-white/50">4.8 rating • 3.2K active students</p>
+                      <div className="space-y-1 text-start md:text-end">
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">{t('home.roadmap_progress')}</p>
+                        <p className="text-xs text-white/50">{t('home.roadmap_rating')}</p>
                       </div>
                       <div className="w-full md:w-40 h-1.5 rounded-full bg-white/5 overflow-hidden">
-                        <div className="w-1/3 h-full bg-emerald-500 rounded-full" />
+                        <div className="w-1/3 h-full bg-icc-500 rounded-full" />
                       </div>
                       <Link to="/categories" className="btn-icc py-2.5 px-5 text-xs font-bold gap-1 mt-2">
-                        View Track <ArrowRight className="w-3.5 h-3.5" />
+                        {t('home.view_track')} <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
                   </>
@@ -921,25 +921,25 @@ export default function Home() {
                   // Regular tracks
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-500/10 transition-all">
+                      <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-icc-500/10 transition-all">
                         {track.icon}
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[9px] bg-white/5 text-white/50 border border-white/10 font-bold">{track.difficulty}</span>
+                      <span className="px-2 py-0.5 rounded text-[9px] bg-white/5 text-white/50 border border-white/10 font-bold">{t(track.difficultyKey)}</span>
                     </div>
                     
                     <div>
-                      <h3 className="text-base font-bold text-white group-hover:text-emerald-400 transition-colors duration-300">{track.name}</h3>
-                      <p className="text-xs text-white/40 mt-1.5 leading-relaxed line-clamp-2">{track.desc}</p>
+                      <h3 className="text-base font-bold text-white group-hover:text-icc-400 transition-colors duration-300">{track.name}</h3>
+                      <p className="text-xs text-white/40 mt-1.5 leading-relaxed line-clamp-2">{t(track.descKey)}</p>
                     </div>
 
                     {/* Progress representation */}
                     <div className="space-y-1.5 pt-2">
                       <div className="flex justify-between items-center text-[10px] text-white/30">
-                        <span>{track.lessons} lessons</span>
+                        <span>{t('home.lessons_count', { count: track.lessons })}</span>
                         <span>{track.duration}</span>
                       </div>
                       <div className="w-full h-1 rounded-full bg-white/5 overflow-hidden">
-                        <div className="w-0 h-full bg-emerald-500" />
+                        <div className="w-0 h-full bg-icc-500" />
                       </div>
                     </div>
                   </div>
@@ -958,29 +958,29 @@ export default function Home() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
-                  <Headphones className="w-3.5 h-3.5 text-emerald-400" />
-                  AUDIO LIBRARY
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold mb-3">
+                  <Headphones className="w-3.5 h-3.5 text-icc-400" />
+                  {t('home.section_audio_badge')}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
                   {t('home.latest_audio')}
                 </h2>
               </div>
               <div className="flex items-center gap-3">
-                <Link to="/audio" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                <Link to="/audio" className="text-xs text-icc-400 hover:text-icc-300 font-bold flex items-center gap-1">
                   {t('common.view_all')}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <div className="hidden sm:flex items-center gap-1.5">
                   <button 
                     onClick={() => slideLeft(audioSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                   </button>
                   <button 
                     onClick={() => slideRight(audioSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -1013,27 +1013,27 @@ export default function Home() {
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold mb-3">
                   <Video className="w-3.5 h-3.5 text-purple-400" />
-                  CLASS RECORDINGS
+                  {t('home.section_video_badge')}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
                   {t('home.latest_video')}
                 </h2>
               </div>
               <div className="flex items-center gap-3">
-                <Link to="/videos" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                <Link to="/videos" className="text-xs text-icc-400 hover:text-icc-300 font-bold flex items-center gap-1">
                   {t('common.view_all')}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <div className="hidden sm:flex items-center gap-1.5">
                   <button 
                     onClick={() => slideLeft(videoSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                   </button>
                   <button 
                     onClick={() => slideRight(videoSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -1066,27 +1066,27 @@ export default function Home() {
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold mb-3">
                   <FileText className="w-3.5 h-3.5 text-red-400" />
-                  LITERARY LIBRARY
+                  {t('home.section_pdf_badge')}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
                   {t('home.pdf_books')}
                 </h2>
               </div>
               <div className="flex items-center gap-3">
-                <Link to="/pdfs" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                <Link to="/pdfs" className="text-xs text-icc-400 hover:text-icc-300 font-bold flex items-center gap-1">
                   {t('common.view_all')}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <div className="hidden sm:flex items-center gap-1.5">
                   <button 
                     onClick={() => slideLeft(pdfSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                   </button>
                   <button 
                     onClick={() => slideRight(pdfSliderRef)}
-                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="w-9 h-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-icc-500/30 flex items-center justify-center text-white transition-all active:scale-95"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -1118,7 +1118,7 @@ export default function Home() {
 
       {/* ── LIVE BROADCAST CTA ── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative overflow-hidden z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-icc-500/5 to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="glass-premium p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
             <div className="flex flex-col md:flex-row items-start gap-6">
@@ -1129,23 +1129,23 @@ export default function Home() {
               }`}>
                 <Radio className="w-8 h-8" />
               </div>
-              <div className="space-y-2 text-left">
+              <div className="space-y-2 text-start">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-2xl font-extrabold text-white">Live Broadcasting</h3>
+                  <h3 className="text-2xl font-extrabold text-white">{t('home.live_broadcast_title')}</h3>
                   {liveState.isActive && (
                     <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold shadow-[0_0_10px_rgba(239,68,68,0.15)]">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
                       </span>
-                      LIVE NOW
+                      {t('home.live_now')}
                     </span>
                   )}
                 </div>
                 <p className="text-white/50 text-sm md:text-base max-w-lg leading-relaxed">
                   {liveState.isActive
-                    ? 'Sheikh Mohammed Zabuur is currently broadcasting live. Join the active stream to participate directly.'
-                    : 'Check the schedule for upcoming live lectures and classes with Sheikh Mohammed Zabuur.'}
+                    ? t('home.live_description_live')
+                    : t('home.live_description_upcoming')}
                 </p>
               </div>
             </div>
@@ -1159,7 +1159,7 @@ export default function Home() {
               }`}
             >
               <Radio className="w-4.5 h-4.5" />
-              {liveState.isActive ? 'Join Live Stream' : 'View Schedule'}
+              {liveState.isActive ? t('home.join_live_stream') : t('home.view_schedule')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -1173,14 +1173,14 @@ export default function Home() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/10 border-b border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              TESTIMONIALS
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider">
+              {t('home.testimonials_badge')}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              What Students Say Worldwide
+              {t('home.testimonials_title')}
             </h2>
             <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
-              Read how this platform empowers seekers of authentic knowledge globally.
+              {t('home.testimonials_subtitle')}
             </p>
           </div>
 
@@ -1193,24 +1193,24 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ delay: idx * 0.05, duration: 0.6 }}
-                className="break-inside-avoid glass-premium p-6 flex flex-col justify-between gap-6 border border-white/5 hover:border-emerald-500/20 transition-all duration-300 group"
+                className="break-inside-avoid glass-premium p-6 flex flex-col justify-between gap-6 border border-white/5 hover:border-icc-500/20 transition-all duration-300 group"
               >
-                <div className="space-y-4 text-left">
+                <div className="space-y-4 text-start">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-transparent" />
                     ))}
                   </div>
-                  <Quote className="w-8 h-8 text-emerald-500/10 shrink-0" />
+                  <Quote className="w-8 h-8 text-icc-500/10 shrink-0" />
                   <p className="text-sm text-white/75 italic leading-relaxed">
                     "{testimonial.text}"
                   </p>
                 </div>
                 <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                  <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-400 uppercase">
+                  <div className="w-9 h-9 rounded-full bg-icc-500/10 border border-icc-500/20 flex items-center justify-center text-xs font-bold text-icc-400 uppercase">
                     {testimonial.initial}
                   </div>
-                  <div className="text-left">
+                  <div className="text-start">
                     <p className="text-xs font-bold text-white leading-none">{testimonial.name}</p>
                     <p className="text-[10px] text-white/40 mt-1">{testimonial.country}</p>
                   </div>
@@ -1228,7 +1228,7 @@ export default function Home() {
             
             {/* Left Column: Framed Portrait & Islamic Accents */}
             <div className="lg:col-span-5 relative group">
-              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-emerald-500 to-amber-500 opacity-20 blur-xl group-hover:opacity-35 transition-all duration-500 pointer-events-none" />
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-icc-500 to-amber-500 opacity-20 blur-xl group-hover:opacity-35 transition-all duration-500 pointer-events-none" />
               <div className="relative rounded-3xl overflow-hidden border border-amber-400/30 p-2 bg-slate-950/80 shadow-2xl">
                 {/* Decorative Islamic Geometric corner vectors */}
                 <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-400/40 z-10 pointer-events-none" />
@@ -1236,40 +1236,39 @@ export default function Home() {
                 
                 <img
                   src="/images/sheikh-zabuur.jpg"
-                  alt="Sheikh Muhammed Zabuur Biography"
+                  alt={t('home.about_image_alt')}
                   className="w-full h-[400px] object-cover rounded-2xl group-hover:scale-[1.01] transition-transform duration-500"
                 />
               </div>
             </div>
 
             {/* Right Column: Biography Content, Quotes & Timeline */}
-            <div className="lg:col-span-7 space-y-8 text-left">
+            <div className="lg:col-span-7 space-y-8 text-start">
               <div className="space-y-4">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider">
                   {t('home.about_sheikh')}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
-                  A Dedicated Path to Propagating <br /> Authentic Sunnah
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug" dangerouslySetInnerHTML={{ __html: t('home.about_subtitle_heading') }} />
+                
               </div>
 
               {/* Biography quoting */}
-              <div className="relative pl-6 border-l-2 border-emerald-500/30 italic text-white/70 text-sm leading-relaxed max-w-2xl">
-                <Quote className="absolute -left-3 -top-3 w-6 h-6 text-emerald-500/10 fill-emerald-500/5 rotate-180" />
+              <div className="relative pl-6 border-l-2 border-icc-500/30 italic text-white/70 text-sm leading-relaxed max-w-2xl">
+                <Quote className="absolute -left-3 -top-3 w-6 h-6 text-icc-500/10 fill-icc-500/5 rotate-180" />
                 "{t('home.about_desc')}"
               </div>
 
               {/* Timeline milestones */}
               <div className="space-y-5">
-                <h4 className="text-xs uppercase tracking-widest font-extrabold text-amber-400">Teaching Timeline</h4>
+                <h4 className="text-xs uppercase tracking-widest font-extrabold text-amber-400">{t('home.timeline_heading')}</h4>
                 <div className="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
                   
                   {/* Item 1 */}
                   <div className="relative pl-7 flex gap-4 items-start">
-                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
+                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-icc-500 ring-4 ring-icc-500/10" />
                     <div>
-                      <p className="text-xs font-bold text-white">Islamic Sciences Education</p>
-                      <p className="text-[11px] text-white/40">Acquired deep classical knowledge under reputable scholars, specializing in Aqeedah & Fiqh.</p>
+                      <p className="text-xs font-bold text-white">{t('home.timeline_education_title')}</p>
+                      <p className="text-[11px] text-white/40">{t('home.timeline_education_desc')}</p>
                     </div>
                   </div>
 
@@ -1277,17 +1276,17 @@ export default function Home() {
                   <div className="relative pl-7 flex gap-4 items-start">
                     <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-amber-500 ring-4 ring-amber-500/10" />
                     <div>
-                      <p className="text-xs font-bold text-white">Teaching Journey</p>
-                      <p className="text-[11px] text-white/40">Taught standard curriculum across colleges and masaajidh, establishing structures for local and online classes.</p>
+                      <p className="text-xs font-bold text-white">{t('home.timeline_teaching_title')}</p>
+                      <p className="text-[11px] text-white/40">{t('home.timeline_teaching_desc')}</p>
                     </div>
                   </div>
 
                   {/* Item 3 */}
                   <div className="relative pl-7 flex gap-4 items-start">
-                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
+                    <div className="absolute left-[5px] top-1.5 w-[7px] h-[7px] rounded-full bg-icc-500 ring-4 ring-icc-500/10" />
                     <div>
-                      <p className="text-xs font-bold text-white">Founder of Iman Chercher College</p>
-                      <p className="text-[11px] text-white/40">Formed the digital learning college portal to extend authentic, free multi-language education worldwide.</p>
+                      <p className="text-xs font-bold text-white">{t('home.timeline_founder_title')}</p>
+                      <p className="text-[11px] text-white/40">{t('home.timeline_founder_desc')}</p>
                     </div>
                   </div>
 
@@ -1310,8 +1309,8 @@ export default function Home() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-2">
-            <h3 className="text-lg font-bold text-white tracking-wide">Connect & Follow Sheikh Muhammed Zabuur</h3>
-            <p className="text-xs text-white/45">Stay connected for weekly lessons, daily reminders, and live broadcasts.</p>
+            <h3 className="text-lg font-bold text-white tracking-wide">{t('home.connect_title')}</h3>
+            <p className="text-xs text-white/45">{t('home.connect_subtitle')}</p>
           </div>
 
           <div className="flex flex-wrap justify-center items-center gap-4">
@@ -1322,7 +1321,7 @@ export default function Home() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#FF0000]/10 border border-white/10 hover:border-[#FF0000]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#FF0000]/5"
             >
               <YoutubeIcon className="w-5 h-5 text-[#FF0000]" />
-              YouTube
+              {t('home.social_youtube')}
             </a>
             <a 
               href="https://t.me/sheikhmohammedzabuur" 
@@ -1331,7 +1330,7 @@ export default function Home() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#229ED9]/10 border border-white/10 hover:border-[#229ED9]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#229ED9]/5"
             >
               <TelegramIcon className="w-5 h-5 text-[#229ED9]" />
-              Telegram
+              {t('home.social_telegram')}
             </a>
             <a 
               href="https://facebook.com/profile.php?id=61555767907866" 
@@ -1340,7 +1339,7 @@ export default function Home() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-[#1877F2]/10 border border-white/10 hover:border-[#1877F2]/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md hover:shadow-[#1877F2]/5"
             >
               <FacebookIcon className="w-5 h-5 text-[#1877F2]" />
-              Facebook
+              {t('home.social_facebook')}
             </a>
             <a 
               href="https://www.tiktok.com/@sheikh.mahammad.z" 
@@ -1349,14 +1348,14 @@ export default function Home() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/40 text-xs font-bold text-white/80 hover:text-white transition-all hover:-translate-y-1 shadow-md"
             >
               <TiktokIcon className="w-4 h-4 text-white" />
-              TikTok
+              {t('home.social_tiktok')}
             </a>
             <Link 
               to="/about"
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-emerald-500/10 border border-white/10 hover:border-emerald-500/40 text-xs font-bold text-white/80 hover:text-emerald-400 transition-all hover:-translate-y-1 shadow-md"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/5 hover:bg-icc-500/10 border border-white/10 hover:border-icc-500/40 text-xs font-bold text-white/80 hover:text-icc-400 transition-all hover:-translate-y-1 shadow-md"
             >
-              <Globe className="w-4 h-4 text-emerald-400" />
-              Official Bio
+              <Globe className="w-4 h-4 text-icc-400" />
+              {t('home.social_official_bio')}
             </Link>
           </div>
         </div>
@@ -1366,14 +1365,14 @@ export default function Home() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              MEDIA showcase
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider">
+              {t('home.gallery_badge')}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Visual Learning Showcase
+              {t('home.gallery_title')}
             </h2>
             <p className="text-base text-white/50 max-w-xl mx-auto leading-relaxed">
-              Explore photo captures from lectures, events, and college modules. Click to view.
+              {t('home.gallery_subtitle')}
             </p>
           </div>
 
@@ -1398,7 +1397,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                   <h4 className="text-sm font-bold text-white tracking-wide">{img.title}</h4>
-                  <p className="text-[11px] text-emerald-400 font-semibold mt-1">Click to expand</p>
+                  <p className="text-[11px] text-icc-400 font-semibold mt-1">{t('home.gallery_click_expand')}</p>
                 </div>
               </motion.div>
             ))}
@@ -1424,7 +1423,7 @@ export default function Home() {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.95 }}
                   src={activeImage} 
-                  alt="Expanded Showcase" 
+                  alt={t('home.gallery_expanded_alt')} 
                   className="max-w-full max-h-[85vh] rounded-2xl object-contain border border-white/10 shadow-2xl"
                 />
               </motion.div>
@@ -1438,12 +1437,12 @@ export default function Home() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden bg-slate-950">
         
         {/* Background gradient overlays */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[350px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[350px] bg-icc-500/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            NEWSLETTER
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-xs font-semibold uppercase tracking-wider">
+            {t('home.newsletter_badge')}
           </span>
           <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-none">
             {t('footer.stay_updated')}
@@ -1456,18 +1455,18 @@ export default function Home() {
             <input
               type="email"
               placeholder={t('footer.email_placeholder_alt')}
-              className="flex-1 px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all duration-300 text-sm shadow-inner"
+              className="flex-1 px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/20 transition-all duration-300 text-sm shadow-inner"
             />
             <button 
               type="submit" 
-              className="btn-icc px-8 py-3.5 whitespace-nowrap font-bold text-sm bg-gradient-to-r from-emerald-500 via-emerald-600 to-amber-500 border border-emerald-400/20 hover:scale-[1.03] active:scale-100 transition-all duration-300"
+              className="btn-icc px-8 py-3.5 whitespace-nowrap font-bold text-sm bg-gradient-to-r from-icc-500 via-icc-600 to-amber-500 border border-icc-400/20 hover:scale-[1.03] active:scale-100 transition-all duration-300"
             >
               {t('footer.subscribe')}
             </button>
           </form>
 
           <p className="text-[11px] text-white/40 tracking-wide">
-            ✓ No spam. Only beneficial Islamic content.
+            {t('home.newsletter_no_spam')}
           </p>
         </div>
       </section>

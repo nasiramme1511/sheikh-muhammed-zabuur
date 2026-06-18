@@ -13,7 +13,7 @@ const lessons = [
     image: 'https://placehold.co/400x225/065F46/ffffff?text=Tafsir+Al-Fatihah',
     progress: 75,
     slug: 'tafsir-al-fatihah',
-    color: '#10B981',
+    color: '#0EA5E9',
   },
   {
     title: 'Conditions of Prayer',

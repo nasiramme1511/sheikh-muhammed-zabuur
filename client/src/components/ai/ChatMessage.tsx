@@ -88,7 +88,7 @@ export default function ChatMessage({ message, isLast }: ChatMessageProps) {
         className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${
           isUser
             ? 'bg-gradient-to-br from-gold-500 to-amber-600 shadow-gold-500/20'
-            : 'bg-gradient-to-br from-icc-500 to-emerald-600 shadow-icc-500/20'
+            : 'bg-gradient-to-br from-icc-500 to-icc-600 shadow-icc-500/20'
         }`}
       >
         {isUser ? (

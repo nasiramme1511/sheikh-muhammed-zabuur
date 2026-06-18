@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from '../i18n';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Download, Play, Pause, Music, Volume2, Clock, Eye, Sparkles, Filter, Bookmark, CheckCircle, BookOpen,
@@ -11,25 +12,25 @@ import { useSEO } from '../seo/metadata';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
 
-const CATEGORIES = [
-  'All Lectures',
-  'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
-  'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
-  'Questions & Answers', 'General',
-];
-
 export default function AudioLibrary() {
+  const { t } = useTranslation();
+  const CATEGORIES = [
+    t('audio.all_lectures'),
+    'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
+    'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
+    'Questions & Answers', 'General',
+  ];
   useSEO({
-    title: 'Audio Lectures',
-    description: 'Listen to authentic Islamic audio lectures on Aqeedah, Tafsir, Hadith, Fiqh, Seerah, Tajweed and more by Sheikh Mohammed Zabuur. Free Islamic learning in English, Arabic, Amharic, and Afaan Oromo.',
+    title: t('audio.title'),
+    description: t('audio.subtitle'),
     canonical: '/audio',
-    keywords: 'Islamic audio lectures, listen to Quran lectures, Aqeedah audio, Tafsir lessons, Hadith audio, Fiqh lectures, Sheikh Mohammed Zabuur audio, free Islamic audio',
+    keywords: t('audio.title'),
   });
 
   const [audios, setAudios] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Lectures');
+  const [selectedCategory, setSelectedCategory] = useState(t('audio.all_lectures'));
   const [sortBy, setSortBy] = useState<'latest' | 'downloads' | 'views'>('latest');
   const [currentTrack, setCurrentTrack] = useState<Resource | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -102,7 +103,7 @@ export default function AudioLibrary() {
         (audio.description && audio.description.toLowerCase().includes(searchQuery.toLowerCase()));
 
       const matchesCategory =
-        selectedCategory === 'All Lectures' ||
+        selectedCategory === t('audio.all_lectures') ||
         audio.category.toLowerCase() === selectedCategory.toLowerCase();
 
       return matchesSearch && matchesCategory;
@@ -219,10 +220,10 @@ export default function AudioLibrary() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Audio Library
+            {t('audio.badge')}
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: -10 }}
@@ -230,7 +231,7 @@ export default function AudioLibrary() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold mb-3 tracking-tight"
           >
-            Listen to Lectures
+            {t('audio.heading')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -238,7 +239,7 @@ export default function AudioLibrary() {
             transition={{ delay: 0.2 }}
             className="text-white/60 max-w-2xl mx-auto text-base"
           >
-            Gain authentic knowledge through audio recordings of Tafsir, Hadith, Aqeedah, and Seerah by Sheikh Mohammed Zabuur.
+            {t('audio.description')}
           </motion.p>
         </div>
 
@@ -246,8 +247,8 @@ export default function AudioLibrary() {
         {Object.keys(collectionStats).length > 0 && (
           <div className="mb-5">
             <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-400" />
-              Browse By Collection
+              <BookOpen className="w-5 h-5 text-icc-400" />
+              {t('audio.browse_collections')}
             </h3>
             <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
               {COLLECTIONS.filter(c => (collectionStats[c.slug] || 0) > 0).map(c => (
@@ -256,7 +257,7 @@ export default function AudioLibrary() {
                   onClick={() => setSelectedCollection(c.slug)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm shrink-0 transition-all border ${
                     selectedCollection === c.slug
-                      ? 'bg-emerald-500 text-white border-emerald-500'
+                      ? 'bg-icc-500 text-white border-icc-500'
                       : `${COLLECTION_COLORS[c.slug] || 'bg-white/5 text-white/60 border-white/10'} hover:brightness-125`
                   }`}
                 >
@@ -275,15 +276,15 @@ export default function AudioLibrary() {
 
         {selectedCollection && (
           <div className="mb-4 flex items-center gap-2 text-sm bg-white/5 p-3 rounded-xl border border-white/5">
-            <span className="text-white/60">Showing only:</span>
-            <span className="font-semibold text-emerald-400">
+            <span className="text-white/60">{t('audio.showing_only')}</span>
+            <span className="font-semibold text-icc-400">
               {getCollectionBySlug(selectedCollection)?.icon} {getCollectionBySlug(selectedCollection)?.name || selectedCollection}
             </span>
             <button
               onClick={handleClearCollection}
               className="ml-auto px-3 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 text-xs font-medium transition-all"
             >
-              Clear Collection Filter
+              {t('audio.clear_collection')}
             </button>
           </div>
         )}
@@ -294,10 +295,10 @@ export default function AudioLibrary() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/40" />
             <input
               type="text"
-              placeholder="Search lectures..."
+              placeholder={t('audio.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 transition-all text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-icc-500/50 transition-all text-sm"
             />
           </div>
 
@@ -309,10 +310,10 @@ export default function AudioLibrary() {
                   key={s}
                   onClick={() => setSortBy(s)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    sortBy === s ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'
+                    sortBy === s ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'
                   }`}
                 >
-                  {s === 'latest' ? 'Latest' : s === 'downloads' ? 'Top Downloads' : 'Most Viewed'}
+                  {s === 'latest' ? t('audio.sort_latest') : s === 'downloads' ? t('audio.sort_top_downloads') : t('audio.sort_most_viewed')}
                 </button>
               ))}
             </div>
@@ -321,15 +322,15 @@ export default function AudioLibrary() {
             <div className="flex gap-1 bg-white/5 border border-white/5 rounded-xl p-0.5">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
-                title="Grid View"
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title={t('audio.grid_view')}
               >
                 <Grid3X3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'text-white/60 hover:text-white'}`}
-                title="List View"
+                className={`p-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-icc-500 text-white' : 'text-white/60 hover:text-white'}`}
+                title={t('audio.list_view')}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -357,7 +358,7 @@ export default function AudioLibrary() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-xs font-medium shrink-0 transition-all whitespace-nowrap ${
                     active
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                      ? 'bg-icc-500 text-white shadow-lg shadow-icc-500/20'
                       : 'bg-white/5 text-white/60 hover:text-white border border-white/5 hover:bg-white/10'
                   }`}
                 >
@@ -394,19 +395,19 @@ export default function AudioLibrary() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-24 bg-white/5 rounded-3xl border border-white/5 backdrop-blur-sm relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-icc-500/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="relative z-10">
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', damping: 15 }}
-                className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/10 flex items-center justify-center"
+                className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-icc-500/10 to-icc-600/10 border border-icc-500/10 flex items-center justify-center"
               >
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <Music className="w-12 h-12 text-emerald-400/60" />
+                  <Music className="w-12 h-12 text-icc-400/60" />
                 </motion.div>
               </motion.div>
               <motion.h3
@@ -415,7 +416,7 @@ export default function AudioLibrary() {
                 transition={{ delay: 0.1 }}
                 className="text-2xl font-bold text-white/80 mb-3"
               >
-                {searchQuery || selectedCategory !== 'All Lectures' ? 'No Lectures Found' : 'Audio Library Coming Soon'}
+                {searchQuery || selectedCategory !== t('audio.all_lectures') ? t('audio.empty_title') : t('audio.empty_coming_soon')}
               </motion.h3>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -423,11 +424,11 @@ export default function AudioLibrary() {
                 transition={{ delay: 0.2 }}
                 className="text-sm text-white/40 max-w-md mx-auto mb-8 leading-relaxed"
               >
-                {searchQuery || selectedCategory !== 'All Lectures'
-                  ? 'No lectures match your current search criteria. Try adjusting your search terms or selecting a different category to discover Islamic audio content.'
-                  : 'Audio lectures by Sheikh Mohammed Zabuur are being prepared. Check back soon for Tafsir, Hadith, and Aqeedah recordings taught in multiple languages.'}
+{searchQuery || selectedCategory !== t('audio.all_lectures')
+                    ? t('audio.empty_search_desc')
+                    : t('audio.empty_desc')}
               </motion.p>
-              {(searchQuery || selectedCategory !== 'All Lectures') && (
+              {(searchQuery || selectedCategory !== t('audio.all_lectures')) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -435,11 +436,11 @@ export default function AudioLibrary() {
                   className="flex items-center justify-center gap-3"
                 >
                   <button
-                    onClick={() => { setSearchQuery(''); setSelectedCategory('All Lectures'); }}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all text-sm font-medium flex items-center gap-2"
+                    onClick={() => { setSearchQuery(''); setSelectedCategory(t('audio.all_lectures')); }}
+                    className="px-5 py-2.5 rounded-xl bg-icc-500/10 border border-icc-500/20 text-icc-400 hover:bg-icc-500/20 transition-all text-sm font-medium flex items-center gap-2"
                   >
                     <Filter className="w-4 h-4" />
-                    Clear All Filters
+                    {t('audio.clear_filters')}
                   </button>
                 </motion.div>
               )}
@@ -458,7 +459,7 @@ export default function AudioLibrary() {
                   transition={{ delay: idx * 0.05 }}
                   key={audio.id}
                   className={`glass-premium p-6 flex flex-col justify-between h-full relative overflow-hidden group cursor-pointer ${
-                    isCurrent ? 'border-emerald-500/40 shadow-lg shadow-emerald-500/10' : ''
+                    isCurrent ? 'border-icc-500/40 shadow-lg shadow-icc-500/10' : ''
                   }`}
                   onClick={() => handlePlayPauseGuarded(audio)}
                 >
@@ -466,7 +467,7 @@ export default function AudioLibrary() {
                   {isCurrent && (
                     <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10">
                       <div
-                        className="h-full bg-emerald-400 transition-all duration-300"
+                        className="h-full bg-icc-400 transition-all duration-300"
                         style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
                       />
                     </div>
@@ -474,7 +475,7 @@ export default function AudioLibrary() {
 
                   <div>
                       <div className="flex justify-between items-start mb-4">
-                        <div className={`p-3 rounded-xl ${isCurrent ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+                        <div className={`p-3 rounded-xl ${isCurrent ? 'bg-icc-500 text-white' : 'bg-icc-500/10 text-icc-400 border border-icc-500/20'}`}>
                           {playing ? <BarChart3 className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
                         </div>
                         <div className="flex flex-wrap gap-1 justify-end">
@@ -493,11 +494,11 @@ export default function AudioLibrary() {
                         </div>
                       </div>
 
-                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-emerald-400 transition-colors">
+                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-snug group-hover:text-icc-400 transition-colors">
                       {audio.title}
                     </h3>
                     <p className="text-sm text-white/50 mb-4 line-clamp-2">
-                      {audio.description || 'No description available for this lecture.'}
+                      {audio.description || t('audio.no_description')}
                     </p>
                   </div>
 
@@ -517,7 +518,7 @@ export default function AudioLibrary() {
                       <button
                         onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                         className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
-                        title="Download MP3"
+                        title={t('audio.download_mp3')}
                       >
                         <Download className="w-4 h-4 text-white/70" />
                       </button>
@@ -525,8 +526,8 @@ export default function AudioLibrary() {
                         onClick={() => handlePlayPauseGuarded(audio)}
                         className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                           playing
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20'
+                            ? 'bg-icc-500 text-white'
+                            : 'bg-icc-500/10 hover:bg-icc-500/20 text-icc-400 border border-icc-500/20'
                         }`}
                       >
                         {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 pl-0.5" />}
@@ -550,26 +551,26 @@ export default function AudioLibrary() {
                   transition={{ delay: idx * 0.03 }}
                   key={audio.id}
                   className={`glass-premium p-4 flex items-center gap-4 group cursor-pointer relative overflow-hidden ${
-                    isCurrent ? 'border-emerald-500/40 shadow-lg shadow-emerald-500/10' : ''
+                    isCurrent ? 'border-icc-500/40 shadow-lg shadow-icc-500/10' : ''
                   }`}
                   onClick={() => handlePlayPauseGuarded(audio)}
                 >
                   {isCurrent && (
                     <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10">
                       <div
-                        className="h-full bg-emerald-400 transition-all duration-300"
+                        className="h-full bg-icc-400 transition-all duration-300"
                         style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
                       />
                     </div>
                   )}
 
-                  <div className={`p-3 rounded-xl shrink-0 ${isCurrent ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+                  <div className={`p-3 rounded-xl shrink-0 ${isCurrent ? 'bg-icc-500 text-white' : 'bg-icc-500/10 text-icc-400 border border-icc-500/20'}`}>
                     {playing ? <BarChart3 className="w-4 h-4" /> : <Headphones className="w-4 h-4" />}
                   </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                          <h3 className="text-sm font-bold text-white truncate group-hover:text-emerald-400 transition-colors">
+                          <h3 className="text-sm font-bold text-white truncate group-hover:text-icc-400 transition-colors">
                             {audio.title}
                           </h3>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/5 border border-white/10 text-white/50 shrink-0">
@@ -586,7 +587,7 @@ export default function AudioLibrary() {
                           })()}
                         </div>
                     <p className="text-xs text-white/40 truncate">
-                      {audio.description || 'No description'}
+                      {audio.description || t('audio.no_description')}
                     </p>
                   </div>
 
@@ -602,7 +603,7 @@ export default function AudioLibrary() {
                     <button
                       onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                       className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
-                      title="Download MP3"
+                      title={t('audio.download_mp3')}
                     >
                       <Download className="w-3.5 h-3.5 text-white/70" />
                     </button>
@@ -610,8 +611,8 @@ export default function AudioLibrary() {
                       onClick={() => handlePlayPauseGuarded(audio)}
                       className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
                         playing
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20'
+                          ? 'bg-icc-500 text-white'
+                          : 'bg-icc-500/10 hover:bg-icc-500/20 text-icc-400 border border-icc-500/20'
                       }`}
                     >
                       {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 pl-0.5" />}
@@ -634,7 +635,7 @@ export default function AudioLibrary() {
             className="fixed bottom-0 left-0 right-0 z-[100] bg-surface-900/90 backdrop-blur-xl border-t border-white/10 py-4 px-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4"
           >
             <div className="flex items-center gap-3 min-w-0 w-full md:w-1/3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-icc-500/10 text-icc-400 border border-icc-500/20 flex items-center justify-center shrink-0">
                 <Music className="w-5 h-5" />
               </div>
               <div className="min-w-0">
@@ -647,7 +648,7 @@ export default function AudioLibrary() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => handlePlayPauseGuarded(currentTrack)}
-                  className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform"
+                  className="w-10 h-10 rounded-full bg-icc-500 text-white flex items-center justify-center shadow-lg shadow-icc-500/20 hover:scale-105 transition-transform"
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 pl-0.5" />}
                 </button>
@@ -660,7 +661,7 @@ export default function AudioLibrary() {
                   max={duration || 100}
                   value={currentTime}
                   onChange={handleSeek}
-                  className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-emerald-500 focus:outline-none"
+                  className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-icc-500 focus:outline-none"
                 />
                 <span>{formatTime(duration)}</span>
               </div>
@@ -669,13 +670,13 @@ export default function AudioLibrary() {
             <div className="hidden md:flex items-center justify-end gap-3 w-full md:w-1/3">
               <div className="flex items-center gap-2 text-white/60 text-xs">
                 <Volume2 className="w-4 h-4 text-white/40" />
-                <span>Stereo</span>
+                <span>{t('audio.stereo')}</span>
               </div>
               <button
                 onClick={() => handleDownloadGuarded(currentTrack.id, currentTrack.url)}
                 className="btn-icc py-2 px-4 text-xs h-9 rounded-lg"
               >
-                Download MP3
+                {t('audio.download_mp3')}
               </button>
             </div>
           </motion.div>

@@ -20,7 +20,7 @@ export default function TeacherFooter() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-emerald-400" />
+            <BookOpen className="w-5 h-5 text-icc-400" />
             <span className="text-sm font-bold text-white">{t('app.title')}</span>
           </Link>
         </div>
@@ -37,7 +37,7 @@ export default function TeacherFooter() {
             <button
               key={lang.code}
               onClick={() => setLanguage(lang.code as any)}
-              className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${language === lang.code ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-white/40 hover:text-white bg-white/5 border border-white/5'}`}
+              className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${language === lang.code ? 'bg-icc-500/20 text-icc-400 border border-icc-500/30' : 'text-white/40 hover:text-white bg-white/5 border border-white/5'}`}
             >
               {lang.flag} {lang.label}
             </button>

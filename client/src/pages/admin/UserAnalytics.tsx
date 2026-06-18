@@ -38,14 +38,14 @@ interface ActiveUser {
 
 const ROLE_COLORS: Record<string, string> = {
   ADMIN: '#8b5cf6',
-  USER: '#10b981',
+  USER: '#0EA5E9',
   STUDENT: '#3b82f6',
   TEACHER: '#f59e0b',
   MODERATOR: '#06b6d4',
 };
 
 const MONTH_COLORS = [
-  '#10b981', '#34d399', '#6ee7b7', '#a7f3d0',
+  '#0EA5E9', '#38BDF8', '#7DD3FC', '#a7f3d0',
   '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe',
   '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe',
 ];
@@ -142,7 +142,7 @@ export default function UserAnalytics() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-icc-500 border-t-transparent" />
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function UserAnalytics() {
             <AlertCircle className="w-8 h-8 text-red-400" />
           </div>
           <p className="text-red-500 font-medium mb-4">{error}</p>
-          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold transition-all">Retry</button>
+          <button onClick={loadData} className="px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 text-white text-sm font-semibold transition-all">Retry</button>
         </div>
       </div>
     );
@@ -166,7 +166,7 @@ export default function UserAnalytics() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-emerald-500" />
+            <BarChart3 className="w-6 h-6 text-icc-500" />
             User Analytics
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -174,7 +174,7 @@ export default function UserAnalytics() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={loadData} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-emerald-500 hover:border-emerald-500 transition-all" title="Refresh">
+          <button onClick={loadData} className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-icc-500 hover:border-icc-500 transition-all" title="Refresh">
             <RefreshCw className="w-4 h-4" />
           </button>
           <button onClick={() => alert('Export feature coming soon!')} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
@@ -185,7 +185,7 @@ export default function UserAnalytics() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <StatCard icon={Users} label="Total Users" value={stats.totalUsers.toLocaleString()} color="text-emerald-500" bg="bg-emerald-500/10 border-emerald-500/20" />
+        <StatCard icon={Users} label="Total Users" value={stats.totalUsers.toLocaleString()} color="text-icc-500" bg="bg-icc-500/10 border-icc-500/20" />
         <StatCard icon={UserCheck} label="Active Users" value={stats.activeUsers.toLocaleString()} color="text-blue-500" bg="bg-blue-500/10 border-blue-500/20" />
         <StatCard icon={UserPlus} label="New Users (30d)" value={stats.newUsers30d.toLocaleString()} color="text-cyan-500" bg="bg-cyan-500/10 border-cyan-500/20" />
         <StatCard icon={ShieldCheck} label="Total Admins" value={stats.totalAdmins.toLocaleString()} color="text-purple-500" bg="bg-purple-500/10 border-purple-500/20" />
@@ -197,7 +197,7 @@ export default function UserAnalytics() {
         {/* User Growth Bar Chart */}
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-emerald-500" />
+            <TrendingUp className="w-4 h-4 text-icc-500" />
             <h2 className="text-sm font-bold text-gray-900 dark:text-white">User Growth (Monthly Signups)</h2>
           </div>
           <div className="p-5">
@@ -234,7 +234,7 @@ export default function UserAnalytics() {
         {/* Role Distribution Pie Chart */}
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-            <Users className="w-4 h-4 text-emerald-500" />
+            <Users className="w-4 h-4 text-icc-500" />
             <h2 className="text-sm font-bold text-gray-900 dark:text-white">Users by Role</h2>
           </div>
           <div className="p-5 flex items-center gap-6">
@@ -276,7 +276,7 @@ export default function UserAnalytics() {
       <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-500" />
+            <Activity className="w-4 h-4 text-icc-500" />
             <h2 className="text-sm font-bold text-gray-900 dark:text-white">Most Active Users</h2>
           </div>
           <span className="text-xs text-gray-400">{activeUsers.length} users</span>
@@ -305,7 +305,7 @@ export default function UserAnalytics() {
                     <td className="px-4 py-3 text-gray-400 text-xs">{index + 1}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-icc-400 to-icc-600 flex items-center justify-center text-sm font-bold text-white shrink-0">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <span className="font-medium text-gray-900 dark:text-white truncate max-w-[150px]">{user.name}</span>
@@ -313,7 +313,7 @@ export default function UserAnalytics() {
                     </td>
                     <td className="px-4 py-3 text-gray-500 truncate max-w-[200px]">{user.email}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-500">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-icc-500">
                         <Bookmark className="w-3 h-3" /> {user._count?.bookmarks ?? 0}
                       </span>
                     </td>

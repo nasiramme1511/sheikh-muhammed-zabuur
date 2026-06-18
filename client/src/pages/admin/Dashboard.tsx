@@ -91,7 +91,7 @@ function LineChart({ data, labels, color, height = 160 }: { data: number[]; labe
           <stop offset="100%" stopColor="currentColor" stopOpacity="0.02" />
         </linearGradient>
       </defs>
-      <polygon points={areaPts} fill={`url(#grad-${color.replace(/\s/g, '')})`} className="text-emerald-500" />
+      <polygon points={areaPts} fill={`url(#grad-${color.replace(/\s/g, '')})`} className="text-icc-500" />
       <polyline points={polyline} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" className={color} />
       {data.map((v, i) => {
         const x = (i / Math.max(data.length - 1, 1)) * w;
@@ -168,9 +168,9 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 mb-2" />
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96" />
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-full max-w-[16rem] mb-2" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full max-w-[24rem]" />
         </div>
       </div>
     );
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
   };
 
   const quickActions = [
-    { to: '/admin/audio', label: t('admin.upload_audio'), icon: Headphones, color: 'from-emerald-500 to-emerald-600' },
+    { to: '/admin/audio', label: t('admin.upload_audio'), icon: Headphones, color: 'from-icc-500 to-icc-600' },
     { to: '/admin/videos', label: t('admin.upload_video'), icon: Video, color: 'from-blue-500 to-blue-600' },
     { to: '/admin/pdfs', label: t('admin.upload_pdf'), icon: FileText, color: 'from-purple-500 to-purple-600' },
     { to: '/admin/gallery', label: t('admin.upload_image'), icon: Image, color: 'from-pink-500 to-pink-600' },
@@ -211,8 +211,8 @@ export default function AdminDashboard() {
     <div className="space-y-6 pb-8">
 
       {/* Welcome */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 relative overflow-hidden">
+        <div className="absolute top-0 end-0 w-40 sm:w-80 h-40 sm:h-80 bg-icc-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="relative">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t('admin.welcome_title')}</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{t('admin.welcome_desc')}</p>
@@ -220,9 +220,9 @@ export default function AdminDashboard() {
       </motion.div>
 
       {/* Main Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 gap-2 sm:gap-3">
         {[
-          { icon: HiUsers, label: t('admin.total_users'), value: s?.totalUsers || 0, color: 'from-emerald-500 to-emerald-600' },
+          { icon: HiUsers, label: t('admin.total_users'), value: s?.totalUsers || 0, color: 'from-icc-500 to-icc-600' },
           { icon: Headphones, label: t('admin.total_audio'), value: s?.totalAudio || 0, color: 'from-blue-500 to-blue-600' },
           { icon: HiVideoCamera, label: t('admin.total_video'), value: s?.totalVideo || 0, color: 'from-purple-500 to-purple-600' },
           { icon: FileText, label: t('admin.total_pdfs'), value: s?.totalPdf || 0, color: 'from-red-500 to-red-600' },
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Export Buttons */}
-      <div className="flex flex-wrap gap-2 print:hidden">
+      <div className="flex flex-wrap gap-2 print:hidden px-1 sm:px-0">
         <button onClick={exportToPrint} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
           <Printer className="w-3.5 h-3.5" /> Export PDF
         </button>
@@ -278,20 +278,20 @@ export default function AdminDashboard() {
       </div>
 
       {/* Analytics Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:grid-cols-2">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 print:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 sm:p-5 min-w-0 overflow-hidden">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
-            <Upload className="w-4 h-4 text-emerald-500" /> Uploads (30 days)
+            <Upload className="w-4 h-4 text-icc-500" /> Uploads (30 days)
           </h3>
           {s?.uploadsOverTime ? (
             <BarChart
               data={s.uploadsOverTime.map(p => p.count)}
               labels={s.uploadsOverTime.map(p => p.date.slice(5))}
-              color="bg-emerald-500"
+              color="bg-icc-500"
             />
           ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 sm:p-5 min-w-0 overflow-hidden">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
             <HiDownload className="w-4 h-4 text-blue-500" /> Downloads (30 days)
           </h3>
@@ -303,7 +303,7 @@ export default function AdminDashboard() {
             />
           ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 sm:p-5 min-w-0 overflow-hidden">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
             <HiUsers className="w-4 h-4 text-purple-500" /> Users (30 days)
           </h3>
@@ -315,7 +315,7 @@ export default function AdminDashboard() {
             />
           ) : <div className="text-sm text-gray-400 text-center py-8">No data</div>}
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 sm:p-5 min-w-0 overflow-hidden">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
             <HiEye className="w-4 h-4 text-rose-500" /> Views (30 days)
           </h3>
@@ -330,18 +330,18 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content Overview + Live Stream + User Management */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
 
         {/* Content Overview - Recent Uploads */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 sm:p-5 min-w-0 overflow-hidden">
           <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <HiLibrary className="w-4 h-4 text-emerald-500" /> {t('admin.recent_uploads')}
+            <HiLibrary className="w-4 h-4 text-icc-500" /> {t('admin.recent_uploads')}
           </h2>
           {s?.recentActivity && s.recentActivity.length > 0 ? (
             <div className="space-y-1">
               {s.recentActivity.slice(0, 8).map((log: any, i: number) => {
                 const actionLabel: Record<string, { icon: any; label: string; color: string }> = {
-                  upload: { icon: Upload, label: t('admin.admin_uploaded'), color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' },
+                  upload: { icon: Upload, label: t('admin.admin_uploaded'), color: 'text-icc-500 bg-icc-50 dark:bg-icc-500/10' },
                   delete: { icon: Trash2, label: t('admin.admin_deleted'), color: 'text-red-500 bg-red-50 dark:bg-red-500/10' },
                   download: { icon: HiDownload, label: t('admin.user_downloaded'), color: 'text-blue-500 bg-blue-50 dark:bg-blue-500/10' },
                   livestream: { icon: Radio, label: t('admin.user_joined'), color: 'text-purple-500 bg-purple-50 dark:bg-purple-500/10' },
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
                 <p className="text-[10px] text-gray-500">{t('admin.new_registrations')}</p>
               </div>
             </div>
-            <Link to="/admin/users" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-medium transition-all"><UserPlus className="w-3.5 h-3.5" /> {t('admin.add_user')}</Link>
+            <Link to="/admin/users" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-icc-500 hover:bg-icc-400 text-white text-xs font-medium transition-all"><UserPlus className="w-3.5 h-3.5" /> {t('admin.add_user')}</Link>
           </div>
         </div>
       </div>
@@ -416,9 +416,9 @@ export default function AdminDashboard() {
       {/* Content Management Quick Actions */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Zap className="w-4 h-4 text-emerald-500" /> {t('admin.content_management')}
+          <Zap className="w-4 h-4 text-icc-500" /> {t('admin.content_management')}
         </h2>
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
           {quickActions.map((action, i) => (
             <Link key={i} to={action.to} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all group">
               <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
@@ -433,7 +433,7 @@ export default function AdminDashboard() {
       {/* Collections Management */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <HiCollection className="w-4 h-4 text-emerald-500" /> {t('admin.collections_management')}
+          <HiCollection className="w-4 h-4 text-icc-500" /> {t('admin.collections_management')}
         </h2>
         <div className="flex flex-wrap gap-2">
           {COLLECTIONS.slice(0, 9).map(col => (
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
               <span>{col.icon}</span> {col.name}
             </Link>
           ))}
-          <Link to="/admin/collections" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all">
+          <Link to="/admin/collections" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-icc-50 dark:bg-icc-900/20 text-icc-600 dark:text-icc-400 text-xs font-medium hover:bg-icc-100 dark:hover:bg-icc-900/30 transition-all">
             {t('common.view_all')}
           </Link>
         </div>
@@ -451,7 +451,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-4">
-            <HiVolumeUp className="w-4 h-4 text-emerald-500" /> {t('admin.most_played_audio')}
+            <HiVolumeUp className="w-4 h-4 text-icc-500" /> {t('admin.most_played_audio')}
           </h3>
           {s?.popularAudio && s.popularAudio.length > 0 ? (
             <div className="space-y-1">
@@ -490,7 +490,7 @@ export default function AdminDashboard() {
       {/* System Settings Links */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Settings className="w-4 h-4 text-emerald-500" /> {t('admin.settings')}
+          <Settings className="w-4 h-4 text-icc-500" /> {t('admin.settings')}
         </h2>
         <div className="flex flex-wrap gap-2">
           <Link to="/admin/settings" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 text-xs font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Settings className="w-3.5 h-3.5" /> {t('admin.settings')}</Link>
@@ -527,8 +527,8 @@ export default function AdminDashboard() {
               <button onClick={() => { setDeleteTarget(null); setDeleteConfirm(''); }} className="text-red-400 hover:text-red-600"><X className="w-4 h-4" /></button>
             </div>
             <p className="text-xs text-red-600 dark:text-red-400 mb-2">{t('admin.delete_confirm_instruction')}</p>
-            <div className="flex items-center gap-3">
-              <input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={t('admin.type_delete')} className="w-32 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-800 border border-red-300 dark:border-red-700 text-sm text-red-700 dark:text-red-300 placeholder:text-red-300 focus:outline-none focus:border-red-500" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              <input value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)} placeholder={t('admin.type_delete')} className="w-full sm:w-32 px-3 py-1.5 rounded-lg bg-white dark:bg-gray-800 border border-red-300 dark:border-red-700 text-sm text-red-700 dark:text-red-300 placeholder:text-red-300 focus:outline-none focus:border-red-500 min-h-[44px]" />
               <button onClick={handleDeleteAll} disabled={deleteConfirm !== 'DELETE' || deleting} className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:bg-red-300 text-white text-xs font-medium transition-all">
                 {deleting ? <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" /> : <Trash2 className="w-3.5 h-3.5" />}
                 {t('admin.confirm_delete_btn')}

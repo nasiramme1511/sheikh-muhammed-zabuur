@@ -10,7 +10,7 @@ const teachers = [
     title: 'Islamic Jurisprudence',
     image: 'https://placehold.co/200x200/10B981/ffffff?text=AA',
     lessons: 45,
-    color: '#10B981',
+    color: '#0EA5E9',
     socials: ['X', 'YT', 'Web'],
   },
   {

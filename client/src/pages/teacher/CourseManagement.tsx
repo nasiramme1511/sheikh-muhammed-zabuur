@@ -264,7 +264,7 @@ export default function CourseManagement() {
                     <div className="flex items-center justify-between mb-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border tracking-wide uppercase ${
                         c.status === 'PUBLISHED'
-                          ? 'text-emerald-500 bg-emerald-50 border-emerald-200'
+                          ? 'text-icc-500 bg-icc-50 border-icc-200'
                           : 'text-yellow-500 bg-yellow-50 border-yellow-200'
                       }`}>
                         {c.status}

@@ -32,7 +32,7 @@ export default function TeacherBio({ teacher }: Props) {
       className="rounded-2xl bg-dark-800/50 border border-white/5 p-6 md:p-8"
     >
       <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <BookOpen className="w-5 h-5 text-emerald-400" />
+        <BookOpen className="w-5 h-5 text-icc-400" />
         {t('teacher_detail_page.about')}
       </h2>
 
@@ -40,7 +40,7 @@ export default function TeacherBio({ teacher }: Props) {
         <div>
           <p className="text-sm text-white/60 leading-relaxed">{displayBio}</p>
           {truncated && (
-            <button onClick={() => setExpanded(!expanded)} className="inline-flex items-center gap-1 mt-2 text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
+            <button onClick={() => setExpanded(!expanded)} className="inline-flex items-center gap-1 mt-2 text-xs text-icc-400 hover:text-icc-300 transition-colors">
               {expanded ? (
                 <><ChevronUp className="w-3.5 h-3.5" /> {t('teacher_detail_page.show_less')}</>
               ) : (

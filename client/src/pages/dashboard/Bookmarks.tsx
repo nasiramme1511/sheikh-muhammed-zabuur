@@ -46,7 +46,7 @@ export default function DashboardBookmarks() {
   };
 
   const getLessonIcon = (lesson: any) => {
-    if (lesson.audioUrl) return <Headphones className="w-5 h-5 text-emerald-400" />;
+    if (lesson.audioUrl) return <Headphones className="w-5 h-5 text-icc-400" />;
     if (lesson.videoUrl) return <Video className="w-5 h-5 text-blue-400" />;
     if (lesson.pdfUrl) return <FileText className="w-5 h-5 text-purple-400" />;
     return <Bookmark className="w-5 h-5 text-amber-400" />;
@@ -60,7 +60,7 @@ export default function DashboardBookmarks() {
   };
 
   const getTypeColor = (lesson: any) => {
-    if (lesson.audioUrl) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+    if (lesson.audioUrl) return 'text-icc-400 bg-icc-500/10 border-icc-500/20';
     if (lesson.videoUrl) return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
     if (lesson.pdfUrl) return 'text-purple-400 bg-purple-500/10 border-purple-500/20';
     return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
@@ -74,7 +74,7 @@ export default function DashboardBookmarks() {
           {t('bookmarks.title')}
         </h1>
         <span className="text-xs text-white/40 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-          {bookmarks.length} saved
+          {bookmarks.length} {t('dashboard.bookmarks_saved')}
         </span>
       </div>
 
@@ -92,8 +92,8 @@ export default function DashboardBookmarks() {
             <BookmarkX className="w-8 h-8 text-amber-400/60" />
           </div>
           <p className="text-lg font-semibold text-white/70 mb-2">{t('bookmarks.no_bookmarks')}</p>
-          <p className="text-sm text-white/40 mb-6">Save lessons, audio, videos and PDFs for quick access later.</p>
-          <Link to="/categories" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-all">
+          <p className="text-sm text-white/40 mb-6">{t('dashboard.bookmarks_empty_desc')}</p>
+          <Link to="/categories" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-600 text-white text-sm font-medium transition-all">
             {t('bookmarks.browse_categories')}
           </Link>
         </motion.div>
@@ -113,11 +113,11 @@ export default function DashboardBookmarks() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-semibold text-white truncate">{b.lesson?.title || 'Untitled'}</h3>
+                    <h3 className="text-sm font-semibold text-white truncate">{b.lesson?.title || t('dashboard.bookmarks_fallback_title')}</h3>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${b.lesson ? getTypeColor(b.lesson) : 'text-white/40 bg-white/5'}`}>
-                      {b.lesson ? getTypeLabel(b.lesson) : 'Lesson'}
+                      {b.lesson ? getTypeLabel(b.lesson) : t('dashboard.bookmarks_fallback_type')}
                     </span>
                     {b.createdAt && (
                       <span className="text-[10px] text-white/40 flex items-center gap-1">
@@ -133,9 +133,9 @@ export default function DashboardBookmarks() {
                 {b.lesson?.slug && (
                   <Link
                     to={`/lessons/${b.lesson.slug}`}
-                    className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center justify-center gap-1.5 transition-all"
+                    className="flex-1 py-1.5 px-3 rounded-lg bg-icc-500/10 hover:bg-icc-500/20 border border-icc-500/20 text-icc-400 text-xs font-medium flex items-center justify-center gap-1.5 transition-all"
                   >
-                    <ExternalLink className="w-3 h-3" /> Open
+                    <ExternalLink className="w-3 h-3" /> {t('dashboard.bookmarks_open')}
                   </Link>
                 )}
                 <button
@@ -143,7 +143,7 @@ export default function DashboardBookmarks() {
                   disabled={removingId === b.lessonId}
                   className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-medium flex items-center gap-1.5 transition-all disabled:opacity-30"
                 >
-                  <Trash2 className="w-3 h-3" /> Remove
+                  <Trash2 className="w-3 h-3" /> {t('dashboard.bookmarks_remove')}
                 </button>
               </div>
             </motion.div>
