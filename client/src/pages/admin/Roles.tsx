@@ -3,6 +3,7 @@ import { HiShieldCheck, HiUsers, HiKey, HiCheck, HiX } from 'react-icons/hi';
 import api from '../../lib/api';
 import { AdminModal } from '../../components/admin';
 import toast from 'react-hot-toast';
+import { useTranslation } from '../../i18n';
 
 interface Role {
   id: number;
@@ -53,6 +54,7 @@ const ROLE_ICONS: Record<string, string> = {
 };
 
 export default function AdminRoles() {
+  const { t } = useTranslation();
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -164,7 +166,7 @@ export default function AdminRoles() {
 
       {filteredRoles.length === 0 ? (
         <div className="text-center py-16 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800">
-          No roles found
+          {t('admin.no_roles')}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

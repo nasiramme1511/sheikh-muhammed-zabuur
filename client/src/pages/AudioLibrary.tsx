@@ -16,9 +16,10 @@ export default function AudioLibrary() {
   const { t } = useTranslation();
   const CATEGORIES = [
     t('audio.all_lectures'),
-    'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
-    'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
-    'Questions & Answers', 'General',
+    t('audio.aqeedah'), t('audio.hadith'), t('audio.tafsir'), t('audio.fiqh'),
+    t('audio.seerah'), t('audio.tajweed'), t('audio.arabic'), t('audio.usul'),
+    t('audio.manhaj'), t('audio.adab'), t('audio.khutbah'), t('audio.ramadan'),
+    t('audio.q_and_a'), t('audio.general'),
   ];
   useSEO({
     title: t('audio.title'),

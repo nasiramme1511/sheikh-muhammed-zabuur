@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { HiUpload } from 'react-icons/hi';
 import { bulkImport } from '../../lib/api';
+import { useTranslation } from '../../i18n';
 import { COLLECTIONS, getCollectionBySlug } from '../../config/collections';
 import toast from 'react-hot-toast';
 
@@ -65,6 +66,7 @@ function getFileIcon(type?: string) {
 }
 
 export default function AdminImport() {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -442,7 +444,7 @@ export default function AdminImport() {
             </div>
 
             {results.length === 0 && (
-              <p className="text-center py-8 text-white/30">No files imported yet.</p>
+              <p className="text-center py-8 text-white/30">{t('admin.no_files_imported')}</p>
             )}
 
             {/* Inline Edit */}

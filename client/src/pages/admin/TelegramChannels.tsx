@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { HiPlus, HiPencil, HiTrash, HiMenu } from 'react-icons/hi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { admin } from '../../lib/api';
+import { useTranslation } from '../../i18n';
 import { AdminModal, ConfirmDeleteModal } from '../../components/admin';
 import toast from 'react-hot-toast';
 
@@ -21,6 +22,7 @@ interface TelegramChannel {
 const emptyForm: TelegramChannel = { name: '', link: '', teacherName: 'Sheikh Muhammad Zabuur', description: '', category: 'General', enabled: true };
 
 export default function AdminTelegramChannels() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<TelegramChannel[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -120,7 +122,7 @@ export default function AdminTelegramChannels() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Telegram Channels</h1>
+        <h1 className="text-2xl font-bold">{t('admin.telegram_channels_title')}</h1>
         <button onClick={openCreate} className="btn-primary inline-flex items-center gap-2 self-start">
           <HiPlus className="w-5 h-5" /> Add Channel
         </button>
@@ -134,7 +136,7 @@ export default function AdminTelegramChannels() {
         ) : items.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <FaTelegramPlane className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-            <p>No Telegram channels added yet</p>
+            <p>{t('admin.no_telegram_channels')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

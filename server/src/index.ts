@@ -102,8 +102,11 @@ function deriveCollection(filename: string): string | null {
 }
 
 function prettyTitle(name: string): string {
+  // Strip all trailing extensions (handles double extensions like .mp3.mp3)
+  while (name.includes('.') && /\.\w+$/.test(name)) {
+    name = name.replace(/\.[^/.]+$/, '');
+  }
   return name
-    .replace(/\.[^/.]+$/, '')
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }

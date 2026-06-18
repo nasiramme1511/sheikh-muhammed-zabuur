@@ -3,6 +3,7 @@ import { HiBell, HiMail, HiGlobe, HiTrash, HiUsers, HiUser, HiPaperAirplane, HiC
 import { admin } from '../../lib/api';
 import { AdminTable, ConfirmDeleteModal } from '../../components/admin';
 import toast from 'react-hot-toast';
+import { useTranslation } from '../../i18n';
 
 interface NotificationItem {
   id: number;
@@ -26,6 +27,7 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
 };
 
 export default function AdminNotifications() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('send');
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -307,7 +309,7 @@ export default function AdminNotifications() {
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
-          emptyMessage="No notifications sent yet"
+          emptyMessage={t('admin.no_notifications_sent')}
         />
       )}
 

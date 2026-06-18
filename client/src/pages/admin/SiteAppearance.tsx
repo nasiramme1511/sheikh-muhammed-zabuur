@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAppearance } from '../../context/AppearanceContext';
 import { admin } from '../../lib/api';
+import { useTranslation } from '../../i18n';
 import {
   Upload, Image, Eye, EyeOff, Sliders, RefreshCw,
 } from 'lucide-react';
 
 export default function AdminSiteAppearance() {
+  const { t } = useTranslation();
   const { settings, updateSettings, refreshSettings, loading } = useAppearance();
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -51,8 +53,8 @@ export default function AdminSiteAppearance() {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Site Appearance</h1>
-          <p className="text-white/50 text-sm mt-1">Customize the global look and feel of your Islamic learning platform</p>
+          <h1 className="text-2xl font-bold text-white">{t('admin.site_appearance')}</h1>
+          <p className="text-white/50 text-sm mt-1">{t('admin.bg_image_desc')}</p>
         </div>
         <button
           onClick={refreshSettings}
@@ -70,8 +72,8 @@ export default function AdminSiteAppearance() {
             <Image className="w-5 h-5 text-icc-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Background Image</h2>
-            <p className="text-sm text-white/50">Upload a mosque or Islamic-themed image as the site-wide background</p>
+            <h2 className="text-lg font-semibold text-white">{t('admin.bg_image')}</h2>
+            <p className="text-sm text-white/50">{t('admin.bg_image_desc')}</p>
           </div>
         </div>
 
@@ -114,7 +116,7 @@ export default function AdminSiteAppearance() {
             <Sliders className="w-5 h-5 text-gold-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Overlay Settings</h2>
+            <h2 className="text-lg font-semibold text-white">{t('admin.overlay_settings')}</h2>
             <p className="text-sm text-white/50">Control the dark overlay and blur effect for better readability</p>
           </div>
         </div>
@@ -215,12 +217,12 @@ export default function AdminSiteAppearance() {
             <Eye className="w-4 h-4 text-icc-400" />
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-1">Tips for Best Results</h3>
+            <h3 className="text-white font-semibold mb-1">{t('admin.tips_best_results')}</h3>
             <ul className="text-sm text-white/50 space-y-1 list-disc list-inside">
-              <li>Use high-resolution mosque or Islamic architecture images (1920x1080 or larger)</li>
-              <li>Keep overlay opacity between 40-70% for optimal readability</li>
-              <li>A moderate blur (4-12px) creates a premium glassmorphism effect</li>
-              <li>The background applies instantly across all pages after upload</li>
+              <li>{t('admin.tip_resolution')}</li>
+              <li>{t('admin.tip_opacity')}</li>
+              <li>{t('admin.tip_blur')}</li>
+              <li>{t('admin.tip_instant')}</li>
             </ul>
           </div>
         </div>

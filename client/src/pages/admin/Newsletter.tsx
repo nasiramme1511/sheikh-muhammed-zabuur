@@ -4,6 +4,7 @@ import { admin } from '../../lib/api';
 import api from '../../lib/api';
 import { AdminTable, ConfirmDeleteModal } from '../../components/admin';
 import toast from 'react-hot-toast';
+import { useTranslation } from '../../i18n';
 
 interface Subscriber {
   id: number;
@@ -31,6 +32,7 @@ interface NewsletterStats {
 type Tab = 'subscribers' | 'send';
 
 export default function AdminNewsletter() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('subscribers');
 
   const [stats, setStats] = useState<NewsletterStats>({ totalSubscribers: 0, activeSubscribers: 0, campaignsSent: 0 });
@@ -214,7 +216,7 @@ export default function AdminNewsletter() {
           page={subsPage}
           totalPages={subsTotalPages}
           onPageChange={setSubsPage}
-          emptyMessage="No subscribers found"
+          emptyMessage={t('admin.no_subscribers')}
         />
       ) : (
         <div className="max-w-2xl bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-6">

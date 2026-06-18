@@ -188,7 +188,7 @@ export default function NavigationMenu() {
         {items.length === 0 ? (
           <div className="text-center py-12 text-sm text-gray-400">
             <Globe className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No navigation items</p>
+            <p>{t('admin.no_navigation_items')}</p>
             <p className="text-xs mt-1">Click "Add Item" to create your first menu item</p>
           </div>
         ) : (
@@ -223,7 +223,7 @@ export default function NavigationMenu() {
                   <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors" title="Edit">
                     <Edit3 className="w-4 h-4" />
                   </button>
-                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title="Delete">
+                  <button onClick={() => setDeleteTarget(item)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors" title={t('admin.delete')}>
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>

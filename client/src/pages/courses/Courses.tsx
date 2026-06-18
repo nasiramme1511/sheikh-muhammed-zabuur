@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { Search, BookOpen, Layers, Globe, Users, ChevronRight, BookOpen as CourseIcon } from 'lucide-react';
 import { courses as coursesApi, categories as categoriesApi, levels as levelsApi } from '../../lib/api';
 import { Course, Category, Level } from '../../types';
+import { useTranslation } from '../../i18n';
 
 export default function Courses() {
+  const { t } = useTranslation();
   const [courses, setCourses] = useState<Course[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
@@ -58,16 +60,13 @@ export default function Courses() {
         <div className="relative max-w-3xl">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-icc-500/15 border border-icc-500/30 text-icc-400 text-xs font-semibold mb-4">
             <BookOpen className="w-3.5 h-3.5" />
-            Islamic Curriculum
+            {t('courses.isl_curriculum')}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-            Browse Our{' '}
-            <span className="bg-gradient-to-r from-icc-400 to-icc-300 bg-clip-text text-transparent">
-              Structured Courses
-            </span>
+            {t('courses.structured_courses')}
           </h1>
           <p className="text-white/60 text-base md:text-lg mb-8 leading-relaxed">
-            Gain authentic knowledge from verified scholars. Follow path-based learning systems starting from the absolute basics up to advanced branches.
+            {t('courses.hero_desc')}
           </p>
 
           {/* Search Inputs */}
@@ -77,7 +76,7 @@ export default function Courses() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses by topic, creed, or teacher..."
+              placeholder={t('courses.search_placeholder')}
               className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all text-sm shadow-xl"
             />
           </div>
@@ -87,7 +86,7 @@ export default function Courses() {
       {/* Filters grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div>
-          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">Category</label>
+          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">{t('courses.category')}</label>
           <div className="relative">
             <CourseIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
             <select
@@ -95,7 +94,7 @@ export default function Courses() {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/80 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="All" className="bg-dark-800 text-white">All Categories</option>
+              <option value="All" className="bg-dark-800 text-white">{t('courses.all_categories')}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id} className="bg-dark-800 text-white">{cat.name}</option>
               ))}
@@ -104,7 +103,7 @@ export default function Courses() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">Level</label>
+          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">{t('courses.level')}</label>
           <div className="relative">
             <Layers className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
             <select
@@ -112,7 +111,7 @@ export default function Courses() {
               onChange={(e) => setSelectedLevel(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/80 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="All" className="bg-dark-800 text-white">All Levels</option>
+              <option value="All" className="bg-dark-800 text-white">{t('courses.all_levels')}</option>
               {levels.map((lvl) => (
                 <option key={lvl.id} value={lvl.id} className="bg-dark-800 text-white">{lvl.name}</option>
               ))}
@@ -121,7 +120,7 @@ export default function Courses() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">Language</label>
+          <label className="block text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">{t('courses.language')}</label>
           <div className="relative">
             <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
             <select
@@ -129,11 +128,11 @@ export default function Courses() {
               onChange={(e) => setSelectedLanguage(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/80 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all text-sm appearance-none cursor-pointer"
             >
-              <option value="All" className="bg-dark-800 text-white">All Languages</option>
-              <option value="en" className="bg-dark-800 text-white">English</option>
-              <option value="ar" className="bg-dark-800 text-white">Arabic</option>
-              <option value="am" className="bg-dark-800 text-white">Amharic</option>
-              <option value="om" className="bg-dark-800 text-white">Oromiffa</option>
+              <option value="All" className="bg-dark-800 text-white">{t('courses.all_languages')}</option>
+              <option value="en" className="bg-dark-800 text-white">{t('admin.language_en')}</option>
+              <option value="ar" className="bg-dark-800 text-white">{t('admin.language_ar')}</option>
+              <option value="am" className="bg-dark-800 text-white">{t('admin.language_am')}</option>
+              <option value="om" className="bg-dark-800 text-white">{t('admin.language_om')}</option>
             </select>
           </div>
         </div>
@@ -141,7 +140,7 @@ export default function Courses() {
 
       {/* Courses count */}
       <div className="text-sm text-white/40 mb-6 font-medium">
-        Showing {filteredCourses.length} of {courses.length} courses
+        {t('courses.showing_of', { count: filteredCourses.length, total: courses.length })}
       </div>
 
       {/* Course Grid */}
@@ -154,8 +153,8 @@ export default function Courses() {
       ) : filteredCourses.length === 0 ? (
         <div className="text-center py-16 rounded-2xl bg-white/5 border border-white/5">
           <BookOpen className="w-12 h-12 text-white/20 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-white mb-1">No courses found</h3>
-          <p className="text-white/40 text-sm">Try modifying your filters or search keywords.</p>
+          <h3 className="text-lg font-bold text-white mb-1">{t('courses.no_courses_found')}</h3>
+          <p className="text-white/40 text-sm">{t('courses.try_modifying')}</p>
         </div>
       ) : (
         <motion.div
@@ -230,7 +229,7 @@ export default function Courses() {
                     to={`/courses/${course.slug}`}
                     className="inline-flex items-center gap-1 text-xs font-bold text-icc-400 hover:text-white transition-colors"
                   >
-                    View Course
+                    {t('courses.view_course')}
                     <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>

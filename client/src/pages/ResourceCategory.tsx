@@ -9,6 +9,7 @@ import {
 import { resourceCategories } from '../lib/api';
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
+import { useTranslation } from '../i18n';
 
 interface CategoryInfo {
   name: string;
@@ -86,6 +87,7 @@ function getYoutubeId(url: string) {
 }
 
 export default function ResourceCategory() {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
 
   useSEO({
@@ -145,7 +147,7 @@ export default function ResourceCategory() {
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-white/40 mb-6">
-          <Link to="/" className="hover:text-icc-400 transition-colors">Home</Link>
+          <Link to="/" className="hover:text-icc-400 transition-colors">{t('nav.home')}</Link>
           <span>/</span>
           {data ? (
             <span className="text-white/70 font-medium">{data.category.name}</span>
@@ -162,7 +164,7 @@ export default function ResourceCategory() {
             </h1>
             {data && (
               <p className="text-white/50 text-sm mt-1">
-                {data.stats.total} resource{data.stats.total !== 1 ? 's' : ''} in this category
+                {t('resource_category.resources_in_category', { count: data.stats.total, plural: data.stats.total !== 1 ? 's' : '' })}
               </p>
             )}
           </div>
@@ -170,7 +172,7 @@ export default function ResourceCategory() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
             <input
               type="text"
-              placeholder="Search within category..."
+               placeholder={t('resource_category.search_within')}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:border-icc-500/40 transition-colors"
@@ -231,16 +233,16 @@ export default function ResourceCategory() {
         ) : !data || data.items.length === 0 ? (
           <div className="text-center py-20 rounded-2xl bg-dark-800/30 border border-white/5">
             <Search className="w-12 h-12 text-white/20 mx-auto mb-4" />
-            <p className="text-lg text-white/60 font-medium">No resources found</p>
+            <p className="text-lg text-white/60 font-medium">{t('resources.no_resources_found')}</p>
             <p className="text-sm text-white/40 mt-1">
-              {searchQuery ? 'Try a different search term' : 'No content available in this category yet'}
+              {searchQuery ? t('resource_category.try_different_term') : t('resource_category.no_content_yet')}
             </p>
             {searchQuery && (
               <button
                 onClick={() => { setSearchQuery(''); setPage(1); }}
                 className="mt-4 px-4 py-2 rounded-xl bg-icc-500/10 text-icc-400 border border-icc-500/20 text-sm font-semibold hover:bg-icc-500/20 transition-colors"
               >
-                Clear Search
+                {t('resource_category.clear_search')}
               </button>
             )}
           </div>

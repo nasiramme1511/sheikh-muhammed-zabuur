@@ -256,8 +256,8 @@ export default function TeacherDashboard() {
             ) : (
               <div className="text-center py-10 text-sm text-gray-400">
                 {analytics?.pendingGrading && analytics.pendingGrading > 0
-                  ? 'Loading submissions...'
-                  : 'No submissions pending review.'}
+                  ? t('teacher_dashboard.loading_submissions')
+                  : t('teacher_dashboard.no_submissions_pending')}
               </div>
             )}
           </div>
@@ -267,7 +267,7 @@ export default function TeacherDashboard() {
                 to="/teacher/submissions"
                 className="text-xs font-semibold text-icc-500 hover:text-icc-400 transition-colors"
               >
-                Review All Submissions
+                {t('teacher_dashboard.review_all_submissions')}
               </Link>
             </div>
           )}
@@ -312,7 +312,7 @@ export default function TeacherDashboard() {
               </div>
             ) : (
               <div className="text-center py-10 text-sm text-gray-400">
-                No course data available yet.
+                {t('teacher_dashboard.no_course_data')}
               </div>
             )}
           </div>

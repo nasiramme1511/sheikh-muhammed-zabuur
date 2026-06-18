@@ -407,7 +407,7 @@ export default function AdminBackup() {
           <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-amber-500" />
-              <h2 className="font-semibold text-gray-900 dark:text-white text-sm">Restore Backup</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-white text-sm">{t('admin.restore_backup')}</h2>
             </div>
             <span className="text-xs text-white/40">{backups.length} backups</span>
           </div>
@@ -487,8 +487,8 @@ export default function AdminBackup() {
                   <AlertTriangle className="w-6 h-6 text-amber-500" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-gray-900 dark:text-white">Restore Backup?</h3>
-                  <p className="text-sm text-white/50">This action cannot be undone</p>
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-white">{t('admin.restore_backup_confirm')}</h3>
+                  <p className="text-sm text-white/50">{t('admin.restore_no_undo')}</p>
                 </div>
               </div>
               <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 mb-4 space-y-2">
@@ -519,7 +519,7 @@ export default function AdminBackup() {
                   disabled={restoring}
                   className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white text-sm font-medium transition-all"
                 >
-                  Cancel
+                  {t('admin.cancel')}
                 </button>
                 <button
                   onClick={handleRestore}
@@ -527,9 +527,9 @@ export default function AdminBackup() {
                   className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/50 text-white text-sm font-semibold transition-all inline-flex items-center gap-2"
                 >
                   {restoring ? (
-                    <><RefreshCw className="w-4 h-4 animate-spin" /> Restoring...</>
+                    <><RefreshCw className="w-4 h-4 animate-spin" /> {t('admin.restoring')}</>
                   ) : (
-                    <>Restore Backup</>
+                    <>{t('admin.restore_backup')}</>
                   )}
                 </button>
               </div>

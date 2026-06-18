@@ -10,7 +10,7 @@ import {
   ChevronLeft, ChevronRight, AlertCircle
 } from 'lucide-react';
 import { admin } from '../../lib/api';
-import { useTranslation } from '../../i18n';
+import { useTranslation, TranslationKey } from '../../i18n';
 
 type ActionType = 'Login' | 'Upload' | 'Edit' | 'Delete' | 'Settings' | 'All';
 
@@ -129,6 +129,14 @@ function formatTimestamp(iso: string): string {
 
 export default function ActivityLogs() {
   const { t } = useTranslation();
+  const actionLabelKey: Record<string, TranslationKey> = {
+    All: 'admin.action_all',
+    Login: 'admin.action_login',
+    Upload: 'admin.action_upload',
+    Edit: 'admin.action_edit',
+    Delete: 'admin.action_delete',
+    Settings: 'admin.action_settings',
+  };
   const [allLogs, setAllLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -297,7 +305,7 @@ export default function ActivityLogs() {
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                {at.label}
+                {t(actionLabelKey[at.value])}
               </button>
             );
           })}
@@ -427,10 +435,10 @@ export default function ActivityLogs() {
         ) : (
           <div className="text-center py-12 text-sm text-gray-400">
             <Activity className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No activity logs found</p>
+            <p>{t('admin.no_activity_logs')}</p>
             {hasActiveFilters && (
               <button onClick={clearFilters} className="text-icc-400 hover:text-icc-300 text-xs mt-2">
-                Clear filters to see all logs
+                {t('admin.clear_filters')}
               </button>
             )}
           </div>

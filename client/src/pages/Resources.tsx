@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { resources as resourcesApi, teachers, books } from '../lib/api';
 import type { Resource, Teacher, Book } from '../types';
+import { useTranslation } from '../i18n';
 
 const ITEMS_PER_PAGE = 20;
 const CATEGORIES = ['All Categories', 'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed', 'Manhaj', 'Adab', 'General'];
@@ -168,6 +169,7 @@ function PreviewModal({ resource, onClose }: PreviewModalProps) {
 }
 
 export default function Resources() {
+  const { t } = useTranslation();
   const [allResources, setAllResources] = useState<Resource[]>([]);
   const [popularResources, setPopularResources] = useState<Resource[]>([]);
   const [recentResources, setRecentResources] = useState<Resource[]>([]);
@@ -280,16 +282,16 @@ export default function Resources() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-icc-500/10 border border-icc-500/20 text-icc-400 text-sm font-medium mb-6">
                 <Library className="w-4 h-4" />
-                Islamic Library
+                {t('resources.islamic_library')}
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                Learning{' '}
+                {t('resources.learning')}{' '}
                 <span className="bg-gradient-to-r from-icc-400 to-icc-300 bg-clip-text text-transparent">
-                  Resources
+                  {t('nav.resources')}
                 </span>
               </h1>
               <p className="text-lg text-white/50 max-w-2xl mx-auto mb-10">
-                Browse and download Islamic materials by teacher, book, category, and type.
+                {t('resources.hero_desc')}
               </p>
 
               {/* Search */}
@@ -299,7 +301,7 @@ export default function Resources() {
                   type="text"
                   value={search}
                   onChange={(e) => handleFilterChange(setSearch)(e.target.value)}
-                  placeholder="Search resources by title, teacher, or book..."
+                  placeholder={t('resources.search_placeholder')}
                   className="w-full pl-12 pr-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-icc-500/50 focus:ring-1 focus:ring-icc-500/30 transition-all text-sm shadow-xl"
                   id="resources-search"
                   aria-label="Search resources"
@@ -320,38 +322,38 @@ export default function Resources() {
             >
               <div className="flex items-center gap-2 text-white/40 text-sm mb-4">
                 <BarChart3 className="w-4 h-4" />
-                <span>Resource Statistics</span>
+                <span>{t('resources.resource_statistics')}</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl bg-icc-500/5 border border-icc-500/10 p-4">
                   <div className="flex items-center gap-2 text-icc-400 text-xs font-medium mb-1">
                     <File className="w-3.5 h-3.5" />
-                    Total Resources
-                  </div>
-                  <p className="text-2xl font-bold text-white">{allResources.length}</p>
-                </div>
-                <div className="rounded-xl bg-blue-500/5 border border-blue-500/10 p-4">
-                  <div className="flex items-center gap-2 text-blue-400 text-xs font-medium mb-1">
-                    <DownloadCloud className="w-3.5 h-3.5" />
-                    Total Downloads
-                  </div>
-                  <p className="text-2xl font-bold text-white">
-                    {allResources.reduce((sum, r) => sum + (r.downloads || 0), 0).toLocaleString()}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-purple-500/5 border border-purple-500/10 p-4">
-                  <div className="flex items-center gap-2 text-purple-400 text-xs font-medium mb-1">
-                    <Eye className="w-3.5 h-3.5" />
-                    Total Views
-                  </div>
-                  <p className="text-2xl font-bold text-white">
-                    {allResources.reduce((sum, r) => sum + (r.views || 0), 0).toLocaleString()}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-icc-500/5 border border-icc-500/10 p-4">
-                  <div className="flex items-center gap-2 text-icc-400 text-xs font-medium mb-1">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    Categories
+                    {t('resources.total_resources_label')}
+                   </div>
+                   <p className="text-2xl font-bold text-white">{allResources.length}</p>
+                 </div>
+                 <div className="rounded-xl bg-blue-500/5 border border-blue-500/10 p-4">
+                   <div className="flex items-center gap-2 text-blue-400 text-xs font-medium mb-1">
+                     <DownloadCloud className="w-3.5 h-3.5" />
+                     {t('resources.total_downloads')}
+                   </div>
+                   <p className="text-2xl font-bold text-white">
+                     {allResources.reduce((sum, r) => sum + (r.downloads || 0), 0).toLocaleString()}
+                   </p>
+                 </div>
+                 <div className="rounded-xl bg-purple-500/5 border border-purple-500/10 p-4">
+                   <div className="flex items-center gap-2 text-purple-400 text-xs font-medium mb-1">
+                     <Eye className="w-3.5 h-3.5" />
+                     {t('resources.total_views')}
+                   </div>
+                   <p className="text-2xl font-bold text-white">
+                     {allResources.reduce((sum, r) => sum + (r.views || 0), 0).toLocaleString()}
+                   </p>
+                 </div>
+                 <div className="rounded-xl bg-icc-500/5 border border-icc-500/10 p-4">
+                   <div className="flex items-center gap-2 text-icc-400 text-xs font-medium mb-1">
+                     <BookOpen className="w-3.5 h-3.5" />
+                     {t('resources.categories_label')}
                   </div>
                   <p className="text-2xl font-bold text-white">
                     {new Set(allResources.map(r => r.category)).size}
@@ -373,11 +375,11 @@ export default function Resources() {
               >
                 <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5">
                   <TrendingUp className="w-4 h-4 text-icc-400" />
-                  <span className="text-sm font-medium text-white">Most Downloaded Resources</span>
+                  <span className="text-sm font-medium text-white">{t('resources.most_downloaded_resources')}</span>
                 </div>
                 <div className="p-3">
                   {popularResources.length === 0 ? (
-                    <p className="text-sm text-white/30 text-center py-6">No downloads yet</p>
+                    <p className="text-sm text-white/30 text-center py-6">{t('resources.no_downloads_yet')}</p>
                   ) : (
                     <div className="space-y-1">
                       {popularResources.slice(0, 5).map((r, i) => {
@@ -421,11 +423,11 @@ export default function Resources() {
               >
                 <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5">
                   <Clock className="w-4 h-4 text-icc-400" />
-                  <span className="text-sm font-medium text-white">Recently Added Resources</span>
+                  <span className="text-sm font-medium text-white">{t('resources.recently_added_resources')}</span>
                 </div>
                 <div className="p-3">
                   {recentResources.length === 0 ? (
-                    <p className="text-sm text-white/30 text-center py-6">No resources yet</p>
+                    <p className="text-sm text-white/30 text-center py-6">{t('resources.no_resources_yet')}</p>
                   ) : (
                     <div className="space-y-1">
                       {recentResources.slice(0, 5).map((r) => {
@@ -467,7 +469,7 @@ export default function Resources() {
           >
             <div className="flex items-center gap-2 text-white/40 text-sm mb-4">
               <SlidersHorizontal className="w-4 h-4" />
-              <span>Filters</span>
+              <span>{t('resources.filters')}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Teacher Dropdown */}
@@ -537,11 +539,11 @@ export default function Resources() {
           {/* Stats bar */}
           <div className="flex items-center justify-between mb-6 text-sm text-white/40">
             <span>
-              {loading ? 'Loading...' : `${filtered.length} resources found`}
+              {loading ? t('common.loading') : t('resources.resources_found', { count: filtered.length })}
               {search && <span className="ml-1">for "<span className="text-icc-400">{search}</span>"</span>}
             </span>
             {totalPages > 1 && (
-              <span>Page {page} of {totalPages}</span>
+              <span>{t('common.page')} {page} {t('common.of')} {totalPages}</span>
             )}
           </div>
 
@@ -550,7 +552,7 @@ export default function Resources() {
             <div className="text-center py-16">
               <div className="text-red-400 mb-2">{error}</div>
               <button onClick={() => window.location.reload()} className="btn-icc text-sm px-4 py-2">
-                Retry
+                {t('common.retry')}
               </button>
             </div>
           )}
@@ -569,8 +571,8 @@ export default function Resources() {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-white/20" />
               </div>
-              <p className="text-lg font-medium text-white/40 mb-2">No resources found</p>
-              <p className="text-sm text-white/25">Try adjusting your filters or search term.</p>
+              <p className="text-lg font-medium text-white/40 mb-2">{t('resources.no_resources_found')}</p>
+              <p className="text-sm text-white/25">{t('resources.try_adjusting')}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -652,6 +654,7 @@ interface ResourceCardProps {
 }
 
 function ResourceCard({ resource, onPreview, onDownload }: ResourceCardProps) {
+  const { t } = useTranslation();
   const catColor = CATEGORY_COLORS[resource.category] || CATEGORY_COLORS.General;
   const typeConf = TYPE_CONFIG[resource.resourceType] || TYPE_CONFIG.PDF;
   const TypeIcon = typeConf.icon;
@@ -659,17 +662,17 @@ function ResourceCard({ resource, onPreview, onDownload }: ResourceCardProps) {
   const isArabic = /[\u0600-\u06FF]/.test(resource.title);
 
   const getPreviewText = () => {
-    if (resource.resourceType === 'PDF') return 'Preview PDF';
-    if (resource.resourceType === 'AUDIO') return 'Play Audio';
-    if (resource.resourceType === 'VIDEO') return 'Watch Video';
-    return 'Preview';
+    if (resource.resourceType === 'PDF') return t('resources.preview_pdf');
+    if (resource.resourceType === 'AUDIO') return t('resources.play_audio');
+    if (resource.resourceType === 'VIDEO') return t('resources.watch_video');
+    return t('resources.preview');
   };
 
   const getDownloadText = () => {
-    if (resource.resourceType === 'PDF') return 'Download PDF';
-    if (resource.resourceType === 'AUDIO') return 'Download Audio';
-    if (resource.resourceType === 'VIDEO') return 'Download Video';
-    return 'Download';
+    if (resource.resourceType === 'PDF') return t('resources.download_pdf');
+    if (resource.resourceType === 'AUDIO') return t('resources.download_audio');
+    if (resource.resourceType === 'VIDEO') return t('resources.download_video');
+    return t('resources.download');
   };
 
   return (

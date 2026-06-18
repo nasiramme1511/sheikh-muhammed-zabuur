@@ -17,6 +17,7 @@ import LoginWallModal from '../components/LoginWallModal';
 import { useAIChat } from '../context/AIChatContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../i18n';
+import ResponsiveScholarImage from '../components/ResponsiveScholarImage';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = ['Tafsir', 'Riyadhus Salihin', 'Bulugh Al-Maram', 'Tajreed', 'Usul', 'Aqeedah', 'Fiqh', 'Seerah'] as const;
@@ -262,7 +263,7 @@ export default function LiveStream() {
     if (!target) { setCountdown(''); return; }
     const tick = () => {
       const diff = target - Date.now();
-      if (diff <= 0) { setCountdown('Starting soon'); return; }
+      if (diff <= 0) { setCountdown(t('live_stream.starting_soon_val')); return; }
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
@@ -300,17 +301,17 @@ export default function LiveStream() {
           <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center">
             <Loader2 className="w-7 h-7 text-icc-400 animate-spin" />
           </div>
-          <p className="text-white/60 text-sm">Loading broadcast platform...</p>
+           <p className="text-white/60 text-sm">{t('live_stream.loading_platform')}</p>
         </div>
       </div>
     );
   }
 
   const statCards = [
-    { label: 'Total Streams', value: state.totalStreams || 0, icon: Radio, color: 'from-icc-500/20 to-icc-600/10' },
-    { label: 'Total Viewers', value: state.totalViewers || 0, icon: Users, color: 'from-blue-500/20 to-blue-600/10' },
-    { label: 'Watch Hours', value: state.totalWatchHours || 0, icon: Clock, color: 'from-amber-500/20 to-amber-600/10' },
-    { label: 'Subscribers', value: state.activeSubscribers || 0, icon: Heart, color: 'from-rose-500/20 to-rose-600/10' },
+    { label: t('live_stream.total_streams'), value: state.totalStreams || 0, icon: Radio, color: 'from-icc-500/20 to-icc-600/10' },
+    { label: t('live_stream.total_viewers'), value: state.totalViewers || 0, icon: Users, color: 'from-blue-500/20 to-blue-600/10' },
+    { label: t('live_stream.watch_hours'), value: state.totalWatchHours || 0, icon: Clock, color: 'from-amber-500/20 to-amber-600/10' },
+    { label: t('live_stream.subscribers'), value: state.activeSubscribers || 0, icon: Heart, color: 'from-rose-500/20 to-rose-600/10' },
   ];
 
   return (
@@ -335,21 +336,21 @@ export default function LiveStream() {
                       : 'bg-gray-500/15 text-gray-400 border border-gray-500/30'
                 }`}>
                   {state.isActive && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
-                  {state.isActive ? 'LIVE NOW' : countdown ? 'STARTING SOON' : 'OFFLINE'}
+                  {state.isActive ? t('live_stream.live_now') : countdown ? t('live_stream.starting_soon') : t('live_stream.offline')}
                 </div>
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                  {state.title || 'Weekly Islamic Lecture'}
+                  {state.title || t('live_stream.weekly_islamic_class')}
                 </h1>
-                <p className="text-lg text-amber-400/80 font-medium">Hosted by Sheikh Mohammed Zabuur</p>
+                <p className="text-lg text-amber-400/80 font-medium">{t('live_stream.hosted_by')}</p>
                 {countdown && !state.isActive && (
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
                     <Clock className="w-4 h-4 text-amber-400" />
                     <span className="text-sm font-mono font-bold text-amber-400">{countdown}</span>
-                    <span className="text-xs text-amber-400/60">until next stream</span>
+                    <span className="text-xs text-amber-400/60">{t('live_stream.until_next_stream')}</span>
                   </div>
                 )}
                 <p className="text-sm text-white/60 max-w-lg leading-relaxed">
-                  Join thousands of learners benefiting from authentic Islamic knowledge.
+                  {t('live_stream.hero_desc')}
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
                   {state.isActive && (
@@ -362,28 +363,28 @@ export default function LiveStream() {
                         }
                       })}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-icc-500 hover:bg-icc-600 rounded-xl text-sm font-bold transition-all shadow-lg shadow-icc-500/30">
-                      <Play className="w-4 h-4" /> Watch Live
+                      <Play className="w-4 h-4" /> {t('live_stream.watch_live')}
                     </button>
                   )}
                   <button
                     onClick={() => guardAction(() => window.open('https://t.me/sheikhmohammedzabuur', '_blank'))}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500/15 text-sky-400 border border-sky-500/30 hover:bg-sky-500/25 rounded-xl text-sm font-medium transition-all">
-                    <MessageSquare className="w-4 h-4" /> Join Telegram
+                    <MessageSquare className="w-4 h-4" /> {t('live_stream.join_telegram')}
                   </button>
                   <button onClick={() => { if (user) openChat(); else toast.error('Please login to ask a question'); }}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-all">
-                    <Sparkles className="w-4 h-4" /> Ask Question
+                    <Sparkles className="w-4 h-4" /> {t('live_stream.ask_question')}
                   </button>
                 </div>
               </div>
               <div className="hidden md:flex flex-col items-end gap-3">
                 <div className="text-right">
                   <p className="text-3xl font-bold text-white">{formatCount(state.totalViewers || 0)}</p>
-                  <p className="text-xs text-white/40">Total Viewers</p>
+                  <p className="text-xs text-white/40">{t('live_stream.total_viewers_label')}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-3xl font-bold text-white">{formatCount(state.totalStreams || 0)}</p>
-                  <p className="text-xs text-white/40">Total Broadcasts</p>
+                  <p className="text-xs text-white/40">{t('live_stream.total_broadcasts')}</p>
                 </div>
               </div>
             </div>
@@ -394,11 +395,11 @@ export default function LiveStream() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
           {[
-            { label: 'Duration', value: '—', icon: Clock },
-            { label: 'Category', value: 'Tafsir', icon: BookOpen },
-            { label: 'Language', value: 'Afaan Oromoo', icon: Globe },
-            { label: 'Teacher', value: 'Sheikh Mohammed Zabuur', icon: Users },
-            { label: 'Collection', value: 'Riyadhus Salihin', icon: Layers },
+            { label: t('live_stream.duration'), value: '—', icon: Clock },
+            { label: t('live_stream.category'), value: 'Tafsir', icon: BookOpen },
+            { label: t('live_stream.language'), value: 'Afaan Oromoo', icon: Globe },
+            { label: t('live_stream.teacher'), value: 'Sheikh Mohammed Zabuur', icon: Users },
+            { label: t('live_stream.collection'), value: 'Riyadhus Salihin', icon: Layers },
           ].map((info) => (
             <div key={info.label} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-2">
@@ -421,37 +422,37 @@ export default function LiveStream() {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Radio className="w-4 h-4 text-icc-400" />
-                      <span className="text-sm font-bold text-icc-400">Stream Controls</span>
+                      <span className="text-sm font-bold text-icc-400">{t('live_stream.stream_controls')}</span>
                     </div>
                     <span className="text-[10px] text-white/40">
-                      {state.viewers || 0} viewers &middot; Peak: {state.totalViewers || 0}
+                      {state.viewers || 0} {t('live_stream.total_viewers_label')} &middot; Peak: {state.totalViewers || 0}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={async () => { try { await liveApi.update({ isActive: !state.isActive }); setState(prev => ({ ...prev, isActive: !prev.isActive })); toast.success(state.isActive ? 'Stream stopped' : 'Stream started'); } catch { toast.error('Failed to toggle stream'); } }}
                       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${state.isActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-icc-500 hover:bg-icc-600 text-white'}`}>
                       {state.isActive ? <X className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                      {state.isActive ? 'Stop Stream' : 'Start Stream'}
+                      {state.isActive ? t('live_stream.stop_stream') : t('live_stream.start_stream')}
                     </button>
                     <button onClick={() => setShowScheduleForm(!showScheduleForm)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-all">
-                      <Calendar className="w-3.5 h-3.5" /> Schedule
+                      <Calendar className="w-3.5 h-3.5" /> {t('live_stream.schedule')}
                     </button>
                     <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-all">
-                      <ExternalLink className="w-3.5 h-3.5" /> Edit Stream
+                      <ExternalLink className="w-3.5 h-3.5" /> {t('live_stream.edit_stream')}
                     </button>
                     <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-medium text-red-400 transition-all">
-                      <Trash2 className="w-3.5 h-3.5" /> Delete
+                      <Trash2 className="w-3.5 h-3.5" /> {t('live_stream.delete')}
                     </button>
                   </div>
                   {showScheduleForm && (
                     <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <input value={scheduleTitle} onChange={(e) => setScheduleTitle(e.target.value)} placeholder="Stream title"
+                      <input value={scheduleTitle} onChange={(e) => setScheduleTitle(e.target.value)} placeholder={t('live_stream.schedule') + ' title'}
                         className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50" />
                       <input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)}
                         className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-icc-500/50 [color-scheme:dark]" />
                       <button onClick={() => { if (scheduleTitle && scheduleDate) { toast.success('Stream scheduled!'); setShowScheduleForm(false); } else toast.error('Fill all fields'); }}
-                        className="px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">Schedule Stream</button>
+                        className="px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">{t('live_stream.schedule_stream')}</button>
                     </div>
                   )}
                 </div>
@@ -467,16 +468,16 @@ export default function LiveStream() {
                       : 'bg-gray-500/15 text-gray-400 border border-gray-500/30'
                 }`}>
                   {state.isActive && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
-                  {state.isActive ? 'LIVE NOW' : state.schedule.length > 0 ? 'STARTING SOON' : 'OFFLINE'}
+                  {state.isActive ? t('live_stream.live_now') : state.schedule.length > 0 ? t('live_stream.starting_soon') : t('live_stream.offline')}
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-medium">
                   <Radio className="w-3 h-3" />
-                  Broadcast
+                  {t('live_stream.broadcast')}
                 </div>
                 {state.isActive && (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-medium">
                     <Eye className="w-3 h-3" />
-                    {state.viewers && state.viewers > 0 ? `${formatCount(state.viewers)} watching` : 'No viewers yet'}
+                    {state.viewers && state.viewers > 0 ? t('live_stream.watching', { count: formatCount(state.viewers) }) : t('live_stream.no_viewers_yet')}
                   </div>
                 )}
               </div>
@@ -497,11 +498,11 @@ export default function LiveStream() {
                       <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
                         <Play className="w-8 h-8 text-red-400" />
                       </div>
-                      <h3 className="text-lg font-bold mb-2">Live on YouTube</h3>
-                      <p className="text-sm text-white/50 mb-5 max-w-md">The stream is active. Watch live on YouTube.</p>
+                      <h3 className="text-lg font-bold mb-2">{t('live_stream.live_on_youtube')}</h3>
+                      <p className="text-sm text-white/50 mb-5 max-w-md">{t('live_stream.stream_active_desc')}</p>
                       <a href={streamingUrl || `https://youtube.com/@sheikhmahammadzabuur-b7f`} target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/30">
-                        <Tv className="w-4 h-4" /> Watch on YouTube
+                        <Tv className="w-4 h-4" /> {t('live_stream.watch_on_youtube')}
                       </a>
                     </div>
                   ) : (
@@ -509,8 +510,8 @@ export default function LiveStream() {
                       <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
                         <Tv className="w-8 h-8 text-white/30" />
                       </div>
-                      <h3 className="text-lg font-bold mb-2">Broadcast is Offline</h3>
-                      <p className="text-sm text-white/50 max-w-md">Sheikh Mohammed Zabuur is not live right now. Check the schedule for upcoming classes.</p>
+                      <h3 className="text-lg font-bold mb-2">{t('live_stream.broadcast_offline')}</h3>
+                      <p className="text-sm text-white/50 max-w-md">{t('live_stream.broadcast_offline_desc')}</p>
                     </div>
                   )}
                 </div>
@@ -521,20 +522,20 @@ export default function LiveStream() {
                     {state.isActive && (
                       <span className="flex items-center gap-1.5 text-xs text-red-400 font-semibold">
                         <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                        LIVE
+                        {t('live_stream.live')}
                       </span>
                     )}
-                    <span className="text-xs text-white/40">{state.title || 'Sheikh Mohammed Zabuur'}</span>
+                    <span className="text-xs text-white/40">{state.title || t('live_stream.weekly_islamic_class')}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <button onClick={() => setTheatreMode(!theatreMode)}
                       className="p-1.5 rounded-lg hover:bg-white/5 text-white/40 hover:text-white/80 transition-all"
-                      title={theatreMode ? 'Default view' : 'Theatre mode'}>
+                      title={theatreMode ? t('live_stream.default_view') : t('live_stream.theatre_mode')}>
                       {theatreMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Monitor className="w-3.5 h-3.5" />}
                     </button>
                     <a href={streamingUrl} target="_blank" rel="noopener noreferrer"
                       className="p-1.5 rounded-lg hover:bg-white/5 text-white/40 hover:text-white/80 transition-all"
-                      title="Open in YouTube">
+                      title={t('live_stream.open_in_youtube')}>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   </div>
@@ -546,26 +547,24 @@ export default function LiveStream() {
                 <div className="mt-4 p-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center shrink-0">
-                      <img src="/uploads/images/sheikh-zabuur.jpg" alt="Sheikh Zabuur" className="w-10 h-10 rounded-lg object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      <ResponsiveScholarImage src="/uploads/images/sheikh-zabuur.jpg" alt="Sheikh Zabuur" className="w-10 h-10 rounded-lg" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h2 className="text-lg font-bold mb-1">{state.title}</h2>
                       <p className="text-sm text-white/50 leading-relaxed">
-                        Join Sheikh Mohammed Zabuur for this live session covering essential Islamic knowledge.
-                        Stay engaged and ask questions via the live chat.
+                        {t('live_stream.hero_desc')}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2 shrink-0">
                       {state.chatUrl && (
                         <a href={state.chatUrl} target="_blank" rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-icc-500/20">
-                          <MessageSquare className="w-3.5 h-3.5" /> Join Chat
+                          <MessageSquare className="w-3.5 h-3.5" /> {t('live_stream.join_chat')}
                         </a>
                       )}
                       <button onClick={() => { if (streamingUrl) window.open(streamingUrl, '_blank'); }}
                         className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-semibold transition-all">
-                        <Share2 className="w-3.5 h-3.5" /> Share
+                        <Share2 className="w-3.5 h-3.5" /> {t('live_stream.share')}
                       </button>
                     </div>
                   </div>
@@ -576,12 +575,11 @@ export default function LiveStream() {
               <div className="mt-4 p-5 rounded-2xl bg-gradient-to-r from-amber-500/5 via-amber-500/[0.02] to-transparent border border-amber-500/10 backdrop-blur-xl">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center overflow-hidden shrink-0">
-                    <img src="/uploads/images/sheikh-zabuur.jpg" alt="Sheikh Mohammed Zabuur" className="w-full h-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                    <ResponsiveScholarImage src="/uploads/images/sheikh-zabuur.jpg" alt="Sheikh Mohammed Zabuur" className="w-full h-full" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-amber-400">Sheikh Mohammed Zabuur</h3>
-                    <p className="text-xs text-white/40">Scholar &amp; Islamic Educator</p>
+                    <p className="text-xs text-white/40">{t('live_stream.scholar_and_educator')}</p>
                   </div>
                   <div className="hidden sm:flex flex-wrap gap-1.5">
                     {['Tafsir', 'Aqeedah', 'Fiqh'].map((tag) => (
@@ -600,7 +598,7 @@ export default function LiveStream() {
                   <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-icc-400" />
-                      <span className="text-sm font-bold">Live Chat</span>
+                      <span className="text-sm font-bold">{t('live_stream.live_chat')}</span>
                     </div>
                     <button onClick={() => setShowChat(false)} className="p-1 rounded-lg hover:bg-white/5 text-white/40 hover:text-white/80">
                       <X className="w-3.5 h-3.5" />
@@ -614,24 +612,24 @@ export default function LiveStream() {
                         <div className="w-12 h-12 rounded-xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center mb-3">
                           <MessageSquare className="w-5 h-5 text-icc-400" />
                         </div>
-                        <p className="text-sm font-medium mb-1">Join the Discussion</p>
-                        <p className="text-xs text-white/40 mb-4">Please log in to participate in the live chat.</p>
+                        <p className="text-sm font-medium mb-1">{t('live_stream.join_discussion')}</p>
+                        <p className="text-xs text-white/40 mb-4">{t('live_stream.login_to_chat_desc')}</p>
                         <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">
-                          <LogIn className="w-3.5 h-3.5" /> Login to Chat
+                          <LogIn className="w-3.5 h-3.5" /> {t('live_stream.login_to_chat')}
                         </a>
                       </div>
                     ) : (
                       <>
                         {chatMessages.length === 0 && (
                           <div className="text-center py-8">
-                            <p className="text-xs text-white/40">No messages yet. Be the first to send a message!</p>
+                            <p className="text-xs text-white/40">{t('live_stream.no_messages_yet')}</p>
                           </div>
                         )}
                         {chatMessages.filter(m => m.pinned).slice(0, 1).map((msg, i) => (
                           <div key={`pin-${i}`} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                             <div className="flex items-center gap-1.5 mb-1">
                               <AlertCircle className="w-3 h-3 text-amber-400" />
-                              <span className="text-[9px] font-bold text-amber-400">PINNED</span>
+                              <span className="text-[9px] font-bold text-amber-400">{t('live_stream.pinned')}</span>
                             </div>
                             <p className="text-[10px] font-bold text-amber-300 mb-0.5">{msg.user}</p>
                             <p className="text-xs text-amber-200/80">{msg.message}</p>
@@ -649,8 +647,8 @@ export default function LiveStream() {
                                 <span className={`text-[10px] font-bold ${
                                   msg.role === 'admin' ? 'text-icc-400' : 'text-white/70'
                                 }`}>{msg.user}</span>
-                                {msg.role === 'admin' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-icc-500/20 text-icc-400 uppercase leading-none">Admin</span>}
-                                {msg.role === 'student' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-white/10 text-white/40 uppercase leading-none">Student</span>}
+                                {msg.role === 'admin' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-icc-500/20 text-icc-400 uppercase leading-none">{t('live_stream.admin')}</span>}
+                                {msg.role === 'student' && <span className="px-1 py-[1px] rounded text-[7px] font-bold bg-white/10 text-white/40 uppercase leading-none">{t('live_stream.student')}</span>}
                                 <span className="text-[8px] text-white/30 ml-auto">{msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
                               </div>
                               <p className="text-xs text-white/80 leading-relaxed">{msg.message}</p>
@@ -667,7 +665,7 @@ export default function LiveStream() {
                       <div className="flex gap-2">
                         <input value={chatMessage} onChange={(e) => setChatMessage(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
-                          placeholder="Ask a question..."
+                          placeholder={t('live_stream.ask_question_placeholder')}
                           className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50 transition-all" />
                         <button onClick={handleSendChat} disabled={!chatMessage.trim()}
                           className="p-2 rounded-xl bg-icc-500 hover:bg-icc-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
@@ -681,7 +679,7 @@ export default function LiveStream() {
                   <div className="px-4 py-2.5 border-t border-white/5 bg-amber-500/5">
                     <div className="flex items-start gap-2">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                      <p className="text-[10px] text-amber-400/80 leading-relaxed">Welcome! Please keep messages respectful and relevant to the topic.</p>
+                      <p className="text-[10px] text-amber-400/80 leading-relaxed">{t('live_stream.chat_welcome')}</p>
                     </div>
                   </div>
                 </div>
@@ -695,7 +693,7 @@ export default function LiveStream() {
           <div className="flex justify-center -mt-1 mb-8">
             <button onClick={() => setTheatreMode(false)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-b-xl text-[10px] text-white/40 hover:text-white/70 transition-all">
-              <ChevronUp className="w-3 h-3" /> Exit Theatre Mode
+              <ChevronUp className="w-3 h-3" /> {t('live_stream.exit_theatre_mode')}
             </button>
           </div>
         )}
@@ -719,7 +717,7 @@ export default function LiveStream() {
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="flex items-center gap-2 mb-5">
                 <Star className="w-4 h-4 text-icc-400" />
-                <h2 className="text-lg font-bold">Broadcast Analytics</h2>
+                <h2 className="text-lg font-bold">{t('live_stream.broadcast_analytics')}</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {statCards.map((stat) => (
@@ -743,10 +741,10 @@ export default function LiveStream() {
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-icc-400" />
-                  <h2 className="text-lg font-bold">Upcoming Classes</h2>
+                  <h2 className="text-lg font-bold">{t('live_stream.upcoming_classes')}</h2>
                 </div>
                 {state.schedule.length > 0 && (
-                  <span className="text-[10px] text-white/40">{state.schedule.length} scheduled</span>
+                  <span className="text-[10px] text-white/40">{state.schedule.length} {t('live_stream.scheduled')}</span>
                 )}
               </div>
               {state.schedule.length === 0 ? (
@@ -754,11 +752,11 @@ export default function LiveStream() {
                   <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
                     <Calendar className="w-6 h-6 text-amber-400" />
                   </div>
-                  <p className="text-base font-bold mb-1">📅 No Upcoming Classes Scheduled</p>
-                  <p className="text-xs text-white/40 mb-5">Future classes will appear here when announced.</p>
+                  <p className="text-base font-bold mb-1">{t('live_stream.no_upcoming_classes')}</p>
+                  <p className="text-xs text-white/40 mb-5">{t('live_stream.future_classes_desc')}</p>
                   <button onClick={() => { if (user) handleSubscribe(); else toast.error('Please login to subscribe'); }}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-icc-500/20">
-                    <Bell className="w-3.5 h-3.5" /> Subscribe For Notifications
+                    <Bell className="w-3.5 h-3.5" /> {t('live_stream.subscribe_notifications')}
                   </button>
                 </div>
               ) : (
@@ -793,11 +791,11 @@ export default function LiveStream() {
                           <div className="flex gap-2 mt-3">
                             <button onClick={() => handleAddReminder(stream)}
                               className="inline-flex items-center gap-1 px-3 py-1.5 bg-icc-500/10 hover:bg-icc-500/20 text-icc-400 border border-icc-500/20 rounded-lg text-[10px] font-semibold transition-all">
-                              <Bell className="w-3 h-3" /> Remind Me
+                              <Bell className="w-3 h-3" /> {t('live_stream.remind_me')}
                             </button>
                             <button onClick={() => handleAddReminder(stream)}
                               className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-medium transition-all">
-                              <Calendar className="w-3 h-3" /> Calendar
+                              <Calendar className="w-3 h-3" /> {t('live_stream.calendar')}
                             </button>
                           </div>
                         </div>
@@ -813,7 +811,7 @@ export default function LiveStream() {
               <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                 <div className="flex items-center gap-2">
                   <Film className="w-4 h-4 text-icc-400" />
-                  <h2 className="text-lg font-bold">Previous Recordings</h2>
+                  <h2 className="text-lg font-bold">{t('live_stream.previous_recordings')}</h2>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {['All', ...CATEGORIES].map((cat) => (
@@ -846,8 +844,8 @@ export default function LiveStream() {
                   <div className="w-14 h-14 rounded-2xl bg-icc-500/10 border border-icc-500/20 flex items-center justify-center mx-auto mb-4">
                     <Film className="w-6 h-6 text-icc-400" />
                   </div>
-                  <p className="text-base font-bold mb-1">🎥 No Recordings Available Yet</p>
-                  <p className="text-xs text-white/40">Completed broadcasts will automatically appear here.</p>
+                  <p className="text-base font-bold mb-1">{t('live_stream.no_recordings_yet')}</p>
+                  <p className="text-xs text-white/40">{t('live_stream.recordings_desc')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -874,8 +872,8 @@ export default function LiveStream() {
                       <div className="p-3">
                         <h3 className="text-xs font-bold truncate leading-snug">{rec.title}</h3>
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[10px] text-white/40">{rec.views ? `${formatCount(rec.views)} views` : timeAgo(rec.createdAt)}</span>
-                          <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-icc-400 hover:text-icc-300 font-medium">Watch</a>
+                          <span className="text-[10px] text-white/40">{rec.views ? `${formatCount(rec.views)} ${t('live_stream.views')}` : timeAgo(rec.createdAt)}</span>
+                          <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-icc-400 hover:text-icc-300 font-medium">{t('live_stream.watch')}</a>
                         </div>
                       </div>
                     </div>
@@ -892,7 +890,7 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/[0.04] to-amber-500/[0.01] border border-amber-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="w-4 h-4 text-amber-400" />
-                <h3 className="text-xs font-bold text-amber-400">Daily Hadith</h3>
+                <h3 className="text-xs font-bold text-amber-400">{t('live_stream.daily_hadith')}</h3>
               </div>
               <p className="text-xs text-white/70 leading-relaxed italic">{DAILY_HADITH}</p>
             </div>
@@ -901,7 +899,7 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-gradient-to-br from-icc-500/[0.04] to-icc-500/[0.01] border border-icc-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="w-4 h-4 text-icc-400" />
-                <h3 className="text-xs font-bold text-icc-400">Quran Verse</h3>
+                <h3 className="text-xs font-bold text-icc-400">{t('nav.quran')} {t('common.verse')}</h3>
               </div>
               <p className="text-xs text-white/70 leading-relaxed italic">{QURAN_VERSE}</p>
             </div>
@@ -910,7 +908,7 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-4">
                 <Globe className="w-4 h-4 text-sky-400" />
-                <h3 className="text-sm font-bold">Official Links</h3>
+                <h3 className="text-sm font-bold">{t('live_stream.official_links')}</h3>
               </div>
               <div className="space-y-2.5">
                 <a href="https://youtube.com/@sheikhmahammadzabuur-b7f" target="_blank" rel="noopener noreferrer"
@@ -953,17 +951,17 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-4">
                 <MessageSquare className="w-4 h-4 text-sky-400" />
-                <h3 className="text-sm font-bold">Telegram Learning Communities</h3>
+                <h3 className="text-sm font-bold">{t('live_stream.telegram_communities')}</h3>
               </div>
               {userRole === 'guest' || !user ? (
                 <div className="text-center py-4">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-3">
                     <LogIn className="w-5 h-5 text-amber-400" />
                   </div>
-                  <p className="text-xs font-medium text-amber-400 mb-1">🔒 Login Required</p>
-                  <p className="text-[10px] text-white/40 mb-3">Sign in to access Telegram learning communities.</p>
+                  <p className="text-xs font-medium text-amber-400 mb-1">{t('live_stream.login_required')}</p>
+                  <p className="text-[10px] text-white/40 mb-3">{t('live_stream.sign_in_telegram_desc')}</p>
                   <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold transition-all">
-                    <LogIn className="w-3 h-3" /> Sign In
+                    <LogIn className="w-3 h-3" /> {t('live_stream.sign_in')}
                   </a>
                 </div>
               ) : (
@@ -978,7 +976,7 @@ export default function LiveStream() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{ch.name}</p>
-                        <p className="text-[10px] text-white/40">{userRole === 'subscribed' ? 'Full Access' : 'Join Telegram'}</p>
+                        <p className="text-[10px] text-white/40">{userRole === 'subscribed' ? t('live_stream.full_access') : t('live_stream.join_telegram')}</p>
                       </div>
                       <ExternalLink className="w-3 h-3 text-white/20 group-hover:text-sky-400 transition-all shrink-0" />
                     </a>
@@ -991,28 +989,28 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-4">
                 <Bell className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-bold">Notifications</h3>
+                <h3 className="text-sm font-bold">{t('live_stream.notifications')}</h3>
               </div>
               <div className="space-y-3 mb-4">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={notifEmail} onChange={() => setNotifEmail(!notifEmail)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
-                  <span className="text-xs text-white/70">Email notifications</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={notifLiveReminder} onChange={() => setNotifLiveReminder(!notifLiveReminder)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
-                  <span className="text-xs text-white/70">Live reminders</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={notifUploads} onChange={() => setNotifUploads(!notifUploads)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
-                  <span className="text-xs text-white/70">New uploads</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={notifTelegram} onChange={() => setNotifTelegram(!notifTelegram)}
-                    className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
-                  <span className="text-xs text-white/70">Telegram announcements</span>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={notifEmail} onChange={() => setNotifEmail(!notifEmail)}
+                      className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
+                    <span className="text-xs text-white/70">{t('live_stream.email_notifications')}</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={notifLiveReminder} onChange={() => setNotifLiveReminder(!notifLiveReminder)}
+                      className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
+                    <span className="text-xs text-white/70">{t('live_stream.live_reminders')}</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={notifUploads} onChange={() => setNotifUploads(!notifUploads)}
+                      className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
+                    <span className="text-xs text-white/70">{t('live_stream.new_uploads')}</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={notifTelegram} onChange={() => setNotifTelegram(!notifTelegram)}
+                      className="w-4 h-4 rounded bg-white/5 border border-white/20 accent-icc-500" />
+                    <span className="text-xs text-white/70">{t('live_stream.telegram_announcements')}</span>
                 </label>
               </div>
               {user ? (
@@ -1021,12 +1019,12 @@ export default function LiveStream() {
                     className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 outline-none focus:border-icc-500/50" />
                   <button onClick={handleSubscribe} disabled={!subEmail}
                     className="px-3 py-2 bg-icc-500 hover:bg-icc-600 disabled:opacity-30 rounded-xl text-xs font-semibold transition-all whitespace-nowrap">
-                    Subscribe
+                    {t('live_stream.subscribe')}
                   </button>
                 </div>
               ) : (
                 <a href="/login" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-all w-full justify-center">
-                  <LogIn className="w-3.5 h-3.5" /> Login to Subscribe
+                  <LogIn className="w-3.5 h-3.5" /> {t('live_stream.login_to_subscribe')}
                 </a>
               )}
             </div>
@@ -1035,10 +1033,10 @@ export default function LiveStream() {
             <div className="p-5 rounded-2xl bg-gradient-to-br from-icc-500/[0.06] to-icc-500/[0.02] border border-icc-500/10 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-icc-400" />
-                <h3 className="text-sm font-bold text-icc-400">Iman Chercher AI Scholar</h3>
+                <h3 className="text-sm font-bold text-icc-400">{t('live_stream.ai_scholar')}</h3>
               </div>
               <p className="text-[11px] text-white/50 leading-relaxed mb-4">
-                Your Islamic learning companion powered by the content library of Sheikh Mohammed Zabuur.
+                {t('live_stream.ai_scholar_desc')}
               </p>
               <div className="mb-4 grid grid-cols-2 gap-1.5">
                 {['Study Plans', 'Tafsir Guidance', 'Riyadh Recommendations', 'Usul Roadmaps', 'Tajreed Lessons', 'Arabic Learning'].map((feature) => (
@@ -1047,7 +1045,7 @@ export default function LiveStream() {
               </div>
               <button onClick={() => { if (user) { openChat(); } else { toast.error('Please login to use AI Scholar'); } }}
                 className="w-full py-2.5 bg-icc-500 hover:bg-icc-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-icc-500/20">
-                <Sparkles className="w-3.5 h-3.5" /> Ask AI Scholar
+                <Sparkles className="w-3.5 h-3.5" /> {t('live_stream.ask_ai_scholar')}
               </button>
             </div>
           </div>

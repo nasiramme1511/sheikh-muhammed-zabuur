@@ -260,7 +260,7 @@ export default function RecordingArchive() {
         ) : processed.length === 0 ? (
           <div className="py-16 text-center text-gray-400">
             <Video className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>{recordings.length === 0 ? 'No recordings found' : 'No recordings match your filters'}</p>
+            <p>{recordings.length === 0 ? t('admin.no_recordings') : t('admin.no_recordings_filter')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -333,7 +333,7 @@ export default function RecordingArchive() {
                         >
                           {reclassifyId === rec.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <MoveRight className="w-4 h-4" />}
                         </button>
-                        <button onClick={() => setDeleteTarget(rec)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" title="Delete">
+                        <button onClick={() => setDeleteTarget(rec)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" title={t('admin.delete')}>
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

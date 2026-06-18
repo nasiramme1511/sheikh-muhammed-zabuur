@@ -8,8 +8,10 @@ import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../config/c
 import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../i18n';
 
 export default function CollectionDetail() {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const collection = getCollectionBySlug(slug || '');
   const { user } = useAuth();
@@ -78,8 +80,8 @@ export default function CollectionDetail() {
     return (
       <div className="min-h-screen bg-dark-900 pt-24 pb-16 text-white px-4 md:px-8 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Collection not found</h1>
-          <Link to="/" className="text-icc-400 hover:text-icc-300">Back to Home</Link>
+          <h1 className="text-2xl font-bold mb-4">{t('collections.collection_not_found')}</h1>
+          <Link to="/" className="text-icc-400 hover:text-icc-300">{t('collections.back_to_home')}</Link>
         </div>
       </div>
     );
@@ -98,7 +100,7 @@ export default function CollectionDetail() {
         {/* Back + Header */}
         <div className="mb-8">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-icc-400 transition-colors mb-4">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
+            <ArrowLeft className="w-4 h-4" /> {t('collections.back_to_home')}
           </Link>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -110,7 +112,7 @@ export default function CollectionDetail() {
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">{collection.name}</h1>
-              <p className="text-white/50 text-sm mt-1">{resources.length} resources</p>
+              <p className="text-white/50 text-sm mt-1">{resources.length} {t('collections.resources_count')}</p>
             </div>
           </motion.div>
         </div>
@@ -136,12 +138,12 @@ export default function CollectionDetail() {
                 <FaTelegramPlane className="w-6 h-6 text-[#0088cc]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-white/50">Official Telegram Channel</p>
+                <p className="text-xs text-white/50">{t('collections.official_telegram')}</p>
                 <p className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">{telegramChannel.name}</p>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium group-hover:bg-blue-500/20 transition-all">
                 {!user ? <Lock className="w-4 h-4" /> : !telegramLink ? <Lock className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-                {!user ? 'Login Required' : !telegramLink ? 'Subscribe' : 'Join'}
+                {!user ? t('collections.login_required') : !telegramLink ? t('collections.subscribe') : t('collections.join')}
               </div>
             </div>
           </div>
@@ -155,17 +157,17 @@ export default function CollectionDetail() {
                 {telegramModalType === 'login' ? <LogIn className="w-7 h-7 text-blue-400" /> : <Lock className="w-7 h-7 text-blue-400" />}
               </div>
               <h3 className="text-xl font-bold text-center mb-2">
-                {telegramModalType === 'login' ? 'Login Required' : 'Subscription Required'}
+                {telegramModalType === 'login' ? t('collections.login_required') : t('telegram.subscription_required')}
               </h3>
               <p className="text-white/50 text-center text-sm mb-6">
-                {telegramModalType === 'login' ? 'Please login to access Telegram channels.' : 'Subscribe to our newsletter to access Telegram channels.'}
+                {telegramModalType === 'login' ? t('telegram.login_to_access') : t('telegram.subscribe_to_access')}
               </p>
               <div className="flex gap-3">
                 <button onClick={() => setShowTelegramModal(false)} className="flex-1 py-2.5 rounded-xl bg-white/5 text-white/70 hover:bg-white/10 transition-colors text-sm font-medium">
-                  Cancel
+                  {t('admin.cancel')}
                 </button>
                 <button onClick={() => navigate(telegramModalType === 'login' ? '/login' : '/dashboard/profile')} className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-medium">
-                  {telegramModalType === 'login' ? 'Login' : 'Subscribe Now'}
+                  {telegramModalType === 'login' ? t('auth.sign_in') : t('telegram.subscribe_now')}
                 </button>
               </div>
             </div>
@@ -200,7 +202,7 @@ export default function CollectionDetail() {
         ) : resources.length === 0 ? (
           <div className="text-center py-20 text-white/40">
             <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No resources in this collection yet.</p>
+            <p>{t('collections.no_resources')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

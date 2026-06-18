@@ -240,7 +240,7 @@ export default function MediaLibrary() {
           <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
             <Image className="w-8 h-8 text-gray-400" />
           </div>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">No media found</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">{t('admin.no_media')}</p>
           <p className="text-gray-400 text-sm mt-1">Try a different search or upload new files</p>
         </div>
       ) : viewMode === 'grid' ? (

@@ -463,7 +463,7 @@ export default function AdminAnalytics() {
           ) : (
             <div className="text-center py-10 text-sm text-gray-400">
               <HiLibrary className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              No content data available yet
+              {t('admin.no_content_data')}
             </div>
           )}
         </div>

@@ -420,7 +420,7 @@ export default function DownloadReports() {
           ) : (
             <div className="text-center py-10 text-sm text-gray-400">
               <HiDownload className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              {search || filterType !== 'all' ? 'No download reports match your filters' : 'No download data available yet'}
+              {search || filterType !== 'all' ? t('admin.no_download_reports_filter') : t('admin.no_download_data')}
             </div>
           )}
         </div>

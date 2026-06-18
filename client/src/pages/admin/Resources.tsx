@@ -8,6 +8,7 @@ import {
 import { admin, teachers, books } from '../../lib/api';
 import { COLLECTIONS, getCollectionBySlug, COLLECTION_COLORS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../../i18n';
 import type { Teacher, Book } from '../../types';
 import { useResponsive } from '../../hooks/useResponsive';
 
@@ -71,6 +72,7 @@ function totalSize(files: ResourceItem[]): string {
 }
 
 export default function AdminResources() {
+  const { t } = useTranslation();
   const { isMobile } = useResponsive();
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [teacherList, setTeacherList] = useState<Teacher[]>([]);
@@ -286,7 +288,7 @@ export default function AdminResources() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Resources Manager</h1>
+          <h1 className="text-2xl font-bold">{t('admin.resources_manager_title')}</h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {resources.length} resources · {totalSize(resources)} total
           </p>
@@ -499,7 +501,7 @@ export default function AdminResources() {
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-gray-400">
             <HardDrive className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No resources found</p>
+            <p>{t('admin.no_resources_found')}</p>
           </div>
         ) : isMobile ? (
           <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -761,7 +763,7 @@ export default function AdminResources() {
                           <button
                             onClick={() => setDeleteTarget(file)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                            title="Delete"
+                            title={t('admin.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1276,10 +1278,10 @@ export default function AdminResources() {
                 <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
                   <AlertCircle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-lg">Delete Resource?</h3>
+                <h3 className="font-bold text-lg">{t('admin.delete_resource')}</h3>
               </div>
               <p className="text-sm text-gray-500 mb-2">
-                This will permanently delete:
+                {t('admin.delete_warning')}
               </p>
               <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
                 {deleteTarget.name}
@@ -1289,7 +1291,7 @@ export default function AdminResources() {
                   onClick={() => setDeleteTarget(null)}
                   className="btn-secondary"
                 >
-                  Cancel
+                  {t('admin.cancel')}
                 </button>
                 <button
                   onClick={handleDelete}
@@ -1297,7 +1299,7 @@ export default function AdminResources() {
                   className="btn-primary bg-red-500 hover:bg-red-600 border-red-500 inline-flex items-center gap-2"
                 >
                   {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  Delete
+                  {t('admin.delete')}
                 </button>
               </div>
             </motion.div>
@@ -1405,7 +1407,7 @@ export default function AdminResources() {
               ) : duplicateGroups.length === 0 ? (
                 <div className="py-16 text-center text-gray-400">
                   <CheckCircle className="w-10 h-10 mx-auto mb-3 text-icc-400" />
-                  <p>No duplicates found!</p>
+                  <p>{t('admin.no_duplicates_found')}</p>
                 </div>
               ) : (
                 <div className="space-y-6">

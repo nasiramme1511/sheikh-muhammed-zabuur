@@ -139,13 +139,13 @@ export default function SearchPage() {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-icc-500/10 text-icc-400 border border-icc-500/20 text-xs font-semibold uppercase tracking-wider mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Global Search
+            {t('search_page.global_search')}
           </motion.div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-3">
-            Search Content Portal
+            {t('search_page.search_portal')}
           </h1>
           <p className="max-w-xl mx-auto text-sm md:text-base text-white/60 mb-6">
-            Search across audio lectures, video series, books, PDF transcripts, and live recordings.
+            {t('search_page.search_desc')}
           </p>
 
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
@@ -157,14 +157,14 @@ export default function SearchPage() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Search resources, topics, categories..."
+                placeholder={t('search_page.search_placeholder')}
                 className={`w-full ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3.5 text-base sm:text-lg rounded-2xl border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:ring-2 focus:ring-icc-500/50 focus:border-transparent outline-none shadow-sm transition-all duration-300`}
               />
               <button
                 type="submit"
                 className={`absolute top-1.5 bottom-1.5 ${isRTL ? 'left-1.5' : 'right-1.5'} bg-icc-500 hover:bg-icc-600 text-white font-medium px-5 rounded-xl transition-all duration-200 shadow-md`}
               >
-                Search
+                {t('search_page.search_button')}
               </button>
             </div>
           </form>
@@ -214,7 +214,7 @@ export default function SearchPage() {
                     { id: 'videos', label: t('search.videos') || 'Video Lectures', count: results.videos?.length || 0 },
                     { id: 'pdfs', label: t('search.pdfs') || 'PDF Library', count: results.pdfs?.length || 0 },
                     { id: 'recordings', label: t('search.recordings') || 'Recordings', count: results.recordings?.length || 0 },
-                    { id: 'telegram', label: 'Telegram', count: results.telegramChannels?.length || 0 },
+                    { id: 'telegram', label: t('search_page.telegram'), count: results.telegramChannels?.length || 0 },
                   ].map((tab) => {
                     if (tab.count === 0 && tab.id !== 'all') return null;
                     const isActive = selectedTab === tab.id;
@@ -482,7 +482,7 @@ export default function SearchPage() {
               <section className="space-y-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <span className="w-1.5 h-6 rounded-full bg-sky-500" />
-                  Telegram Channels ({results.telegramChannels.length})
+                  {t('telegram.title')} ({results.telegramChannels.length})
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {results.telegramChannels.map((ch) => (
@@ -496,7 +496,7 @@ export default function SearchPage() {
                         {ch.description && <p className="text-xs text-white/40 mt-1 line-clamp-2">{ch.description}</p>}
                         <div className="flex items-center gap-1 mt-2 text-xs text-sky-400 font-medium">
                           <Send className="w-3 h-3" />
-                          <span>Join</span>
+                          <span>{t('search_page.join')}</span>
                           <ArrowRight className="w-3 h-3" />
                         </div>
                       </div>
@@ -589,7 +589,7 @@ export default function SearchPage() {
               className="w-full max-w-md bg-surface-800 border border-white/10 rounded-2xl p-6 shadow-2xl text-center"
             >
               <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
-                <span className="text-xs text-white/40 uppercase font-semibold tracking-wider">Audio Player</span>
+                <span className="text-xs text-white/40 uppercase font-semibold tracking-wider">{t('search_page.audio_player')}</span>
                 <button onClick={() => setActiveAudio(null)} className="p-1 rounded-lg hover:bg-white/5 text-white/60 hover:text-white">
                   <X className="w-4 h-4" />
                 </button>
@@ -600,7 +600,7 @@ export default function SearchPage() {
               <h3 className="text-base font-bold text-white mb-1 leading-snug line-clamp-2">{activeAudio.title}</h3>
               <p className="text-xs text-white/40 mb-6">{activeAudio.category}</p>
               <audio src={activeAudio.url} controls autoPlay className="w-full mb-4 focus:outline-none" />
-              <p className="text-[10px] text-white/30">HTML5 inline media player controls</p>
+              <p className="text-[10px] text-white/30">{t('search_page.html5_controls')}</p>
             </motion.div>
           </motion.div>
         )}

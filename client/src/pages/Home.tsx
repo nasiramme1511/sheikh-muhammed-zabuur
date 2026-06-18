@@ -13,6 +13,7 @@ import { resources as resourcesApi, collections as collectionsApi, live as liveA
 import { COLLECTIONS, COLLECTION_COLORS, getCollectionBySlug } from '../config/collections';
 import type { Resource } from '../types';
 import { useTranslation, type TranslationKey } from '../i18n';
+import ResponsiveScholarImage from '../components/ResponsiveScholarImage';
 import { useAppearance } from '../context/AppearanceContext';
 import { useSEO } from '../seo/metadata';
 import TelegramSection from '../components/sections/TelegramSection';
@@ -639,10 +640,10 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10 opacity-70" />
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-icc-500/5 to-transparent pointer-events-none z-10" />
 
-                <img
+                <ResponsiveScholarImage
                   src="/images/sheikh-zabuur.jpg"
                   alt={t('home.hero_image_alt')}
-                  className="w-full h-[360px] md:h-[400px] object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  className="w-full h-[360px] md:h-[400px] group-hover:scale-[1.03] transition-transform duration-700"
                 />
 
                 {/* Floating badge */}
@@ -1234,10 +1235,10 @@ export default function Home() {
                 <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-400/40 z-10 pointer-events-none" />
                 <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-400/40 z-10 pointer-events-none" />
                 
-                <img
+                <ResponsiveScholarImage
                   src="/images/sheikh-zabuur.jpg"
                   alt={t('home.about_image_alt')}
-                  className="w-full h-[400px] object-cover rounded-2xl group-hover:scale-[1.01] transition-transform duration-500"
+                  className="w-full h-[400px] rounded-2xl group-hover:scale-[1.01] transition-transform duration-500"
                 />
               </div>
             </div>

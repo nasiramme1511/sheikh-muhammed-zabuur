@@ -7,6 +7,7 @@ import { admin } from '../../lib/api';
 import { COLLECTIONS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useResponsive } from '../../hooks/useResponsive';
+import { useTranslation } from '../../i18n';
 
 interface AudioResource {
   id: number;
@@ -51,6 +52,7 @@ function totalSize(files: AudioResource[]): string {
 }
 
 export default function AudioManagement() {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<AudioResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -199,7 +201,7 @@ export default function AudioManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold truncate">Audio Lectures Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold truncate">{t('admin.audio_management_title')}</h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {resources.length} audio files · {totalSize(resources)} total
           </p>
@@ -270,7 +272,7 @@ export default function AudioManagement() {
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-gray-400 px-4">
             <Music className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No audio resources found</p>
+            <p>{t('admin.no_audio_resources')}</p>
           </div>
         ) : isMobile ? (
           /* Mobile Card View */
@@ -339,7 +341,7 @@ export default function AudioManagement() {
                   <button
                     onClick={() => setDeleteTarget(file)}
                     className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto"
-                    title="Delete"
+                    title={t('admin.delete')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -436,7 +438,7 @@ export default function AudioManagement() {
                         <button
                           onClick={() => setDeleteTarget(file)}
                           className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                          title="Delete"
+                          title={t('admin.delete')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -758,17 +760,17 @@ export default function AudioManagement() {
                 <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
                   <AlertCircle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-lg">Delete Audio?</h3>
+                <h3 className="font-bold text-lg">{t('admin.delete_audio')}</h3>
               </div>
-              <p className="text-sm text-gray-500 mb-2">This will permanently delete:</p>
+              <p className="text-sm text-gray-500 mb-2">{t('admin.delete_warning')}</p>
               <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
                 {deleteTarget.name}
               </p>
               <div className="flex gap-3 justify-end">
-                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">Cancel</button>
+                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">{t('admin.cancel')}</button>
                 <button onClick={handleDelete} disabled={deleting} className="btn-primary bg-red-500 hover:bg-red-600 border-red-500 inline-flex items-center gap-2">
                   {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  Delete
+                  {t('admin.delete')}
                 </button>
               </div>
             </motion.div>

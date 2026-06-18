@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { HiPlus, HiTrash, HiPencil, HiCalendar, HiTag, HiChevronDown, HiChevronUp, HiEye } from 'react-icons/hi';
 import api from '../../lib/api';
 import { AdminModal, ConfirmDeleteModal } from '../../components/admin';
+import { useTranslation } from '../../i18n';
 import toast from 'react-hot-toast';
 
 interface Announcement {
@@ -24,6 +25,7 @@ const emptyForm: FormData = { title: '', content: '', category: 'General', publi
 const CATEGORIES = ['General', 'Update', 'Event', 'Maintenance', 'Feature', 'Important'];
 
 export default function AdminAnnouncements() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -165,7 +167,7 @@ export default function AdminAnnouncements() {
 
       {items.length === 0 ? (
         <div className="text-center py-16 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800">
-          No announcements yet
+          {t('admin.no_announcements')}
         </div>
       ) : (
         <div className="space-y-3">

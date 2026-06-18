@@ -223,7 +223,7 @@ export default function StreamSchedule() {
         {schedule.length === 0 ? (
           <div className="text-center py-12 text-sm text-gray-400">
             <Calendar className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No streams scheduled</p>
+            <p>{t('admin.no_streams_scheduled')}</p>
             <p className="text-xs mt-1">Click "Add Stream" to create your first scheduled stream</p>
           </div>
         ) : (
@@ -264,7 +264,7 @@ export default function StreamSchedule() {
                       </div>
                       <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
                         {entry.youtubeUrl && (
-                          <a href={entry.youtubeUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all" title="Open YouTube">
+                          <a href={entry.youtubeUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all" title={t('admin.open_youtube')}>
                             <ExternalLink className="w-4 h-4" />
                           </a>
                         )}
@@ -276,7 +276,7 @@ export default function StreamSchedule() {
                         <button onClick={() => openEdit(entry)} className="p-1.5 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all" title="Edit">
                           <Edit3 className="w-4 h-4" />
                         </button>
-                        <button onClick={() => setDeleteTarget(entry)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" title="Delete">
+                        <button onClick={() => setDeleteTarget(entry)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" title={t('admin.delete')}>
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

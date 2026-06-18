@@ -9,6 +9,7 @@ import {
 import { FaTelegramPlane, FaFacebook, FaInstagram, FaYoutube, FaTiktok } from 'react-icons/fa';
 import PrayerTimesWidget from './PrayerTimesWidget';
 import { useTranslation } from '../i18n';
+import ResponsiveScholarImage from './ResponsiveScholarImage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { newsletter } from '../lib/api';
@@ -109,10 +110,10 @@ export default function Footer() {
             <Link to="/" className="inline-flex items-center gap-4 group">
               <div className="relative shrink-0">
                 <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/10 ring-2 ring-icc-500/20 group-hover:ring-icc-400/40 transition-all duration-500">
-                  <img
+                  <ResponsiveScholarImage
                     src="/images/sheikh-zabuur.jpg"
                     alt={t('app.title')}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
                 </div>

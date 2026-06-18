@@ -234,7 +234,7 @@ export default function FooterSettings() {
       <SectionCard icon={MapPin} title="Quick Links" subtitle="Manage footer navigation links">
         <div className="space-y-3">
           {data.quickLinks.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400">No quick links added yet.</div>
+            <div className="text-center py-8 text-sm text-gray-400">{t('admin.no_quick_links')}</div>
           ) : (
             data.quickLinks.map((link, index) => (
               <div key={link.id} className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800">

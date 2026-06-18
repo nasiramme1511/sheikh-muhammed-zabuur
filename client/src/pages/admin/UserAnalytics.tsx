@@ -284,7 +284,7 @@ export default function UserAnalytics() {
         {activeUsers.length === 0 ? (
           <div className="text-center py-12 text-sm text-gray-400">
             <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No user activity data</p>
+            <p>{t('admin.no_user_activity')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

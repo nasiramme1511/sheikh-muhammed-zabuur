@@ -7,6 +7,7 @@ import { admin } from '../../lib/api';
 import { COLLECTIONS } from '../../config/collections';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useResponsive } from '../../hooks/useResponsive';
+import { useTranslation } from '../../i18n';
 
 interface VideoResource {
   id: number;
@@ -56,6 +57,7 @@ function isYouTubeUrl(url: string): boolean {
 }
 
 export default function VideoManagement() {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<VideoResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -207,7 +209,7 @@ export default function VideoManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold truncate">Video Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold truncate">{t('admin.video_management_title')}</h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {resources.length} videos · {totalSize(resources)} total
           </p>
@@ -278,7 +280,7 @@ export default function VideoManagement() {
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-gray-400 px-4">
             <Video className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>No video resources found</p>
+            <p>{t('admin.no_video_resources')}</p>
           </div>
         ) : isMobile ? (
           /* Mobile Card View */
@@ -314,7 +316,7 @@ export default function VideoManagement() {
                         <ExternalLink className="w-3 h-3" /> YouTube
                       </span>
                     ) : (
-                      <span>Local</span>
+                      <span>{t('admin.local')}</span>
                     )}
                     <span>{file.views?.toLocaleString() || 0} views</span>
                     <span>{file.downloads?.toLocaleString() || 0} downloads</span>
@@ -332,7 +334,7 @@ export default function VideoManagement() {
                     <a href={file.url} download={file.name} className="p-2 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Download">
                       <Download className="w-4 h-4" />
                     </a>
-                    <button onClick={() => setDeleteTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto" title="Delete">
+                    <button onClick={() => setDeleteTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto" title={t('admin.delete')}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -396,7 +398,7 @@ export default function VideoManagement() {
                             YouTube
                           </span>
                         ) : (
-                          <span className="text-xs text-gray-400">Local</span>
+                          <span className="text-xs text-gray-400">{t('admin.local')}</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -439,7 +441,7 @@ export default function VideoManagement() {
                           <button
                             onClick={() => setDeleteTarget(file)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                            title="Delete"
+                            title={t('admin.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -773,17 +775,17 @@ export default function VideoManagement() {
                 <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
                   <AlertCircle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-lg">Delete Video?</h3>
+                <h3 className="font-bold text-lg">{t('admin.delete_video')}</h3>
               </div>
-              <p className="text-sm text-gray-500 mb-2">This will permanently delete:</p>
+              <p className="text-sm text-gray-500 mb-2">{t('admin.delete_warning')}</p>
               <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
                 {deleteTarget.name}
               </p>
               <div className="flex gap-3 justify-end">
-                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">Cancel</button>
+                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">{t('admin.cancel')}</button>
                 <button onClick={handleDelete} disabled={deleting} className="btn-primary bg-red-500 hover:bg-red-600 border-red-500 inline-flex items-center gap-2">
                   {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  Delete
+                  {t('admin.delete')}
                 </button>
               </div>
             </motion.div>

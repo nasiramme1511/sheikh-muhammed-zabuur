@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useAIChat } from '../context/AIChatContext';
 import { useTranslation } from '../i18n';
+import ResponsiveScholarImage from './ResponsiveScholarImage';
 import type { TranslationKey } from '../i18n';
 import SmartThemeToggle from './SmartThemeToggle';
 import SmartLanguageSwitcher from './SmartLanguageSwitcher';
@@ -123,10 +124,10 @@ export default function Navbar() {
             <Link to="/" className="flex items-center gap-3 group z-10" aria-label={t('hero.title_line1') + ' ' + t('hero.title_line2')}>
               <div className="relative shrink-0">
                 <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl overflow-hidden ring-2 ring-icc-500/30 group-hover:ring-icc-500/60 transition-all duration-300">
-                  <img
+                  <ResponsiveScholarImage
                     src="/images/sheikh-zabuur.jpg"
                     alt={t('app.title')}
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+                    className="w-full h-full transition-all duration-300 group-hover:scale-110"
                     loading="eager"
                   />
                 </div>
