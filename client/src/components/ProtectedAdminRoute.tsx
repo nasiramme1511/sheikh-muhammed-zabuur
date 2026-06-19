@@ -13,7 +13,7 @@ export default function ProtectedAdminRoute({ children }: { children: ReactNode 
     );
   }
 
-  if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'MODERATOR')) {
     return <Navigate to="/" replace />;
   }
 

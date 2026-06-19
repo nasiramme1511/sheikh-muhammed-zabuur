@@ -12,6 +12,7 @@ import { useTranslation } from '../i18n';
 import type { TranslationKey } from '../i18n';
 import BackgroundLayout from './BackgroundLayout';
 import AppearanceStyles from './AppearanceStyles';
+import InstallPrompt from './InstallPrompt';
 import { useAppearance } from '../context/AppearanceContext';
 
 const navItems = [
@@ -66,6 +67,7 @@ export default function Layout() {
       <FloatingPlayer />
       <AIChatPanel />
       <AIChatButton />
+      <InstallPrompt />
 
       <motion.button
         onClick={scrollToTop}

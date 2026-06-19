@@ -11,6 +11,7 @@ import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
+import DownloadButton from '../components/DownloadButton';
 
 const ALL_PDFS = 'All PDFs';
 
@@ -431,6 +432,16 @@ export default function PdfLibrary() {
                     >
                       <Eye className="w-4 h-4" /> {t('pdf_library.preview')}
                     </button>
+                    <DownloadButton
+                      resourceId={pdf.id}
+                      type="PDF"
+                      title={pdf.title}
+                      url={pdf.url}
+                      fileSize={pdf.size}
+                      sizeHuman={pdf.sizeHuman}
+                      description={pdf.description}
+                      category={pdf.category}
+                    />
                     <button
                       onClick={() => handleDownloadGuarded(pdf.id, pdf.url)}
                       className="flex-1 btn-icc py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-none"

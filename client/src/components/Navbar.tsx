@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, Search, User, LogOut, Home, Music, Video, FileText,
-  Radio, Tv, Info, Mail, Bot, Command, Bell
+  Radio, Tv, Info, Mail, Bot, Command, Bell, Download
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useAIChat } from '../context/AIChatContext';
@@ -29,6 +29,7 @@ export default function Navbar() {
     { label: t('nav.pdf_library'), href: '/pdfs', icon: FileText },
     { label: t('nav.live_stream'), href: '/live', icon: Radio, live: true },
     { label: t('nav.recordings'), href: '/recordings', icon: Tv },
+    { label: t('nav.my_downloads'), href: '/my-downloads', icon: Download },
     { label: t('nav.about_sheikh'), href: '/about', icon: Info },
     { label: t('nav.contact'), href: '/contact', icon: Mail },
   ] : [

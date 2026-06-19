@@ -9,14 +9,24 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AIChatProvider } from './context/AIChatContext';
 import { AppearanceProvider } from './context/AppearanceContext';
+import { OfflineProvider } from './context/OfflineContext';
 import { runResponsiveAudit } from './utils/responsiveAudit';
 import './index.css';
+
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+}
 
 function Root() {
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false);
 
   useEffect(() => {
     runResponsiveAudit();
+    registerSW();
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
     };
@@ -30,19 +40,21 @@ function Root() {
         <AppearanceProvider>
           <LanguageProvider>
             <AuthProvider>
-              <PlayerProvider>
-                <AIChatProvider>
-                  <App />
-                </AIChatProvider>
-                <Toaster
-                  position={isMobile ? 'bottom-center' : 'top-right'}
-                  toastOptions={{
-                    className: '!bg-surface-900 !text-white !border !border-white/10 !shadow-modal !max-w-[90vw]',
-                    duration: 3000,
-                    style: { borderRadius: '1rem', padding: '0.75rem 1rem' },
-                  }}
-                />
-              </PlayerProvider>
+              <OfflineProvider>
+                <PlayerProvider>
+                  <AIChatProvider>
+                    <App />
+                  </AIChatProvider>
+                  <Toaster
+                    position={isMobile ? 'bottom-center' : 'top-right'}
+                    toastOptions={{
+                      className: '!bg-surface-900 !text-white !border !border-white/10 !shadow-modal !max-w-[90vw]',
+                      duration: 3000,
+                      style: { borderRadius: '1rem', padding: '0.75rem 1rem' },
+                    }}
+                  />
+                </PlayerProvider>
+              </OfflineProvider>
             </AuthProvider>
           </LanguageProvider>
         </AppearanceProvider>

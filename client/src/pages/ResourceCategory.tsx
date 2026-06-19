@@ -355,7 +355,7 @@ function ResourceCard({ resource, index }: { resource: Resource; index: number }
               src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
               alt={resource.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
+              onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.svg'}
             />
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="w-10 h-10 rounded-full bg-icc-500 flex items-center justify-center shadow-lg">

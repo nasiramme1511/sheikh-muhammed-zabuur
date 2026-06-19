@@ -77,6 +77,7 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/admin/homepage', labelKey: 'admin.homepage', icon: Layout },
       { href: '/admin/appearance', labelKey: 'admin.appearance', icon: Palette },
+      { href: '/admin/branding', labelKey: 'admin.branding', icon: Sparkles },
       { href: '/admin/navigation', labelKey: 'admin.navigation', icon: Navigation },
       { href: '/admin/footer', labelKey: 'admin.footer', icon: FileText },
       { href: '/admin/scholar', labelKey: 'admin.scholar_profile', icon: UserCheck },
@@ -173,7 +174,7 @@ export default function AdminLayout() {
     setSidebarOpen(false);
   }, []);
 
-  if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'MODERATOR')) {
     return (
       <div className="flex items-center justify-center min-h-[100dvh] bg-surface-950 px-4">
         <div className="text-center p-6 sm:p-8">

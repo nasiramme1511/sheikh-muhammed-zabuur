@@ -11,6 +11,7 @@ import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
+import DownloadButton from '../components/DownloadButton';
 
 export default function AudioLibrary() {
   const { t } = useTranslation();
@@ -516,6 +517,17 @@ export default function AudioLibrary() {
                     </div>
 
                     <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <DownloadButton
+                        resourceId={audio.id}
+                        type="AUDIO"
+                        title={audio.title}
+                        url={audio.url}
+                        fileSize={audio.size}
+                        sizeHuman={audio.sizeHuman}
+                        description={audio.description}
+                        category={audio.category}
+                        variant="icon"
+                      />
                       <button
                         onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                         className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
@@ -601,6 +613,16 @@ export default function AudioLibrary() {
                       <Download className="w-3 h-3" />
                       {audio.downloads}
                     </span>
+                    <DownloadButton
+                      resourceId={audio.id}
+                      type="AUDIO"
+                      title={audio.title}
+                      url={audio.url}
+                      fileSize={audio.size}
+                      sizeHuman={audio.sizeHuman}
+                      variant="icon"
+                      className="w-8 h-8 rounded-lg"
+                    />
                     <button
                       onClick={() => handleDownloadGuarded(audio.id, audio.url)}
                       className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
@@ -673,6 +695,16 @@ export default function AudioLibrary() {
                 <Volume2 className="w-4 h-4 text-white/40" />
                 <span>{t('audio.stereo')}</span>
               </div>
+              <DownloadButton
+                resourceId={currentTrack.id}
+                type="AUDIO"
+                title={currentTrack.title}
+                url={currentTrack.url}
+                fileSize={currentTrack.size}
+                sizeHuman={currentTrack.sizeHuman}
+                description={currentTrack.description}
+                category={currentTrack.category}
+              />
               <button
                 onClick={() => handleDownloadGuarded(currentTrack.id, currentTrack.url)}
                 className="btn-icc py-2 px-4 text-xs h-9 rounded-lg"

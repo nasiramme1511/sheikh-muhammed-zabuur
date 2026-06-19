@@ -264,10 +264,29 @@ export const levels = {
 export const scholarProfile = {
   get: () => api.get('/scholar'),
   update: (data: any) => api.put('/scholar', data),
+  uploadImage: (type: 'profile' | 'cover', file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/scholar/upload/${type}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };
 
 export const siteSettings = {
   get: () => api.get('/site-settings'),
   update: (data: any) => api.put('/site-settings', data),
+};
+
+export const branding = {
+  get: () => api.get('/branding'),
+  update: (data: any) => api.put('/branding', data),
+  upload: (type: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/branding/upload/${type}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 };
 

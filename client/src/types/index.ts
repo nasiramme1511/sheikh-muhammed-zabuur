@@ -1,9 +1,15 @@
+export type UserRole = 'USER' | 'STUDENT' | 'MODERATOR' | 'ADMIN' | 'SUPER_ADMIN';
+
+export type StudentRole = 'USER' | 'STUDENT';
+export type AdminRole = 'ADMIN' | 'SUPER_ADMIN';
+export type ModeratorRole = 'MODERATOR';
+
 export interface User {
   id: number;
   email: string;
   name: string;
   image?: string;
-  role: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
+  role: UserRole;
   createdAt: string;
 }
 
@@ -231,18 +237,24 @@ export interface Resource {
 export interface ScholarProfile {
   id: number;
   name: string;
+  arabicName?: string;
   title?: string;
   biography?: string;
   shortBiography?: string;
   profileImage?: string;
   coverImage?: string;
   yearsActive?: number;
+  teachingSchedule?: string[];
+  qualifications?: string[];
+  areasOfStudy?: string[];
   studentsCount: number;
   resourceCount: number;
   youtubeUrl?: string;
   telegramUrl?: string;
   facebookUrl?: string;
   tiktokUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
   websiteUrl?: string;
 }
 
@@ -252,11 +264,40 @@ export interface SiteSettings {
   siteDescription?: string;
   logo?: string;
   favicon?: string;
+  splashScreen?: string;
+  heroImage?: string;
+  socialShareImage?: string;
+  dashboardBanner?: string;
+  appleTouchIcon?: string;
+  pwaMaskableIcon?: string;
   contactEmail?: string;
   phone?: string;
   address?: string;
   copyrightText?: string;
   defaultLanguage: string;
   maintenanceMode: boolean;
+}
+
+export type DownloadStatus = 'pending' | 'downloading' | 'completed' | 'paused' | 'error';
+
+export interface OfflineResource {
+  id: string;
+  resourceId: number;
+  type: 'AUDIO' | 'VIDEO' | 'PDF';
+  title: string;
+  description?: string;
+  category?: string;
+  url: string;
+  blob?: Blob;
+  fileSize: number;
+  sizeHuman: string;
+  duration?: number;
+  thumbnail?: string;
+  downloadedAt: number;
+  lastPlayedAt?: number;
+  playPosition?: number;
+  status: DownloadStatus;
+  progress: number;
+  error?: string;
 }
 

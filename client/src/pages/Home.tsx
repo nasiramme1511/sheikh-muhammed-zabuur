@@ -118,11 +118,11 @@ const CAT_COLORS: Record<string, string> = {
 };
 
 const GALLERY_IMAGES = [
-  { url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80', titleKey: 'gallery_masjid', size: 'large' },
-  { url: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad5d?auto=format&fit=crop&w=600&q=80', titleKey: 'gallery_teaching', size: 'medium' },
-  { url: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=600&q=80', titleKey: 'gallery_study', size: 'medium' },
-  { url: 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=600&q=80', titleKey: 'gallery_classroom', size: 'large' },
-  { url: 'https://images.unsplash.com/photo-1609599006353-e629f1d40a4a?auto=format&fit=crop&w=600&q=80', titleKey: 'gallery_quran', size: 'medium' },
+  { url: '/favicon.svg', titleKey: 'gallery_masjid', size: 'large' },
+  { url: '/logo.svg', titleKey: 'gallery_teaching', size: 'medium' },
+  { url: '/og-image.svg', titleKey: 'gallery_study', size: 'medium' },
+  { url: '/images/sheikh-zabuur.jpg', titleKey: 'gallery_classroom', size: 'large' },
+  { url: '/video-placeholder.svg', titleKey: 'gallery_quran', size: 'medium' },
 ];
 
 function SkeletonCard({ wide = false }: { wide?: boolean }) {
@@ -165,7 +165,7 @@ function StreamingCard({ item, type, t }: { item: Resource; type: 'AUDIO' | 'VID
               src={coverUrl}
               alt={item.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.jpg'}
+              onError={e => (e.target as HTMLImageElement).src = '/video-placeholder.svg'}
             />
           ) : isAudio ? (
             <div className="absolute inset-0 bg-gradient-to-br from-icc-950/40 via-slate-950 to-slate-900/60 flex flex-col justify-between p-4">

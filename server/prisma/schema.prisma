@@ -35,23 +35,29 @@ enum Role {
 }
 
 model ScholarProfile {
-  id             Int      @id @default(autoincrement())
-  name           String
-  title          String?
-  biography      String?  @db.Text
-  shortBiography String?  @db.Text
-  profileImage   String?
-  coverImage     String?
-  yearsActive    Int?
-  studentsCount  Int      @default(0)
-  resourceCount  Int      @default(0)
-  youtubeUrl     String?
-  telegramUrl    String?
-  facebookUrl    String?
-  tiktokUrl      String?
-  websiteUrl     String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  name             String
+  arabicName       String?
+  title            String?
+  biography        String?  @db.Text
+  shortBiography   String?  @db.Text
+  profileImage     String?
+  coverImage       String?
+  teachingSchedule String?  @db.Text
+  qualifications   String?  @db.Text
+  areasOfStudy     String?  @db.Text
+  yearsActive      Int?
+  studentsCount    Int      @default(0)
+  resourceCount    Int      @default(0)
+  youtubeUrl       String?
+  telegramUrl      String?
+  facebookUrl      String?
+  tiktokUrl        String?
+  twitterUrl       String?
+  instagramUrl     String?
+  websiteUrl       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model SiteSettings {
@@ -60,6 +66,12 @@ model SiteSettings {
   siteDescription  String? @db.Text
   logo             String?
   favicon          String?
+  splashScreen     String?
+  heroImage        String?
+  socialShareImage String?
+  dashboardBanner  String?
+  appleTouchIcon   String?
+  pwaMaskableIcon  String?
   contactEmail     String?
   phone            String?
   address          String? @db.Text

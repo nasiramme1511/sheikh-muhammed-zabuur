@@ -79,7 +79,7 @@ export default function SearchPage() {
     if (ytId) {
       return `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
     }
-    return '/video-placeholder.jpg';
+    return '/video-placeholder.svg';
   };
 
   const handlePlayVideo = (video: Resource) => {
@@ -324,7 +324,7 @@ export default function SearchPage() {
                           <div className="relative aspect-video bg-dark-950 overflow-hidden">
                             {isYoutube ? (
                               <img src={thumbUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }} />
+                                onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.svg'; }} />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-950 to-dark-950">
                                 <VideoIcon className="w-10 h-10 text-icc-500/40" />
@@ -445,7 +445,7 @@ export default function SearchPage() {
                         <div className="relative aspect-video bg-dark-950 overflow-hidden">
                           {isYoutube ? (
                             <img src={thumbUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }} />
+                              onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.svg'; }} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-950 to-dark-950">
                               <Radio className="w-10 h-10 text-amber-500/40" />

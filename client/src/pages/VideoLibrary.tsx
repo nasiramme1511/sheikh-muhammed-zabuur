@@ -11,6 +11,7 @@ import type { Resource } from '../types';
 import { useSEO } from '../seo/metadata';
 import { useAuthGuard } from '../hooks/useAuthGuard';
 import LoginWallModal from '../components/LoginWallModal';
+import DownloadButton from '../components/DownloadButton';
 
 const ALL_VIDEOS = 'All Videos';
 
@@ -106,7 +107,7 @@ export default function VideoLibrary() {
     if (ytId) {
       return `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
     }
-    return '/video-placeholder.jpg';
+    return '/video-placeholder.svg';
   };
 
   const handleVideoSelect = (video: Resource) => {
@@ -381,7 +382,7 @@ export default function VideoLibrary() {
                         alt={video.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/video-placeholder.jpg';
+                          (e.target as HTMLImageElement).src = '/video-placeholder.svg';
                         }}
                       />
                     ) : (
@@ -424,6 +425,19 @@ export default function VideoLibrary() {
                         <Eye className="w-3.5 h-3.5" />
                         {video.views} {t('video.views_suffix')}
                       </span>
+                      <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+                        <DownloadButton
+                          resourceId={video.id}
+                          type="VIDEO"
+                          title={video.title}
+                          url={video.url}
+                          fileSize={video.size}
+                          sizeHuman={video.sizeHuman}
+                          description={video.description}
+                          category={video.category}
+                          variant="full"
+                        />
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -451,7 +465,7 @@ export default function VideoLibrary() {
                         src={thumbUrl}
                         alt={video.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.jpg'; }}
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/video-placeholder.svg'; }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-icc-950 to-dark-950">

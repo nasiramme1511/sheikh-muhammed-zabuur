@@ -1,14 +1,23 @@
 {
-  "name": "Sheikh Muhammad Zabuur - Islamic Online Learning",
+  "name": "Sheikh Muhammed Zabuur — Official Educational Platform",
   "short_name": "Sh. Zabuur",
-  "description": "Authentic Islamic education through audio lectures, video lessons, PDFs, live streams, and Telegram communities.",
+  "description": "Learn Islamic knowledge offline with Sheikh Muhammed Zabuur. Download audio lectures, video lessons, and PDF books for offline use.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#059669",
+  "orientation": "portrait-primary",
+  "background_color": "#0F766E",
+  "theme_color": "#0F766E",
+  "categories": ["education", "religion", "islam"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "/favicon.svg", "sizes": "192x192", "type": "image/svg+xml" },
-    { "src": "/favicon.svg", "sizes": "512x512", "type": "image/svg+xml" },
-    { "src": "/photo-masjidlogo.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "/icon-48.png", "sizes": "48x48", "type": "image/png" },
+    { "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "48x48 96x96 192x192 512x512", "type": "image/svg+xml" }
   ]
 }

@@ -10,6 +10,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import SearchPage from './pages/SearchPage';
+import MyDownloads from './pages/MyDownloads';
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Cookies = lazy(() => import('./pages/Cookies'));
@@ -28,6 +29,8 @@ const ResourceCategoryPage = lazy(() => import('./pages/ResourceCategory'));
 const CategoriesPage = lazy(() => import('./pages/Categories'));
 const LessonDetail = lazy(() => import('./pages/LessonDetail'));
 const TelegramChannels = lazy(() => import('./pages/TelegramChannels'));
+const OfflineVideoPlayer = lazy(() => import('./pages/OfflineVideoPlayer'));
+const OfflinePdfReader = lazy(() => import('./pages/OfflinePdfReader'));
 
 // Lazy-loaded admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
@@ -64,6 +67,7 @@ const AdminBulkUpload = lazy(() => import('./pages/admin/BulkUpload'));
 const AdminTelegramChannels = lazy(() => import('./pages/admin/TelegramChannels'));
 const AdminScholarProfile = lazy(() => import('./pages/admin/ScholarProfile'));
 const AdminSiteSettings = lazy(() => import('./pages/admin/SiteSettings'));
+const AdminBranding = lazy(() => import('./pages/admin/Branding'));
 
 // Lazy-loaded dashboard pages
 const DashboardHome = lazy(() => import('./pages/dashboard/Home'));
@@ -74,6 +78,17 @@ const DashboardSettings = lazy(() => import('./pages/dashboard/Settings'));
 const DashboardAudioHistory = lazy(() => import('./pages/dashboard/AudioHistory'));
 const DashboardVideoHistory = lazy(() => import('./pages/dashboard/VideoHistory'));
 const DashboardPdfHistory = lazy(() => import('./pages/dashboard/PdfHistory'));
+const DashboardContinueLearning = lazy(() => import('./pages/dashboard/ContinueLearning'));
+const DashboardStudyCircles = lazy(() => import('./pages/dashboard/StudyCircles'));
+const DashboardLearningProgress = lazy(() => import('./pages/dashboard/LearningProgress'));
+const DashboardAudioLectures = lazy(() => import('./pages/dashboard/AudioLectures'));
+const DashboardVideoLectures = lazy(() => import('./pages/dashboard/VideoLectures'));
+const DashboardPdfLectures = lazy(() => import('./pages/dashboard/PdfLectures'));
+const DashboardOfflineAudio = lazy(() => import('./pages/dashboard/OfflineAudio'));
+const DashboardOfflineVideos = lazy(() => import('./pages/dashboard/OfflineVideos'));
+const DashboardOfflinePdfs = lazy(() => import('./pages/dashboard/OfflinePdfs'));
+const DashboardAnnouncements = lazy(() => import('./pages/dashboard/Announcements'));
+const DashboardTelegramChannels = lazy(() => import('./pages/dashboard/TelegramChannels'));
 
 function PageFallback() {
   return (
@@ -131,6 +146,17 @@ export default function App() {
         <Route path="audio-history" element={<Suspense fallback={<DashboardFallback />}><DashboardAudioHistory /></Suspense>} />
         <Route path="video-history" element={<Suspense fallback={<DashboardFallback />}><DashboardVideoHistory /></Suspense>} />
         <Route path="pdf-history" element={<Suspense fallback={<DashboardFallback />}><DashboardPdfHistory /></Suspense>} />
+        <Route path="continue-learning" element={<Suspense fallback={<DashboardFallback />}><DashboardContinueLearning /></Suspense>} />
+        <Route path="study-circles" element={<Suspense fallback={<DashboardFallback />}><DashboardStudyCircles /></Suspense>} />
+        <Route path="learning-progress" element={<Suspense fallback={<DashboardFallback />}><DashboardLearningProgress /></Suspense>} />
+        <Route path="audio-lectures" element={<Suspense fallback={<DashboardFallback />}><DashboardAudioLectures /></Suspense>} />
+        <Route path="video-lectures" element={<Suspense fallback={<DashboardFallback />}><DashboardVideoLectures /></Suspense>} />
+        <Route path="pdf-library" element={<Suspense fallback={<DashboardFallback />}><DashboardPdfLectures /></Suspense>} />
+        <Route path="offline-audio" element={<Suspense fallback={<DashboardFallback />}><DashboardOfflineAudio /></Suspense>} />
+        <Route path="offline-videos" element={<Suspense fallback={<DashboardFallback />}><DashboardOfflineVideos /></Suspense>} />
+        <Route path="offline-pdfs" element={<Suspense fallback={<DashboardFallback />}><DashboardOfflinePdfs /></Suspense>} />
+        <Route path="announcements" element={<Suspense fallback={<DashboardFallback />}><DashboardAnnouncements /></Suspense>} />
+        <Route path="telegram-channels" element={<Suspense fallback={<DashboardFallback />}><DashboardTelegramChannels /></Suspense>} />
       </Route>
 
       {/* ADMIN ROUTES */}
@@ -183,6 +209,7 @@ export default function App() {
         <Route path="activity" element={<Suspense fallback={<AdminFallback />}><AdminActivity /></Suspense>} />
         <Route path="telegram" element={<Suspense fallback={<AdminFallback />}><AdminTelegramChannels /></Suspense>} />
         <Route path="scholar" element={<Suspense fallback={<AdminFallback />}><AdminScholarProfile /></Suspense>} />
+        <Route path="branding" element={<Suspense fallback={<AdminFallback />}><AdminBranding /></Suspense>} />
         <Route path="site-settings" element={<Suspense fallback={<AdminFallback />}><AdminSiteSettings /></Suspense>} />
       </Route>
 
@@ -210,6 +237,9 @@ export default function App() {
         <Route path="/lessons/:slug" element={<GuestRoute><Suspense fallback={<PageFallback />}><LessonDetail /></Suspense></GuestRoute>} />
         <Route path="/telegram" element={<GuestRoute><Suspense fallback={<PageFallback />}><TelegramChannels /></Suspense></GuestRoute>} />
         <Route path="/search" element={<GuestRoute><SearchPage /></GuestRoute>} />
+        <Route path="/my-downloads" element={<MyDownloads />} />
+        <Route path="/offline/video/:id" element={<Suspense fallback={<PageFallback />}><OfflineVideoPlayer /></Suspense>} />
+        <Route path="/offline/pdf/:id" element={<Suspense fallback={<PageFallback />}><OfflinePdfReader /></Suspense>} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

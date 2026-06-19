@@ -32,6 +32,7 @@ import resourceCategoryRoutes from './routes/resourceCategories';
 import appearanceRoutes from './routes/appearance';
 import settingsRoutes from './routes/settings';
 import downloadRoutes from './routes/download';
+import brandingRoutes from './routes/branding';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -249,6 +250,7 @@ app.use('/api/download', downloadRoutes);
 app.use('/api/admin/settings', settingsRoutes);
 app.use('/api/scholar', scholarRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
+app.use('/api/branding', brandingRoutes);
 
 // Serve client static files
 const CLIENT_DIST = path.join(__dirname, '../../client/dist');
