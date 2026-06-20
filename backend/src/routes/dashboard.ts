@@ -113,8 +113,8 @@ router.get('/bookmarks', async (req: AuthRequest, res: Response) => {
 router.get('/bookmarks/check/:lessonId', async (req: AuthRequest, res: Response) => {
   try {
     const lessonId = Number(req.params.lessonId);
-    const bookmark = await prisma.bookmark.findUnique({
-      where: { userId_lessonId: { userId: req.userId!, lessonId } },
+    const bookmark = await prisma.bookmark.findFirst({
+      where: { userId: req.userId!, lessonId },
     });
     res.json({ bookmarked: !!bookmark });
   } catch {
