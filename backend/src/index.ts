@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import { execSync } from 'child_process';
 import prisma from './lib/prisma';
 import { authLimiter, apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
@@ -285,6 +286,13 @@ app.get('*', (req, res) => {
 });
 
 console.log('Database Connected');
+
+// Sync Prisma schema to database
+try {
+  execSync('npx prisma db push --skip-generate', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+} catch {
+  console.warn('prisma db push failed — continuing anyway');
+}
 
 repairResourceTypes().then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {
