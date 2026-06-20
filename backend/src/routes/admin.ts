@@ -678,7 +678,7 @@ router.get('/lessons', async (req: AuthRequest, res: Response) => {
         include: {
           category: { select: { id: true, name: true } },
           book: { select: { id: true, title: true } },
-          _count: { select: { bookmarks: true, progress: true } },
+          _count: { select: { bookmarks: true, userProgress: true } },
         },
       }),
       prisma.lesson.count({ where }),

@@ -20,6 +20,13 @@ model User {
 
   chatMessages ChatMessage[]
   usageLogs    UsageLog[]
+  bookmarks    Bookmark[]
+  downloads    Download[]
+  listeningHistory ListeningHistory[]
+  watchHistory WatchHistory[]
+  notifications Notification[]
+  schedules    Schedule[]
+  userProgress UserProgress[]
 
   @@index([role])
 }
@@ -123,6 +130,7 @@ model Series {
   audioLessons AudioLesson[]
   videoLessons VideoLesson[]
   resources    Resource[]
+  bookmarks    Bookmark[]
 
   @@index([slug])
   @@index([order])
@@ -186,6 +194,8 @@ model Category {
   updatedAt   DateTime @updatedAt
 
   books   Book[]
+  lessons Lesson[]
+  courses Course[]
 
   @@index([slug])
   @@index([order])
@@ -218,6 +228,7 @@ model Book {
 
   category  Category?  @relation(fields: [categoryId], references: [id])
   resources Resource[]
+  lessons   Lesson[]
 
   @@index([slug])
   @@index([categoryId])
@@ -226,21 +237,47 @@ model Book {
 model Lesson {
   id           Int      @id @default(autoincrement())
   title        String
+  titleAmharic String?
+  titleArabic  String?
+  titleOromic  String?
   slug         String   @unique
   description  String?  @db.Text
+  descriptionAmharic String?  @db.Text
+  descriptionArabic  String?  @db.Text
+  descriptionOromic  String?  @db.Text
   audioUrl     String
   videoUrl     String?
+  pdfUrl       String?
   duration     Int?
   episodeNumber Int?
   seriesId     Int?
+  categoryId   Int?
+  bookId       Int?
+  levelId      Int?
+  courseId     Int?
+  isBeginner   Boolean  @default(false)
   published    Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  series Series? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  series       Series?     @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  category     Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  book         Book?       @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  level        Level?      @relation(fields: [levelId], references: [id], onDelete: SetNull)
+  course       Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+
+  bookmarks         Bookmark[]
+  userProgress      UserProgress[]
+  listeningHistory  ListeningHistory[]
+  watchHistory      WatchHistory[]
+  downloads         Download[]
+  schedules         Schedule[]
 
   @@index([slug])
   @@index([seriesId])
+  @@index([categoryId])
+  @@index([bookId])
+  @@index([levelId])
   @@index([published])
 }
 
@@ -265,6 +302,7 @@ model Resource {
   fileType     String       @default("pdf")
   resourceType ResourceType @default(PDF)
   fileUrl      String
+  fileSize     Int?
   fileHash     String?
   thumbnail    String?
   downloads    Int          @default(0)
@@ -344,4 +382,165 @@ model UsageLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int?
+  seriesId  Int?
+  type      String?
+  createdAt DateTime @default(now())
+
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  series Series? @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([lessonId])
+  @@index([seriesId])
+}
+
+model Download {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  lessonId     Int
+  type         String?
+  fileUrl      String?
+  fileSize     Int?
+  downloadedAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model ListeningHistory {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  lessonId     Int
+  position     Int?
+  duration     Int?
+  progress     Float?
+  completed    Boolean  @default(false)
+  lastPlayedAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model WatchHistory {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  lessonId      Int
+  position      Int?
+  duration      Int?
+  progress      Float?
+  completed     Boolean  @default(false)
+  lastWatchedAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model Level {
+  id          Int      @id @default(autoincrement())
+  name        String
+  nameAmharic String?
+  nameArabic  String?
+  nameOromic  String?
+  slug        String   @unique
+  description String?  @db.Text
+  descriptionAmharic String?  @db.Text
+  descriptionArabic  String?  @db.Text
+  descriptionOromic  String?  @db.Text
+  icon        String?
+  color       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons Lesson[]
+  courses Course[]
+
+  @@index([slug])
+  @@index([order])
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  thumbnail   String?
+  description String?  @db.Text
+  categoryId  Int?
+  levelId     Int?
+  language    String   @default("en")
+  duration    Int?
+  status      String   @default("DRAFT")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  level    Level?    @relation(fields: [levelId], references: [id], onDelete: SetNull)
+  lessons  Lesson[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([levelId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  dayOfWeek Int?
+  time      String?
+  createdAt DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model UserProgress {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  lessonId  Int
+  position  Int      @default(0)
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
 }
