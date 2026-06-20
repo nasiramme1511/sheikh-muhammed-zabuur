@@ -38,6 +38,9 @@
     </g>
   </g>
 
+  <!-- Brand text just below photo -->
+  <text x="256" y="415" font-family="'Poppins', sans-serif" font-weight="700" font-size="16" fill="#ffffff" opacity="0.5" text-anchor="middle" letter-spacing="4">SH. ZABUUR</text>
+
   <!-- Sheikh Name Text "Sh. Zabuur" styled with better design -->
   <g filter="url(#shadow)">
     <text x="256" y="445" font-family="'Poppins', sans-serif" font-weight="800" font-size="34" fill="url(#gold)" text-anchor="middle" letter-spacing="1">SH. ZABUUR</text>
