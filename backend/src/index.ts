@@ -287,6 +287,13 @@ app.get('*', (req, res) => {
 
 console.log('Database Connected');
 
+// Fix old role enum values before syncing schema (STUDENT/TEACHER removed from Role enum)
+try {
+  await prisma.$executeRawUnsafe("UPDATE User SET role = 'USER' WHERE role NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN')");
+} catch {
+  console.warn('Role fix skipped');
+}
+
 // Sync Prisma schema to database
 try {
   execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
