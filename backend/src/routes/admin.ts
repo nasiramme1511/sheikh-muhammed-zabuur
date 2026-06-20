@@ -314,10 +314,11 @@ router.post('/upload', (req: AuthRequest, res: Response) => {
 });
 
 
-// GET /admin/resources — list all uploaded files from DB
+// GET /admin/resources — list all uploaded files from DB (excluding trashed)
 router.get('/resources', async (_req: AuthRequest, res: Response) => {
   try {
     const resources = await prisma.resource.findMany({
+      where: { deletedAt: null },
       orderBy: { createdAt: 'desc' },
       include: {
         book: { select: { id: true, title: true, slug: true } },
@@ -423,18 +424,23 @@ router.put('/resources/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// DELETE /admin/resources — delete an uploaded file
+// DELETE /admin/resources — delete an uploaded file (?permanent=true for hard delete)
 router.delete('/resources', async (req: AuthRequest, res: Response) => {
   try {
     const { url } = req.body;
+    const permanent = req.query.permanent === 'true';
     if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'url required' });
     }
 
-    await deleteFile(url);
-    await prisma.resource.deleteMany({ where: { fileUrl: url } });
-
-    res.json({ message: 'File deleted' });
+    if (permanent) {
+      await deleteFile(url);
+      await prisma.resource.deleteMany({ where: { fileUrl: url } });
+      res.json({ message: 'File permanently deleted' });
+    } else {
+      await prisma.resource.updateMany({ where: { fileUrl: url }, data: { deletedAt: new Date() } });
+      res.json({ message: 'File moved to trash' });
+    }
   } catch {
     res.status(500).json({ error: 'Failed to delete file' });
   }
@@ -1363,8 +1369,83 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
   });
 });
 
-// ── Bulk Delete ───────────────────────────────────────────────
+// ── Bulk Delete (soft by default, ?permanent=true for hard delete) ──
 router.post('/resources/bulk-delete', async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids } = req.body;
+    const permanent = req.query.permanent === 'true';
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids array is required' });
+    }
+    if (permanent) {
+      const resources = await prisma.resource.findMany({ where: { id: { in: ids } } });
+      await deleteFiles(resources.map(r => r.fileUrl));
+      await prisma.resource.deleteMany({ where: { id: { in: ids } } });
+      res.json({ message: `Permanently deleted ${resources.length} resources`, count: resources.length });
+    } else {
+      await prisma.resource.updateMany({ where: { id: { in: ids } }, data: { deletedAt: new Date() } });
+      res.json({ message: `Moved ${ids.length} resources to trash`, count: ids.length });
+    }
+  } catch (err) {
+    console.error('Bulk delete error:', err);
+    res.status(500).json({ error: 'Failed to bulk delete' });
+  }
+});
+
+// ── Trash: list soft-deleted resources ────────────────────────
+router.get('/resources/trash', async (_req: AuthRequest, res: Response) => {
+  try {
+    const resources = await prisma.resource.findMany({
+      where: { deletedAt: { not: null } },
+      orderBy: { deletedAt: 'desc' },
+      include: {
+        book: { select: { id: true, title: true, slug: true } },
+        series: { select: { id: true, name: true, slug: true } },
+      },
+    });
+    const results = resources.map((r) => ({
+      id: r.id,
+      name: r.fileUrl.split('/').pop() || 'resource',
+      url: r.fileUrl,
+      size: 0,
+      type: r.fileType === 'pdf' ? 'pdf' : r.fileType,
+      resourceType: r.resourceType,
+      createdAt: r.createdAt.toISOString(),
+      deletedAt: r.deletedAt?.toISOString(),
+      category: r.category,
+      collection: r.collection,
+      title: r.title,
+      description: r.description,
+      language: r.language,
+      featured: r.featured,
+      author: r.author,
+      bookId: r.bookId,
+      book: r.book,
+      seriesId: r.seriesId,
+      series: r.series,
+    }));
+    res.json(results);
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch trash' });
+  }
+});
+
+// ── Restore soft-deleted resources ────────────────────────────
+router.post('/resources/restore', async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'ids array is required' });
+    }
+    await prisma.resource.updateMany({ where: { id: { in: ids } }, data: { deletedAt: null } });
+    res.json({ message: `Restored ${ids.length} resources`, count: ids.length });
+  } catch {
+    res.status(500).json({ error: 'Failed to restore resources' });
+  }
+});
+
+// ── Permanently delete trashed resources ──────────────────────
+router.post('/resources/delete-permanent', async (req: AuthRequest, res: Response) => {
   try {
     const { ids } = req.body;
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
@@ -1373,10 +1454,9 @@ router.post('/resources/bulk-delete', async (req: AuthRequest, res: Response) =>
     const resources = await prisma.resource.findMany({ where: { id: { in: ids } } });
     await deleteFiles(resources.map(r => r.fileUrl));
     await prisma.resource.deleteMany({ where: { id: { in: ids } } });
-    res.json({ message: `Deleted ${resources.length} resources`, count: resources.length });
-  } catch (err) {
-    console.error('Bulk delete error:', err);
-    res.status(500).json({ error: 'Failed to bulk delete' });
+    res.json({ message: `Permanently deleted ${resources.length} resources`, count: resources.length });
+  } catch {
+    res.status(500).json({ error: 'Failed to permanently delete resources' });
   }
 });
 
@@ -1384,7 +1464,7 @@ router.post('/resources/bulk-delete', async (req: AuthRequest, res: Response) =>
 router.post('/resources/delete-all', async (req: AuthRequest, res: Response) => {
   try {
     const { resourceType } = req.body;
-    const where: any = {};
+    const where: any = { deletedAt: null };
     if (resourceType && resourceType !== 'ALL') {
       if (!['PDF', 'AUDIO', 'VIDEO', 'IMAGE'].includes(resourceType)) {
         return res.status(400).json({ error: 'Invalid resourceType. Use PDF, AUDIO, VIDEO, IMAGE, or ALL' });

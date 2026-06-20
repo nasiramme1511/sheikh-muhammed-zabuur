@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Video, Upload, RefreshCw, Search, Star, Edit3, Trash2, Eye, Download,
-  X, AlertCircle, Save, Film, HardDrive, ExternalLink,
+  X, AlertCircle, Save, Film, HardDrive, ExternalLink, Square, CheckSquare,
 } from 'lucide-react';
 import { admin, series as seriesApi } from '../../lib/api';
 import { COLLECTIONS } from '../../config/collections';
@@ -26,6 +26,7 @@ interface VideoResource {
   size: number;
   resourceType: string;
   createdAt: string;
+  deletedAt?: string;
   featured: boolean;
   views: number;
   downloads: number;
@@ -93,6 +94,18 @@ export default function VideoManagement() {
   const [stats, setStats] = useState({ totalVideo: 0, totalViews: 0, totalStorage: 0 });
   const { isMobile } = useResponsive();
 
+  // Trash & bulk state
+  const [tab, setTab] = useState<'active' | 'trash'>('active');
+  const [trashItems, setTrashItems] = useState<VideoResource[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [permanentDeleting, setPermanentDeleting] = useState(false);
+  const [deletePermanentTarget, setDeletePermanentTarget] = useState<VideoResource | null>(null);
+
   const load = () => {
     setLoading(true);
     Promise.all([
@@ -113,7 +126,21 @@ export default function VideoManagement() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  const loadTrash = () => {
+    setLoading(true);
+    admin.resources.getTrash()
+      .then((res) => {
+        const all = Array.isArray(res.data) ? res.data : res.data?.items ?? [];
+        setTrashItems(all.filter((r: VideoResource) => r.resourceType === 'VIDEO'));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (tab === 'active') load();
+    else loadTrash();
+  }, [tab]);
 
   useEffect(() => {
     seriesApi.getAll().then(res => {
@@ -121,7 +148,9 @@ export default function VideoManagement() {
     }).catch(() => {});
   }, []);
 
-  const filtered = resources.filter((f) => {
+  const displayItems = tab === 'active' ? resources : trashItems;
+
+  const filtered = displayItems.filter((f) => {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
@@ -130,6 +159,22 @@ export default function VideoManagement() {
       f.category?.toLowerCase().includes(q)
     );
   });
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((f) => f.id)));
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -196,15 +241,61 @@ export default function VideoManagement() {
     setSaving(false);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (permanent: boolean) => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await admin.resources.delete(deleteTarget.url);
-      setResources((prev) => prev.filter((f) => f.url !== deleteTarget.url));
+      await admin.resources.delete(deleteTarget.url, permanent);
+      if (permanent) {
+        setResources((prev) => prev.filter((f) => f.url !== deleteTarget.url));
+        setTrashItems((prev) => prev.filter((f) => f.url !== deleteTarget.url));
+      } else {
+        setResources((prev) => prev.filter((f) => f.url !== deleteTarget.url));
+      }
       setDeleteTarget(null);
     } catch { /* silent */ }
     setDeleting(false);
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    setBulkDeleting(true);
+    try {
+      await admin.resources.bulkDelete(Array.from(selectedIds));
+      setSelectedIds(new Set());
+      setShowBulkDeleteConfirm(false);
+      load();
+    } catch { /* silent */ }
+    setBulkDeleting(false);
+  };
+
+  const handleDeleteAll = async () => {
+    setDeletingAll(true);
+    try {
+      await admin.resources.deleteAll('VIDEO');
+      setShowDeleteAllConfirm(false);
+      load();
+    } catch { /* silent */ }
+    setDeletingAll(false);
+  };
+
+  const handleRestore = async (ids: number[]) => {
+    setRestoring(true);
+    try {
+      await admin.resources.restore(ids);
+      loadTrash();
+    } catch { /* silent */ }
+    setRestoring(false);
+  };
+
+  const handlePermanentDelete = async (ids: number[]) => {
+    setPermanentDeleting(true);
+    try {
+      await admin.resources.deletePermanent(ids);
+      setTrashItems((prev) => prev.filter((f) => !ids.includes(f.id)));
+      setDeletePermanentTarget(null);
+    } catch { /* silent */ }
+    setPermanentDeleting(false);
   };
 
   const toggleFeatured = async (item: VideoResource) => {
@@ -223,6 +314,49 @@ export default function VideoManagement() {
 
   const totalViews = resources.reduce((acc, r) => acc + (r.views || 0), 0);
 
+  const DeleteConfirmModal = () => (
+    <AnimatePresence>
+      {deleteTarget && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.95 }}
+            className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full shadow-2xl"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
+                <AlertCircle className="w-5 h-5 text-red-500" />
+              </div>
+              <h3 className="font-bold text-lg">{t('admin.delete_video')}</h3>
+            </div>
+            <p className="text-sm text-gray-500 mb-2">{t('admin.delete_warning')}</p>
+            <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
+              {deleteTarget.title || deleteTarget.name}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+              <button onClick={() => setDeleteTarget(null)} className="btn-secondary">{t('admin.cancel')}</button>
+              <button onClick={() => handleDelete(false)} disabled={deleting} className="btn-icc inline-flex items-center gap-2">
+                {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
+                <Trash2 className="w-4 h-4" />
+                Move to Trash
+              </button>
+              <button onClick={() => handleDelete(true)} disabled={deleting} className="btn-danger inline-flex items-center gap-2">
+                {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
+                Delete Permanently
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -234,14 +368,13 @@ export default function VideoManagement() {
           </p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="btn-primary inline-flex items-center gap-2"
-          >
-            <Upload className="w-4 h-4" />
-            Upload Video
-          </button>
-          <button onClick={load} className="btn-secondary p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Refresh">
+          {tab === 'active' && (
+            <button onClick={() => setShowUploadModal(true)} className="btn-primary inline-flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              Upload Video
+            </button>
+          )}
+          <button onClick={tab === 'active' ? load : loadTrash} className="btn-secondary p-2 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Refresh">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
@@ -278,6 +411,34 @@ export default function VideoManagement() {
         </div>
       </div>
 
+      {/* Tab toggle */}
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => { setTab('active'); setSelectedIds(new Set()); }}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            tab === 'active'
+              ? 'border-icc-500 text-icc-400'
+              : 'border-transparent text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Active
+        </button>
+        <button
+          onClick={() => { setTab('trash'); setSelectedIds(new Set()); }}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors inline-flex items-center gap-1.5 ${
+            tab === 'trash'
+              ? 'border-red-500 text-red-400'
+              : 'border-transparent text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          Trash
+          {trashItems.length > 0 && (
+            <span className="text-xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{trashItems.length}</span>
+          )}
+        </button>
+      </div>
+
       {/* Search */}
       <div className="relative">
         <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -285,10 +446,48 @@ export default function VideoManagement() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search videos by title, filename, or category..."
+          placeholder={tab === 'active' ? "Search videos by title, filename, or category..." : "Search trash..."}
           className="input-field ps-10 w-full"
         />
       </div>
+
+      {/* Bulk action bar */}
+      {tab === 'active' && selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-icc-500/10 border border-icc-500/20">
+          <span className="text-sm text-icc-400 font-medium">{selectedIds.size} selected</span>
+          <button
+            onClick={() => setShowBulkDeleteConfirm(true)}
+            disabled={bulkDeleting}
+            className="btn-danger text-xs px-3 py-1.5 min-h-[36px] inline-flex items-center gap-1.5"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {bulkDeleting ? 'Moving...' : 'Move to Trash'}
+          </button>
+          <button
+            onClick={() => handleRestore(Array.from(selectedIds))}
+            disabled={restoring}
+            className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] inline-flex items-center gap-1.5"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${restoring ? 'animate-spin' : ''}`} />
+            Restore
+          </button>
+          <button onClick={() => setSelectedIds(new Set())} className="text-xs text-gray-400 hover:text-gray-300 ml-auto">
+            Clear selection
+          </button>
+        </div>
+      )}
+
+      {tab === 'active' && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDeleteAllConfirm(true)}
+            className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] inline-flex items-center gap-1.5 text-red-400 border-red-500/20 hover:border-red-500/40"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete All Videos
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden w-full min-w-0">
@@ -299,16 +498,20 @@ export default function VideoManagement() {
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-gray-400 px-4">
             <Video className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p>{t('admin.no_video_resources')}</p>
+            <p>{tab === 'active' ? t('admin.no_video_resources') : 'Trash is empty'}</p>
           </div>
         ) : isMobile ? (
-          /* Mobile Card View */
           <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
             {filtered.map((file, i) => {
               const isYT = isYouTubeUrl(file.url);
               return (
                 <div key={file.id || file.url + i} className="p-3 space-y-2">
                   <div className="flex items-start gap-3">
+                    {tab === 'active' && (
+                      <button onClick={() => toggleSelect(file.id)} className="mt-1 shrink-0">
+                        {selectedIds.has(file.id) ? <CheckSquare className="w-4 h-4 text-icc-400" /> : <Square className="w-4 h-4 text-gray-500" />}
+                      </button>
+                    )}
                     {file.thumbnail ? (
                       <img src={file.thumbnail} alt="" className="w-14 h-10 rounded object-cover shrink-0" />
                     ) : (
@@ -318,44 +521,37 @@ export default function VideoManagement() {
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm break-words">{file.title || file.name}</p>
-                      {file.title && file.name !== file.title && (
-                        <p className="text-xs text-gray-400 break-all">{file.name}</p>
-                      )}
+                      {file.title && file.name !== file.title && <p className="text-xs text-gray-400 break-all">{file.name}</p>}
+                      {file.deletedAt && <p className="text-xs text-red-400 mt-0.5">Deleted {new Date(file.deletedAt).toLocaleDateString()}</p>}
                     </div>
-                    {file.featured && (
-                      <Star className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" />
-                    )}
+                    {file.featured && <Star className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" />}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                    <span className="font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
-                      {file.category || '-'}
-                    </span>
-                    {isYT ? (
-                      <span className="inline-flex items-center gap-1 text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
-                        <ExternalLink className="w-3 h-3" /> YouTube
-                      </span>
-                    ) : (
-                      <span>{t('admin.local')}</span>
-                    )}
+                    <span className="font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">{file.category || '-'}</span>
+                    {isYT ? <span className="inline-flex items-center gap-1 text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full"><ExternalLink className="w-3 h-3" /> YouTube</span> : <span>{t('admin.local')}</span>}
                     <span>{file.views?.toLocaleString() || 0} views</span>
-                    <span>{file.downloads?.toLocaleString() || 0} downloads</span>
                   </div>
                   <div className="flex items-center gap-1 pt-1">
-                    <button onClick={() => toggleFeatured(file)} className={`p-2 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${file.featured ? 'text-amber-400 bg-amber-500/10' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'}`} title={file.featured ? 'Unfeature' : 'Feature'}>
-                      <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
-                    </button>
-                    <button onClick={() => setEditTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Edit">
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => handlePreview(file)} className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Preview">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <a href={file.url} download={file.name} className="p-2 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Download">
-                      <Download className="w-4 h-4" />
-                    </a>
-                    <button onClick={() => setDeleteTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto" title={t('admin.delete')}>
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {tab === 'active' ? (
+                      <>
+                        <button onClick={() => toggleFeatured(file)} className={`p-2 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ${file.featured ? 'text-amber-400 bg-amber-500/10' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'}`} title={file.featured ? 'Unfeature' : 'Feature'}>
+                          <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
+                        </button>
+                        <button onClick={() => setEditTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Edit"><Edit3 className="w-4 h-4" /></button>
+                        <button onClick={() => handlePreview(file)} className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Preview"><Eye className="w-4 h-4" /></button>
+                        <a href={file.url} download={file.name} className="p-2 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center" title="Download"><Download className="w-4 h-4" /></a>
+                        <button onClick={() => setDeleteTarget(file)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto" title={t('admin.delete')}><Trash2 className="w-4 h-4" /></button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => handleRestore([file.id])} disabled={restoring} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-icc-500 bg-icc-500/10 border border-icc-500/20 hover:bg-icc-500/20 transition-all min-h-[44px]">
+                          <RefreshCw className="w-3.5 h-3.5" /> Restore
+                        </button>
+                        <button onClick={() => setDeletePermanentTarget(file)} className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all min-h-[44px]">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete Forever
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               );
@@ -366,6 +562,13 @@ export default function VideoManagement() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 dark:bg-dark-900/50 border-b border-gray-200 dark:border-gray-700">
                 <tr>
+                  {tab === 'active' && (
+                    <th className="px-4 py-3 w-10">
+                      <button onClick={toggleSelectAll} className="flex items-center">
+                        {selectedIds.size === filtered.length && filtered.length > 0 ? <CheckSquare className="w-4 h-4 text-icc-400" /> : <Square className="w-4 h-4 text-gray-500" />}
+                      </button>
+                    </th>
+                  )}
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Title</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Category</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs uppercase tracking-wider">Views</th>
@@ -380,90 +583,56 @@ export default function VideoManagement() {
                   const isYT = isYouTubeUrl(file.url);
                   return (
                     <tr key={file.id || file.url + i} className="hover:bg-gray-50 dark:hover:bg-white/2 transition-colors">
+                      {tab === 'active' && (
+                        <td className="px-4 py-3">
+                          <button onClick={() => toggleSelect(file.id)} className="flex items-center">
+                            {selectedIds.has(file.id) ? <CheckSquare className="w-4 h-4 text-icc-400" /> : <Square className="w-4 h-4 text-gray-500" />}
+                          </button>
+                        </td>
+                      )}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          {file.thumbnail ? (
-                            <img
-                              src={file.thumbnail}
-                              alt=""
-                              className="w-12 h-8 rounded object-cover shrink-0"
-                            />
-                          ) : (
-                            <div className="w-12 h-8 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
-                              <Video className="w-4 h-4 text-purple-400" />
-                            </div>
-                          )}
+                          {file.thumbnail ? <img src={file.thumbnail} alt="" className="w-12 h-8 rounded object-cover shrink-0" /> : <div className="w-12 h-8 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0"><Video className="w-4 h-4 text-purple-400" /></div>}
                           <div className="min-w-0">
-                            <span className="font-medium truncate block max-w-[200px]" title={file.title || file.name}>
-                              {file.title || file.name}
-                            </span>
-                            {file.title && file.name !== file.title && (
-                              <span className="text-xs text-gray-400 truncate block max-w-[200px]">{file.name}</span>
-                            )}
+                            <span className="font-medium truncate block max-w-[200px]" title={file.title || file.name}>{file.title || file.name}</span>
+                            {file.title && file.name !== file.title && <span className="text-xs text-gray-400 truncate block max-w-[200px]">{file.name}</span>}
+                            {file.deletedAt && <span className="text-xs text-red-400">Deleted {new Date(file.deletedAt).toLocaleDateString()}</span>}
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">
-                          {file.category || '-'}
-                        </span>
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full border text-icc-400 bg-icc-500/10 border-icc-500/20">{file.category || '-'}</span>
                       </td>
                       <td className="px-4 py-3 text-gray-500">{file.views?.toLocaleString() || 0}</td>
                       <td className="px-4 py-3 text-gray-500">{file.downloads?.toLocaleString() || 0}</td>
                       <td className="px-4 py-3">
-                        {isYT ? (
-                          <span className="inline-flex items-center gap-1 text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
-                            <ExternalLink className="w-3 h-3" />
-                            YouTube
-                          </span>
-                        ) : (
-                          <span className="text-xs text-gray-400">{t('admin.local')}</span>
-                        )}
+                        {isYT ? <span className="inline-flex items-center gap-1 text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full"><ExternalLink className="w-3 h-3" /> YouTube</span> : <span className="text-xs text-gray-400">{t('admin.local')}</span>}
                       </td>
                       <td className="px-4 py-3">
-                        <button
-                          onClick={() => toggleFeatured(file)}
-                          className={`p-1 rounded-lg transition-all ${
-                            file.featured
-                              ? 'text-amber-400 bg-amber-500/10 hover:bg-amber-500/20'
-                              : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'
-                          }`}
-                          title={file.featured ? 'Unfeature' : 'Feature'}
-                        >
-                          <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
-                        </button>
+                        {tab === 'active' ? (
+                          <button onClick={() => toggleFeatured(file)} className={`p-1 rounded-lg transition-all ${file.featured ? 'text-amber-400 bg-amber-500/10 hover:bg-amber-500/20' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'}`} title={file.featured ? 'Unfeature' : 'Feature'}>
+                            <Star className="w-4 h-4" fill={file.featured ? 'currentColor' : 'none'} />
+                          </button>
+                        ) : <span className="text-gray-500 text-xs">-</span>}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => setEditTarget(file)}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all"
-                            title="Edit metadata"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handlePreview(file)}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all"
-                            title="Preview"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <a
-                            href={file.url}
-                            download={file.name}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all"
-                            title="Download"
-                          >
-                            <Download className="w-4 h-4" />
-                          </a>
-                          <button
-                            onClick={() => setDeleteTarget(file)}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                            title={t('admin.delete')}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {tab === 'active' ? (
+                            <>
+                              <button onClick={() => setEditTarget(file)} className="p-1.5 rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all" title="Edit metadata"><Edit3 className="w-4 h-4" /></button>
+                              <button onClick={() => handlePreview(file)} className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all" title="Preview"><Eye className="w-4 h-4" /></button>
+                              <a href={file.url} download={file.name} className="p-1.5 rounded-lg text-gray-400 hover:text-icc-500 hover:bg-icc-50 dark:hover:bg-icc-500/10 transition-all" title="Download"><Download className="w-4 h-4" /></a>
+                              <button onClick={() => setDeleteTarget(file)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" title={t('admin.delete')}><Trash2 className="w-4 h-4" /></button>
+                            </>
+                          ) : (
+                            <>
+                              <button onClick={() => handlePreview(file)} className="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all" title="Preview"><Eye className="w-4 h-4" /></button>
+                              <button onClick={() => handleRestore([file.id])} disabled={restoring} className="p-1.5 rounded-lg text-icc-400 hover:text-icc-300 hover:bg-icc-500/10 transition-all" title="Restore">
+                                <RefreshCw className={`w-4 h-4 ${restoring ? 'animate-spin' : ''}`} />
+                              </button>
+                              <button onClick={() => setDeletePermanentTarget(file)} className="p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all" title="Delete forever"><Trash2 className="w-4 h-4" /></button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -499,13 +668,7 @@ export default function VideoManagement() {
                   </div>
                   <h3 className="font-bold text-lg">Upload Video</h3>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowUploadModal(false)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                >
-                  <X className="w-4 h-4 text-white/60" />
-                </button>
+                <button type="button" onClick={() => setShowUploadModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"><X className="w-4 h-4 text-white/60" /></button>
               </div>
 
               {uploadError && (
@@ -518,122 +681,54 @@ export default function VideoManagement() {
               <form onSubmit={handleUploadSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Video File</label>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleFileChange}
-                    required
-                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-500 hover:file:bg-purple-500/20 file:cursor-pointer"
-                  />
-                  {uploadFile && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      Selected: {uploadFile.name} ({humanSize(uploadFile.size)})
-                    </p>
-                  )}
+                  <input type="file" accept="video/*" onChange={handleFileChange} required className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-500 hover:file:bg-purple-500/20 file:cursor-pointer" />
+                  {uploadFile && <p className="text-xs text-gray-400 mt-1">Selected: {uploadFile.name} ({humanSize(uploadFile.size)})</p>}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Thumbnail (optional)</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setUploadThumbnail(e.target.files?.[0] || null)}
-                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-icc-500/10 file:text-icc-500 hover:file:bg-icc-500/20 file:cursor-pointer"
-                  />
+                  <input type="file" accept="image/*" onChange={(e) => setUploadThumbnail(e.target.files?.[0] || null)} className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-icc-500/10 file:text-icc-500 hover:file:bg-icc-500/20 file:cursor-pointer" />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-                  <input
-                    type="text"
-                    value={uploadTitle}
-                    onChange={(e) => setUploadTitle(e.target.value)}
-                    required
-                    placeholder="Enter video title"
-                    className="input-field w-full"
-                  />
+                  <input type="text" value={uploadTitle} onChange={(e) => setUploadTitle(e.target.value)} required placeholder="Enter video title" className="input-field w-full" />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                  <textarea
-                    value={uploadDescription}
-                    onChange={(e) => setUploadDescription(e.target.value)}
-                    placeholder="Enter optional description"
-                    className="input-field w-full h-20 resize-none"
-                  />
+                  <textarea value={uploadDescription} onChange={(e) => setUploadDescription(e.target.value)} placeholder="Enter optional description" className="input-field w-full h-20 resize-none" />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                  <select
-                    value={uploadCategory}
-                    onChange={(e) => setUploadCategory(e.target.value)}
-                    className="input-field w-full"
-                  >
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
+                  <select value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className="input-field w-full">
+                    {CATEGORIES.map((cat) => (<option key={cat} value={cat}>{cat}</option>))}
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Collection</label>
-                  <select
-                    value={uploadCollection}
-                    onChange={(e) => setUploadCollection(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
-                  >
+                  <select value={uploadCollection} onChange={(e) => setUploadCollection(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm">
                     <option value="">None (General)</option>
-                    {COLLECTIONS.map((c) => (
-                      <option key={c.slug} value={c.slug}>{c.name}</option>
-                    ))}
+                    {COLLECTIONS.map((c) => (<option key={c.slug} value={c.slug}>{c.name}</option>))}
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Series</label>
-                  <select
-                    value={uploadSeriesId}
-                    onChange={(e) => setUploadSeriesId(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm"
-                  >
+                  <select value={uploadSeriesId} onChange={(e) => setUploadSeriesId(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-icc-500/50 text-sm">
                     <option value="">None (General)</option>
-                    {seriesList.map((s) => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
-                    ))}
+                    {seriesList.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
                   </select>
                   <p className="text-xs text-gray-400 mt-1">Assigning to a series will create a lesson automatically</p>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Language</label>
-                  <select
-                    value={uploadLanguage}
-                    onChange={(e) => setUploadLanguage(e.target.value)}
-                    className="input-field w-full"
-                  >
-                    {LANGUAGES.map((l) => (
-                      <option key={l.value} value={l.value}>{l.label}</option>
-                    ))}
+                  <select value={uploadLanguage} onChange={(e) => setUploadLanguage(e.target.value)} className="input-field w-full">
+                    {LANGUAGES.map((l) => (<option key={l.value} value={l.value}>{l.label}</option>))}
                   </select>
                 </div>
-
                 <div className="flex items-center gap-3 py-1">
-                  <button
-                    type="button"
-                    onClick={() => setUploadFeatured(!uploadFeatured)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                      uploadFeatured ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
+                  <button type="button" onClick={() => setUploadFeatured(!uploadFeatured)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${uploadFeatured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${uploadFeatured ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Feature on Homepage</label>
                 </div>
-
                 <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button type="button" onClick={() => setShowUploadModal(false)} className="btn-secondary">Cancel</button>
                   <button type="submit" disabled={uploading} className="btn-primary inline-flex items-center gap-2">
@@ -666,93 +761,51 @@ export default function VideoManagement() {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-500/10">
-                    <Edit3 className="w-5 h-5 text-amber-500" />
-                  </div>
+                  <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-500/10"><Edit3 className="w-5 h-5 text-amber-500" /></div>
                   <h3 className="font-bold text-lg">Edit Video Metadata</h3>
                 </div>
-                <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
-                  <X className="w-4 h-4 text-white/60" />
-                </button>
+                <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"><X className="w-4 h-4 text-white/60" /></button>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-                  <input
-                    type="text"
-                    value={editTarget.title}
-                    onChange={(e) => setEditTarget({ ...editTarget, title: e.target.value })}
-                    className="input-field w-full"
-                  />
+                  <input type="text" value={editTarget.title} onChange={(e) => setEditTarget({ ...editTarget, title: e.target.value })} className="input-field w-full" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                  <textarea
-                    value={editTarget.description || ''}
-                    onChange={(e) => setEditTarget({ ...editTarget, description: e.target.value })}
-                    className="input-field w-full h-20 resize-none"
-                  />
+                  <textarea value={editTarget.description || ''} onChange={(e) => setEditTarget({ ...editTarget, description: e.target.value })} className="input-field w-full h-20 resize-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                  <select
-                    value={editTarget.category}
-                    onChange={(e) => setEditTarget({ ...editTarget, category: e.target.value })}
-                    className="input-field w-full"
-                  >
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
+                  <select value={editTarget.category} onChange={(e) => setEditTarget({ ...editTarget, category: e.target.value })} className="input-field w-full">
+                    {CATEGORIES.map((cat) => (<option key={cat} value={cat}>{cat}</option>))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Series</label>
-                  <select
-                    value={editTarget.seriesId ?? ''}
-                    onChange={(e) => setEditTarget({ ...editTarget, seriesId: e.target.value ? Number(e.target.value) : null })}
-                    className="input-field w-full"
-                  >
+                  <select value={editTarget.seriesId ?? ''} onChange={(e) => setEditTarget({ ...editTarget, seriesId: e.target.value ? Number(e.target.value) : null })} className="input-field w-full">
                     <option value="">None (General)</option>
-                    {seriesList.map((s) => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
-                    ))}
+                    {seriesList.map((s) => (<option key={s.id} value={s.id}>{s.name}</option>))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Language</label>
-                  <select
-                    value={editTarget.language || 'en'}
-                    onChange={(e) => setEditTarget({ ...editTarget, language: e.target.value })}
-                    className="input-field w-full"
-                  >
-                    {LANGUAGES.map((l) => (
-                      <option key={l.value} value={l.value}>{l.label}</option>
-                    ))}
+                  <select value={editTarget.language || 'en'} onChange={(e) => setEditTarget({ ...editTarget, language: e.target.value })} className="input-field w-full">
+                    {LANGUAGES.map((l) => (<option key={l.value} value={l.value}>{l.label}</option>))}
                   </select>
                 </div>
                 <div className="flex items-center gap-3 py-1">
-                  <button
-                    type="button"
-                    onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                      editTarget.featured ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
+                  <button type="button" onClick={() => setEditTarget({ ...editTarget, featured: !editTarget.featured })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${editTarget.featured ? 'bg-icc-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${editTarget.featured ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Featured on Homepage</label>
                 </div>
               </div>
-
               <div className="flex gap-3 justify-end mt-6">
                 <button onClick={() => setEditTarget(null)} className="btn-secondary">Cancel</button>
                 <button onClick={handleEdit} disabled={saving} className="btn-primary inline-flex items-center gap-2">
                   {saving && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  <Save className="w-4 h-4" />
-                  Save Changes
+                  <Save className="w-4 h-4" /> Save Changes
                 </button>
               </div>
             </motion.div>
@@ -779,23 +832,13 @@ export default function VideoManagement() {
             >
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-dark-900/50 shrink-0">
                 <span className="text-sm text-white/60 truncate">{previewItem.title || previewItem.name}</span>
-                <button onClick={() => { setPreviewUrl(null); setPreviewItem(null); }} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors ml-3 shrink-0">
-                  <X className="w-4 h-4 text-white/60" />
-                </button>
+                <button onClick={() => { setPreviewUrl(null); setPreviewItem(null); }} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors ml-3 shrink-0"><X className="w-4 h-4 text-white/60" /></button>
               </div>
               <div className="flex-1 bg-black">
                 {isYouTubeUrl(previewUrl) ? (
-                  <iframe
-                    src={previewUrl.replace('watch?v=', 'embed/')}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title="Video preview"
-                  />
+                  <iframe src={previewUrl.replace('watch?v=', 'embed/')} className="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title="Video preview" />
                 ) : (
-                  <video controls playsInline className="w-full h-full object-contain" autoPlay>
-                    <source src={previewUrl} />
-                  </video>
+                  <video controls playsInline className="w-full h-full object-contain" autoPlay><source src={previewUrl} /></video>
                 )}
               </div>
             </motion.div>
@@ -804,8 +847,11 @@ export default function VideoManagement() {
       </AnimatePresence>
 
       {/* Delete Confirm Modal */}
+      <DeleteConfirmModal />
+
+      {/* Bulk Delete Confirm Modal */}
       <AnimatePresence>
-        {deleteTarget && (
+        {showBulkDeleteConfirm && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -819,20 +865,81 @@ export default function VideoManagement() {
               className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full shadow-2xl"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                </div>
-                <h3 className="font-bold text-lg">{t('admin.delete_video')}</h3>
+                <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10"><AlertCircle className="w-5 h-5 text-red-500" /></div>
+                <h3 className="font-bold text-lg">Move to Trash</h3>
               </div>
-              <p className="text-sm text-gray-500 mb-2">{t('admin.delete_warning')}</p>
-              <p className="text-sm font-mono bg-gray-100 dark:bg-dark-900 px-3 py-2 rounded-lg text-red-500 break-all mb-6">
-                {deleteTarget.name}
-              </p>
+              <p className="text-sm text-gray-500 mb-6">Move {selectedIds.size} selected video(s) to trash? You can restore them later.</p>
               <div className="flex gap-3 justify-end">
-                <button onClick={() => setDeleteTarget(null)} className="btn-secondary">{t('admin.cancel')}</button>
-                <button onClick={handleDelete} disabled={deleting} className="btn-primary bg-red-500 hover:bg-red-600 border-red-500 inline-flex items-center gap-2">
-                  {deleting && <RefreshCw className="w-4 h-4 animate-spin" />}
-                  {t('admin.delete')}
+                <button onClick={() => setShowBulkDeleteConfirm(false)} className="btn-secondary">Cancel</button>
+                <button onClick={handleBulkDelete} disabled={bulkDeleting} className="btn-danger inline-flex items-center gap-2">
+                  {bulkDeleting && <RefreshCw className="w-4 h-4 animate-spin" />}
+                  <Trash2 className="w-4 h-4" /> Move to Trash
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete All Confirm Modal */}
+      <AnimatePresence>
+        {showDeleteAllConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10"><AlertCircle className="w-5 h-5 text-red-500" /></div>
+                <h3 className="font-bold text-lg">Delete All Videos</h3>
+              </div>
+              <p className="text-sm text-gray-500 mb-2">This will permanently delete all {resources.length} video files from the server. This action cannot be undone.</p>
+              <p className="text-xs text-red-400 font-medium mb-6">Are you sure?</p>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setShowDeleteAllConfirm(false)} className="btn-secondary">Cancel</button>
+                <button onClick={handleDeleteAll} disabled={deletingAll} className="btn-danger inline-flex items-center gap-2">
+                  {deletingAll && <RefreshCw className="w-4 h-4 animate-spin" />}
+                  <Trash2 className="w-4 h-4" /> Delete All Permanently
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Permanent Delete Confirm Modal */}
+      <AnimatePresence>
+        {deletePermanentTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-full bg-red-100 dark:bg-red-500/10"><AlertCircle className="w-5 h-5 text-red-500" /></div>
+                <h3 className="font-bold text-lg">Delete Forever</h3>
+              </div>
+              <p className="text-sm text-gray-500 mb-2">This will permanently delete "{deletePermanentTarget.title || deletePermanentTarget.name}" from the server. This action cannot be undone.</p>
+              <p className="text-xs text-red-400 font-medium mb-6">Are you sure?</p>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setDeletePermanentTarget(null)} className="btn-secondary">Cancel</button>
+                <button onClick={() => handlePermanentDelete([deletePermanentTarget.id])} disabled={permanentDeleting} className="btn-danger inline-flex items-center gap-2">
+                  {permanentDeleting && <RefreshCw className="w-4 h-4 animate-spin" />}
+                  <Trash2 className="w-4 h-4" /> Delete Forever
                 </button>
               </div>
             </motion.div>

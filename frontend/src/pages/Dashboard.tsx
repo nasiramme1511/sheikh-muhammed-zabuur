@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { HiBookmark, HiPlay, HiCheck, HiChartBar, HiCollection, HiTrendingUp } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation, type TranslationKey } from '../i18n';
-import { users as usersApi, progress as progressApi, courses as coursesApi } from '../lib/api';
-import api from '../lib/api';
+import { users as usersApi, progress as progressApi } from '../lib/api';
 import type { UserProgress } from '../types';
 import LessonCard from '../components/LessonCard';
 import AIDashboardWidget from '../components/ai/AIDashboardWidget';
@@ -14,7 +13,6 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [progress, setProgress] = useState<UserProgress[]>([]);
-  const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,12 +23,10 @@ export default function Dashboard() {
     Promise.all([
       usersApi.getStats(),
       progressApi.getAll(),
-      api.get('/analytics/student'),
     ])
-      .then(([statsRes, progRes, analyticsRes]) => {
+      .then(([statsRes, progRes]) => {
         setStats(statsRes.data);
         setProgress(progRes.data);
-        setAnalytics(analyticsRes.data);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -85,41 +81,6 @@ export default function Dashboard() {
 
       <div className="mb-8">
         <AIDashboardWidget />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 space-y-6">
-        </div>
-
-        <div className="space-y-6">
-          {analytics && (
-            <section>
-              <h2 className="text-lg font-semibold mb-4">{t('dashboard.learning_analytics')}</h2>
-              <div className="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-500">{t('dashboard.completion_rate')}</span>
-                    <span className="font-semibold">{analytics.completionRate ?? 0}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-green-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(analytics.completionRate ?? 0, 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">{t('dashboard.quiz_average')}</span>
-                  <span className="font-semibold">{analytics.quizAverage ?? 0}%</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">{t('dashboard.lessons_started')}</span>
-                  <span className="font-semibold">{analytics.lessonsStarted ?? progress.length}</span>
-                </div>
-              </div>
-            </section>
-          )}
-        </div>
       </div>
 
       {progress.length > 0 && (

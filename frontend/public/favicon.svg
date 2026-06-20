@@ -38,18 +38,6 @@
     </g>
   </g>
 
-  <!-- Arabic letter 'ز' Badge overlaying bottom right of photo -->
-  <g transform="translate(370, 340)" filter="url(#shadow)">
-    <circle cx="0" cy="0" r="50" fill="url(#bgGrad)" stroke="url(#gold)" stroke-width="3"/>
-    <path d="M -20 -22 
-             Q -2 -24, 15 -22 
-             Q 22 -21, 20 -12 
-             Q 17 2, 11 12 
-             Q 5 20, 0 30"
-          fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
-    <circle cx="-1" cy="42" r="4.5" fill="url(#gold)"/>
-  </g>
-
   <!-- Sheikh Name Text "Sh. Zabuur" styled with better design -->
   <g filter="url(#shadow)">
     <text x="256" y="445" font-family="'Poppins', sans-serif" font-weight="800" font-size="34" fill="url(#gold)" text-anchor="middle" letter-spacing="1">SH. ZABUUR</text>

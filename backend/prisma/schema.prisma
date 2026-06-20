@@ -431,6 +431,7 @@ model Resource {
   views        Int          @default(0)
   featured     Boolean      @default(false)
   published    Boolean      @default(true)
+  deletedAt    DateTime?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
@@ -444,6 +445,7 @@ model Resource {
   @@index([language])
   @@index([featured])
   @@index([published])
+  @@index([deletedAt])
   @@index([downloads])
   @@index([views])
   @@index([seriesId])

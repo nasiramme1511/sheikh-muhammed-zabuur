@@ -337,7 +337,103 @@ async function autoSeed() {
   console.log('Auto-seed complete.');
 }
 
-setupDatabase().then(() => autoSeed()).then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
+// ── Assign unlinked lessons → series ──────────────────────────
+async function assignLessonsToSeries() {
+  const startTime = Date.now();
+  const [seriesList, catList, bookList] = await Promise.all([
+    prisma.series.findMany({ select: { id: true, slug: true } }),
+    prisma.category.findMany({ select: { id: true, slug: true, name: true } }),
+    prisma.book.findMany({ select: { id: true, slug: true, title: true } }),
+  ]);
+  const seriesBySlug = new Map(seriesList.map(s => [s.slug, s.id]));
+  const catBySlug = new Map(catList.map(c => [c.slug, c.id]));
+
+  // Category slug → series slug mapping
+  const CAT_SERIES: Record<string, string> = {
+    tafsir: 'tafsir-al-quran',
+    usul: 'usul-ath-thalathah',
+    bulugh: 'bulugh-al-maram',
+    tajreed: 'tajreed',
+    riyad: 'riyadus-salihin',
+  };
+
+  // Book slug → series slug mapping
+  const BOOK_SERIES: Record<string, string> = {
+    'kitab-at-tawheed': 'kitab-at-tawheed',
+    'tafsir-ibn-kathir': 'tafsir-al-quran',
+    'sahih-al-bukhari': 'riyadus-salihin',
+    'umdat-al-ahkam': 'bulugh-al-maram',
+    'riyadh-as-salihin': 'riyadus-salihin',
+    'al-manhaj-as-salim': 'usul-ath-thalathah',
+    'tafsiira-sheekh-muussaa': 'tafsir-al-quran',
+    'aqiidaa-kee-qabadhu': 'kitab-at-tawheed',
+    'hadiisa-afurtamman-nawaawwii': 'al-arbain-an-nawawiyyah',
+    'tafsiira-juziiwwan-sadan-boodaa': 'tafsir-al-quran',
+    'gabaabfamaa-bua-qabeessa-muslima-haaraaf': 'kitab-at-tawheed',
+  };
+
+  // Title keyword → series slug fallback
+  const TITLE_SERIES: [RegExp, string][] = [
+    [/(tafsir|tafsiira)/i, 'tafsir-al-quran'],
+    [/(aqeedah|aqiida|tawheed|tawhid)/i, 'kitab-at-tawheed'],
+    [/(hadith|hadiis)/i, 'riyadus-salihin'],
+    [/(salaat|xahaara|purif|prayer|condition)/i, 'bulugh-al-maram'],
+    [/^barnoota/i, 'usul-ath-thalathah'],
+  ];
+
+  const lessons = await prisma.lesson.findMany({
+    where: { seriesId: null },
+    select: { id: true, title: true, categoryId: true, bookId: true },
+  });
+  if (lessons.length === 0) return; // silent skip
+
+  let updated = 0;
+  let skipped = 0;
+  for (const lesson of lessons) {
+    let seriesSlug: string | null = null;
+    let reason = '';
+
+    if (lesson.categoryId) {
+      const cat = catList.find(c => c.id === lesson.categoryId);
+      if (cat && CAT_SERIES[cat.slug]) {
+        seriesSlug = CAT_SERIES[cat.slug];
+        reason = `category "${cat.name}" → "${seriesSlug}"`;
+      }
+    }
+
+    if (!seriesSlug && lesson.bookId) {
+      const book = bookList.find(b => b.id === lesson.bookId);
+      if (book && BOOK_SERIES[book.slug]) {
+        seriesSlug = BOOK_SERIES[book.slug];
+        reason = `book "${book.title}" → "${seriesSlug}"`;
+      }
+    }
+
+    if (!seriesSlug) {
+      for (const [regex, slug] of TITLE_SERIES) {
+        if (regex.test(lesson.title)) {
+          seriesSlug = slug;
+          reason = `title match → "${slug}"`;
+          break;
+        }
+      }
+    }
+
+    if (seriesSlug && seriesBySlug.has(seriesSlug)) {
+      await prisma.lesson.update({
+        where: { id: lesson.id },
+        data: { seriesId: seriesBySlug.get(seriesSlug)! },
+      });
+      updated++;
+    } else {
+      skipped++;
+    }
+  }
+  const elapsed = Date.now() - startTime;
+  console.log(`assignLessonsToSeries: ${updated} linked, ${skipped} skipped (${elapsed}ms)`);
+}
+
+setupDatabase().then(() => autoSeed()).then(() => assignLessonsToSeries()).then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

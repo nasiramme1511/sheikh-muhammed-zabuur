@@ -110,9 +110,12 @@ export const admin = {
   }),
   resources: {
     getAll: () => api.get('/admin/resources'),
+    getTrash: () => api.get('/admin/resources/trash'),
     update: (id: number, data: any) => api.put(`/admin/resources/${id}`, data),
-    delete: (url: string) => api.delete('/admin/resources', { data: { url } }),
-    bulkDelete: (ids: number[]) => api.post('/admin/resources/bulk-delete', { ids }),
+    delete: (url: string, permanent = false) => api.delete('/admin/resources', { data: { url }, params: { permanent } }),
+    bulkDelete: (ids: number[], permanent = false) => api.post('/admin/resources/bulk-delete', { ids }, { params: { permanent } }),
+    restore: (ids: number[]) => api.post('/admin/resources/restore', { ids }),
+    deletePermanent: (ids: number[]) => api.post('/admin/resources/delete-permanent', { ids }),
     deleteByCategory: (category: string, resourceType?: string) =>
       api.post('/admin/resources/delete-by-category', { category, resourceType }),
     moveCollection: (ids: number[], collection: string) =>

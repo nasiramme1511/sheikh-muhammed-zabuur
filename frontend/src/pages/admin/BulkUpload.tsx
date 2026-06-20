@@ -28,7 +28,19 @@ export default function AdminBulkUpload() {
   const [results, setResults] = useState<UploadResult[]>([]);
   const [duplicateAction, setDuplicateAction] = useState<'skip' | 'replace'>('skip');
   const [dragOver, setDragOver] = useState(false);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
+  const [deleteAllType, setDeleteAllType] = useState<'AUDIO' | 'VIDEO' | 'PDF'>('AUDIO');
+  const [deletingAll, setDeletingAll] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleDeleteAll = async () => {
+    setDeletingAll(true);
+    try {
+      await admin.resources.deleteAll(deleteAllType);
+      setShowDeleteAllConfirm(false);
+    } catch { /* silent */ }
+    setDeletingAll(false);
+  };
 
   const handleFiles = (incoming: FileList | File[]) => {
     const newFiles = Array.from(incoming).filter(f => {
@@ -159,6 +171,72 @@ export default function AdminBulkUpload() {
             {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploading ? `Uploading ${files.length} files...` : `Upload ${files.length} Files`}
           </button>
+        </div>
+      )}
+
+      {/* Delete All Resources */}
+      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-red-200 dark:border-red-900/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-red-200 dark:border-red-900/50 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Delete All Resources</h3>
+        </div>
+        <div className="p-4 flex flex-wrap gap-3">
+          <button
+            onClick={() => { setDeleteAllType('AUDIO'); setShowDeleteAllConfirm(true); }}
+            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" /> Delete All Audio
+          </button>
+          <button
+            onClick={() => { setDeleteAllType('VIDEO'); setShowDeleteAllConfirm(true); }}
+            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" /> Delete All Videos
+          </button>
+          <button
+            onClick={() => { setDeleteAllType('PDF'); setShowDeleteAllConfirm(true); }}
+            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" /> Delete All PDFs
+          </button>
+        </div>
+      </div>
+
+      {/* Delete All Confirm Modal */}
+      {showDeleteAllConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full mx-4"
+          >
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-3">
+                <Trash2 className="w-6 h-6 text-red-500" />
+              </div>
+              <h3 className="font-bold text-lg">
+                Delete All {deleteAllType === 'AUDIO' ? 'Audio' : deleteAllType === 'VIDEO' ? 'Videos' : 'PDFs'}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                This will permanently delete every {deleteAllType === 'AUDIO' ? 'audio file' : deleteAllType === 'VIDEO' ? 'video' : 'PDF'} in the database, including trashed items. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteAllConfirm(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAll}
+                disabled={deletingAll}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+              >
+                {deletingAll ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Delete All Permanently
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
 
