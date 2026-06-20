@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline — Sheikh Mohammed Zabuur</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Poppins', system-ui, sans-serif;
+        background: #0B1220;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        text-align: center;
+        padding: 2rem;
+      }
+      .container { max-width: 400px; }
+      .icon { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.6; }
+      h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+      p { color: rgba(255,255,255,0.5); font-size: 0.875rem; line-height: 1.6; margin-bottom: 2rem; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 2rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+        color: #fff;
+        text-decoration: none;
+        transition: transform 0.2s;
+      }
+      .btn:hover { transform: translateY(-2px); }
+      .downloads {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      .downloads p { font-size: 0.75rem; margin-bottom: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">📡</div>
+      <h1>You're Offline</h1>
+      <p>
+        Your internet connection has been lost. Don't worry — your downloaded
+        audio lectures, videos, and PDFs are still available.
+      </p>
+      <a href="/" class="btn">Try Again</a>
+      <a href="/my-downloads" class="btn" style="background:rgba(255,255,255,0.1);margin-top:0.75rem;display:inline-flex">
+        My Downloads
+      </a>
+      <div class="downloads">
+        <p>📥 Previously downloaded content works offline</p>
+      </div>
+    </div>
+  </body>
+</html>
