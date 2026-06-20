@@ -287,18 +287,20 @@ app.get('*', (req, res) => {
 
 console.log('Database Connected');
 
-// Fix old role enum values before syncing schema (STUDENT/TEACHER removed from Role enum)
-try {
-  await prisma.$executeRawUnsafe("UPDATE User SET role = 'USER' WHERE role NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN')");
-} catch {
-  console.warn('Role fix skipped');
-}
+async function setupDatabase() {
+  // Fix old role enum values before syncing schema (STUDENT/TEACHER removed from Role enum)
+  try {
+    await prisma.$executeRawUnsafe("UPDATE User SET role = 'USER' WHERE role NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN')");
+  } catch {
+    console.warn('Role fix skipped');
+  }
 
-// Sync Prisma schema to database
-try {
-  execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
-} catch {
-  console.warn('prisma db push failed — continuing anyway');
+  // Sync Prisma schema to database
+  try {
+    execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+  } catch {
+    console.warn('prisma db push failed — continuing anyway');
+  }
 }
 
 async function autoSeed() {
@@ -335,7 +337,7 @@ async function autoSeed() {
   console.log('Auto-seed complete.');
 }
 
-autoSeed().then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
+setupDatabase().then(() => autoSeed()).then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
