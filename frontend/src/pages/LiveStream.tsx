@@ -164,7 +164,7 @@ export default function LiveStream() {
 
   const fetchLiveState = async () => {
     try {
-      const res = await liveApi.get();
+      const res = await liveApi.getCurrent();
       setState((prev) => ({ ...prev, ...res.data }));
     } catch {
       // silent
@@ -336,7 +336,7 @@ export default function LiveStream() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button onClick={async () => { try { await liveApi.update({ isActive: !state.isActive }); setState(prev => ({ ...prev, isActive: !prev.isActive })); toast.success(state.isActive ? 'Stream stopped' : 'Stream started'); } catch { toast.error('Failed to toggle stream'); } }}
+                    <button onClick={async () => { try { if (state.isActive) { await liveApi.end(1); } else { await liveApi.start({ title: 'Live Stream', isLive: true }); } setState(prev => ({ ...prev, isActive: !prev.isActive })); toast.success(state.isActive ? 'Stream stopped' : 'Stream started'); } catch { toast.error('Failed to toggle stream'); } }}
                       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${state.isActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-black'}`}>
                       {state.isActive ? <X className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                       {state.isActive ? 'Stop Stream' : 'Start Stream'}

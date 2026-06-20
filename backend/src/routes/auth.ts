@@ -47,6 +47,7 @@ router.post('/login', validate(loginSchema), async (req: Request, res: Response)
     const { password: _, ...userData } = user;
     res.json({ user: userData, token });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ error: 'Login failed' });
   }
 });

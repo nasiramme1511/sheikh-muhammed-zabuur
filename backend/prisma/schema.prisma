@@ -18,15 +18,8 @@ model User {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  bookmarks        Bookmark[]
-  progress         UserProgress[]
-  listeningHistory ListeningHistory[]
-  watchHistory     WatchHistory[]
-  downloads        Download[]
-  schedules        Schedule[]
-  usageLogs        UsageLog[]
-  notifications    Notification[]
-  chatMessages     ChatMessage[]
+  chatMessages ChatMessage[]
+  usageLogs    UsageLog[]
 
   @@index([role])
 }
@@ -64,23 +57,46 @@ model ScholarProfile {
 }
 
 model SiteSettings {
-  id               Int     @id @default(autoincrement())
-  siteName         String  @default("Sheikh Mohammed Zabuur Official Platform")
-  siteDescription  String? @db.Text
-  logo             String?
-  favicon          String?
-  splashScreen     String?
-  heroImage        String?
-  socialShareImage String?
-  dashboardBanner  String?
-  appleTouchIcon   String?
-  pwaMaskableIcon  String?
-  contactEmail     String?
-  phone            String?
-  address          String? @db.Text
-  copyrightText    String?
-  defaultLanguage  String  @default("en")
-  maintenanceMode  Boolean @default(false)
+  id              Int     @id @default(autoincrement())
+  siteName        String  @default("Sheikh Mohammed Zabuur Official Platform")
+  siteDescription String? @db.Text
+  logo            String?
+  favicon         String?
+  telegramLink    String?
+  youtubeLink     String?
+  facebookLink    String?
+  googleMapEmbed  String?
+  googleMapLink   String?
+  contactEmail    String?
+  phone           String?
+  address         String? @db.Text
+  copyrightText   String?
+  defaultLanguage String  @default("en")
+  maintenanceMode Boolean @default(false)
+}
+
+model LiveStream {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.Text
+  streamUrl   String?
+  platform    String   @default("youtube")
+  isLive      Boolean  @default(false)
+  viewerCount Int      @default(0)
+  scheduledAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LiveRecording {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.Text
+  videoUrl    String
+  thumbnail   String?
+  recordedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Series {
@@ -103,11 +119,51 @@ model Series {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  lessons   Lesson[]
-  resources Resource[]
+  lessons      Lesson[]
+  audioLessons AudioLesson[]
+  videoLessons VideoLesson[]
+  resources    Resource[]
 
   @@index([slug])
   @@index([order])
+}
+
+model AudioLesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  audioUrl    String
+  thumbnail   String?
+  duration    Int?
+  seriesId    Int?
+  downloads   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  series Series? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([seriesId])
+}
+
+model VideoLesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  videoUrl    String
+  thumbnail   String?
+  duration    Int?
+  seriesId    Int?
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  series Series? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([seriesId])
 }
 
 model Category {
@@ -130,8 +186,6 @@ model Category {
   updatedAt   DateTime @updatedAt
 
   books   Book[]
-  lessons Lesson[]
-  courses Course[]
 
   @@index([slug])
   @@index([order])
@@ -163,248 +217,34 @@ model Book {
   updatedAt   DateTime @updatedAt
 
   category  Category?  @relation(fields: [categoryId], references: [id])
-  lessons   Lesson[]
   resources Resource[]
 
   @@index([slug])
   @@index([categoryId])
 }
 
-model Level {
-  id          Int      @id @default(autoincrement())
-  name        String
-  nameAmharic String?
-  nameArabic  String?
-  nameOromic  String?
-  slug        String   @unique
-  description String?
-  descriptionAmharic String?
-  descriptionArabic  String?
-  descriptionOromic  String?
-  order       Int      @default(0)
-  icon        String?
-  color       String?
-  createdAt   DateTime @default(now())
-
-  lessons Lesson[]
-  courses Course[]
-
-  @@index([slug])
-  @@index([order])
-}
-
-model Course {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  thumbnail   String?
-  description String?  @db.Text
-  categoryId  Int?
-  levelId     Int?
-  language    String   @default("en")
-  duration    Int?
-  status      String   @default("DRAFT")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  category      Category?      @relation(fields: [categoryId], references: [id])
-  level         Level?         @relation(fields: [levelId], references: [id])
-  lessons       Lesson[]
-  announcements Announcement[]
-
-  @@index([slug])
-  @@index([status])
-}
-
 model Lesson {
-  id          Int      @id @default(autoincrement())
-  title       String
-  titleAmharic String?
-  titleArabic String?
-  titleOromic String?
-  slug        String   @unique
-  description String?  @db.Text
-  descriptionAmharic String?  @db.Text
-  descriptionArabic  String?  @db.Text
-  descriptionOromic  String?  @db.Text
-  audioUrl    String
-  pdfUrl      String?
-  videoUrl    String?
-  transcript  String?  @db.Text
-  notes       String?  @db.Text
-  duration    Int?
+  id           Int      @id @default(autoincrement())
+  title        String
+  slug         String   @unique
+  description  String?  @db.Text
+  audioUrl     String
+  videoUrl     String?
+  duration     Int?
   episodeNumber Int?
-  seriesId   Int?
-  categoryId Int?
-  bookId     Int?
-  levelId    Int?
-  courseId   Int?
-  difficulty  String   @default("beginner")
-  isBeginner  Boolean  @default(false)
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  seriesId     Int?
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  series   Series?   @relation(fields: [seriesId], references: [id], onDelete: SetNull)
-  category  Category? @relation(fields: [categoryId], references: [id])
-  book      Book?     @relation(fields: [bookId], references: [id])
-  level     Level?    @relation(fields: [levelId], references: [id])
-  course    Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  bookmarks     Bookmark[]
-  progress      UserProgress[]
-  listeningHistory ListeningHistory[]
-  watchHistory     WatchHistory[]
-  downloads       Download[]
-  schedules       Schedule[]
+  series Series? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
 
   @@index([slug])
   @@index([seriesId])
-  @@index([categoryId])
-  @@index([levelId])
-  @@index([courseId])
   @@index([published])
-  @@index([isBeginner])
 }
 
-enum BookmarkType {
-  LESSON
-  SERIES
-  PDF
-}
 
-model Bookmark {
-  id        Int          @id @default(autoincrement())
-  userId    Int
-  lessonId  Int?
-  seriesId  Int?
-  pdfId     Int?
-  type      BookmarkType @default(LESSON)
-  createdAt DateTime     @default(now())
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId, seriesId, pdfId])
-  @@index([userId])
-  @@index([type])
-}
-
-model UserProgress {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  lessonId  Int
-  position  Float    @default(0)
-  completed Boolean  @default(false)
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-  @@index([userId])
-  @@index([lessonId])
-}
-
-model ListeningHistory {
-  id            Int      @id @default(autoincrement())
-  userId        Int
-  lessonId      Int
-  position      Float    @default(0)
-  duration      Int?
-  progress      Float    @default(0)
-  completed     Boolean  @default(false)
-  lastPlayedAt  DateTime @default(now()) @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-  @@index([userId])
-  @@index([lastPlayedAt])
-}
-
-model WatchHistory {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  lessonId     Int
-  position     Float    @default(0)
-  duration     Int?
-  progress     Float    @default(0)
-  completed    Boolean  @default(false)
-  lastWatchedAt DateTime @default(now()) @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-  @@index([userId])
-  @@index([lastWatchedAt])
-}
-
-enum DownloadType {
-  AUDIO
-  PDF
-}
-
-model Download {
-  id        Int          @id @default(autoincrement())
-  userId    Int
-  lessonId  Int?
-  resourceId Int?
-  type      DownloadType
-  fileUrl   String
-  fileSize  Int          @default(0)
-  downloadedAt DateTime @default(now())
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, lessonId])
-  @@index([userId])
-}
-
-model Schedule {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  lessonId  Int
-  dayOfWeek Int?
-  time      String?
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model UsageLog {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  action    String
-  metadata  String?
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([action])
-  @@index([createdAt])
-}
-
-model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  title     String
-  body      String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([read])
-}
 
 enum ResourceType {
   PDF
@@ -451,18 +291,6 @@ model Resource {
   @@index([seriesId])
 }
 
-model Announcement {
-  id        Int      @id @default(autoincrement())
-  courseId  Int?
-  title     String
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-
-  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@index([createdAt])
-}
-
 model TelegramChannel {
   id          Int      @id @default(autoincrement())
   name        String
@@ -502,4 +330,18 @@ model ChatMessage {
 
   @@index([sessionId])
   @@index([userId])
+}
+
+model UsageLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  metadata  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }

@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, Radio, BookOpen, Send, Info, ExternalLink } from 'lucide-react';
+import { Play, BookOpen, Headphones, Video, Download, Send } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { useAppearance } from '../../context/AppearanceContext';
 import ResponsiveScholarImage from '../ResponsiveScholarImage';
@@ -8,6 +9,26 @@ import ResponsiveScholarImage from '../ResponsiveScholarImage';
 export default function HeroSection() {
   const { t } = useTranslation();
   const { settings } = useAppearance();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      if (result.outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    }
+  };
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -76,61 +97,65 @@ export default function HeroSection() {
                 transition={{ duration: 0.8 }}
                 className="space-y-6 lg:space-y-8"
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/20">
-                  <Sparkles className="w-4 h-4 text-gold-400" />
-                  <span className="text-xs font-semibold text-gold-300 uppercase tracking-wider">
-                    {t('hero.badge')}
-                  </span>
-                </div>
-
                 <div className="space-y-4">
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1]">
-                    <span className="animated-gradient-text">{t('hero.title_line1')}</span>
+                    <span className="animated-gradient-text">
+                      Authentic Islamic Knowledge
+                    </span>
                     <br />
-                    <span className="text-white">{t('hero.title_line2')}</span>
+                    <span className="text-white">
+                      From Fajr to Maghrib
+                    </span>
                   </h1>
 
                   <p className="text-lg lg:text-xl text-white/60 max-w-2xl leading-relaxed">
-                    {t('hero.subtitle')}
+                    Learn directly from Sheikh Mohammed Zabuur through structured Islamic lessons, live broadcasts, audio lectures, and educational resources.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    to="/series"
-                    className="btn-icc px-5 py-3 text-sm font-bold inline-flex items-center gap-2"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    Series
-                  </Link>
-                  <Link
                     to="/live"
                     className="btn-gold px-5 py-3 text-sm font-bold inline-flex items-center gap-2"
                   >
-                    <Radio className="w-4 h-4" />
-                    Live
+                    <Play className="w-4 h-4" />
+                    Watch Live
                   </Link>
                   <Link
-                    to="/contact"
+                    to="/series"
                     className="btn-outline px-5 py-3 text-sm font-bold inline-flex items-center gap-2 border-white/10 hover:border-icc-500/40"
                   >
-                    <Send className="w-4 h-4" />
-                    Contact
+                    <BookOpen className="w-4 h-4" />
+                    Browse Series
                   </Link>
                   <Link
-                    to="/about"
+                    to="/audio"
                     className="btn-outline px-5 py-3 text-sm font-bold inline-flex items-center gap-2 border-white/10 hover:border-icc-500/40"
                   >
-                    <Info className="w-4 h-4" />
-                    About
+                    <Headphones className="w-4 h-4" />
+                    Audio Library
                   </Link>
+                  <Link
+                    to="/videos"
+                    className="btn-outline px-5 py-3 text-sm font-bold inline-flex items-center gap-2 border-white/10 hover:border-icc-500/40"
+                  >
+                    <Video className="w-4 h-4" />
+                    Video Library
+                  </Link>
+                  <button
+                    onClick={handleInstall}
+                    className="btn-outline px-5 py-3 text-sm font-bold inline-flex items-center gap-2 border-white/10 hover:border-icc-500/40"
+                  >
+                    <Download className="w-4 h-4" />
+                    Install App
+                  </button>
                   <a
                     href="https://t.me/sheikhmohammedzabuur"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-outline px-5 py-3 text-sm font-bold inline-flex items-center gap-2 border-white/10 hover:border-icc-500/40"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <Send className="w-4 h-4" />
                     Telegram
                   </a>
                 </div>

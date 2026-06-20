@@ -15,7 +15,7 @@ import AdvancedVideoPlayer from '../components/AdvancedVideoPlayer';
 export default function Recordings() {
   const { t } = useTranslation();
   const ALL_RECORDINGS = t('recordings.badge');
-  const CATEGORIES = [ALL_RECORDINGS, 'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed', 'General Lectures'];
+  const CATEGORIES = [ALL_RECORDINGS, 'Aqeedah', 'Hadith', 'Tafsir', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Arabic', 'General Lectures'];
 
   useSEO({
     title: t('recordings.title'),

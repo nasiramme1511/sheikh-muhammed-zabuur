@@ -7,7 +7,6 @@ import { AuthProvider } from './context/AuthProvider';
 import { PlayerProvider } from './context/PlayerProvider';
 import { ThemeProvider } from './context/ThemeProvider';
 import { LanguageProvider } from './context/LanguageProvider';
-import { AIChatProvider } from './context/AIChatProvider';
 import { AppearanceProvider } from './context/AppearanceProvider';
 import { OfflineProvider } from './context/OfflineProvider';
 import { runResponsiveAudit } from './utils/responsiveAudit';
@@ -33,9 +32,7 @@ function Root() {
             <AuthProvider>
               <OfflineProvider>
                 <PlayerProvider>
-                  <AIChatProvider>
                     <App />
-                  </AIChatProvider>
                   <Toaster
                     position={isMobile ? 'bottom-center' : 'top-right'}
                     toastOptions={{

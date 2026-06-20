@@ -25,7 +25,7 @@ interface ImageResource {
   altText?: string;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Tajweed', 'Usul al-Fiqh', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
 
 function humanSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

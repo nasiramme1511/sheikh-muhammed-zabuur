@@ -24,8 +24,9 @@ const ALL_VIDEOS = 'All Videos';
 
 const CATEGORIES = [
   ALL_VIDEOS,
-  'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
-  'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
+  'Aqeedah', 'Hadith', 'Tafsir', 'Riyadus Salihin', 'Bulugh al-Maram',
+  'Fiqh', 'Seerah', 'Tajweed', 'Tajreed', 'Arabic', 'Usul',
+  'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
   'Questions & Answers', 'General',
 ];
 

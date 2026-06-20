@@ -44,7 +44,7 @@ interface EditForm {
   seriesId: number | null | string;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Tajweed', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
 
 function formatDuration(seconds?: number): string {
   if (!seconds) return '--:--';

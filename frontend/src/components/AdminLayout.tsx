@@ -2,12 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
   HiHome, HiMenu, HiX,
-  HiChevronLeft, HiBell, HiLogout,
+  HiChevronLeft, HiLogout,
   HiMusicNote, HiVideoCamera, HiCog,
 } from 'react-icons/hi';
 import {
-  Radio, FileText, Layout, User, Settings, Send, Megaphone,
-  Library, Globe,
+  Radio, Layout, User, Send,
+  Library, Globe, Video, Upload,
 } from 'lucide-react';
 import SmartThemeToggle from './SmartThemeToggle';
 import SmartLanguageSwitcher from './SmartLanguageSwitcher';
@@ -44,7 +44,7 @@ const navGroups: NavGroup[] = [
       { href: '/admin/series', labelKey: 'admin.study_series', icon: Library },
       { href: '/admin/audio', labelKey: 'admin.audio_lessons', icon: HiMusicNote },
       { href: '/admin/videos', labelKey: 'admin.video_lessons', icon: HiVideoCamera },
-      { href: '/admin/pdfs', labelKey: 'admin.pdf_library', icon: FileText },
+      { href: '/admin/bulk-upload', labelKey: 'admin.bulk_upload', icon: Upload },
     ],
   },
   {
@@ -52,7 +52,7 @@ const navGroups: NavGroup[] = [
     icon: Radio,
     items: [
       { href: '/admin/live', labelKey: 'admin.live_broadcasts', icon: Radio },
-      { href: '/admin/stream-schedule', labelKey: 'admin.live_schedule', icon: Settings },
+      { href: '/admin/recordings', labelKey: 'admin.recordings', icon: Video },
     ],
   },
   {
@@ -60,7 +60,6 @@ const navGroups: NavGroup[] = [
     icon: Send,
     items: [
       { href: '/admin/telegram', labelKey: 'admin.telegram_channels', icon: Send },
-      { href: '/admin/announcements', labelKey: 'admin.announcements', icon: Megaphone },
     ],
   },
   {
@@ -69,7 +68,6 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/admin/homepage', labelKey: 'admin.homepage', icon: Layout },
       { href: '/admin/scholar', labelKey: 'admin.biography', icon: User },
-      { href: '/admin/media', labelKey: 'admin.media_gallery', icon: HiMusicNote },
       { href: '/admin/site-settings', labelKey: 'admin.site_settings', icon: HiCog },
       { href: '/admin/seo', labelKey: 'admin.seo_settings', icon: Globe },
     ],

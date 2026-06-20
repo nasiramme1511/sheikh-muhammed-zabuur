@@ -29,7 +29,7 @@ interface PdfResource {
   book?: { id: number; title: string; slug?: string } | null;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Tajweed', 'Usul al-Fiqh', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -158,8 +158,13 @@ export default function PdfManagement() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    if (ext !== 'pdf') {
+      setUploadError(`Invalid file type .${ext}. Only PDF files are allowed. ZIP files should be uploaded via Bulk Upload.`);
+      e.target.value = '';
+      return;
+    }
     setUploadFile(file);
-    const ext = file.name.split('.').pop() || '';
     const baseName = file.name.substring(0, file.name.length - ext.length - 1);
     const pretty = baseName.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     setUploadTitle(pretty);

@@ -13,7 +13,6 @@ interface GeneralSettings {
 }
 
 interface FeatureSettings {
-  aiAssistant: boolean;
   userRegistration: boolean;
   comments: boolean;
   ratings: boolean;
@@ -58,7 +57,6 @@ const DEFAULT_GENERAL = (t: (k: string) => string): GeneralSettings => ({
 });
 
 const DEFAULT_FEATURES: FeatureSettings = {
-  aiAssistant: true,
   userRegistration: true,
   comments: true,
   ratings: true,
@@ -212,7 +210,6 @@ export default function AdminSettings() {
   const renderFeatures = () => (
     <div className="space-y-4">
       {[
-        { key: 'aiAssistant', label: t('admin.settings_ai_scholar'), desc: t('admin.settings_ai_scholar_desc') },
         { key: 'userRegistration', label: t('admin.settings_user_reg'), desc: t('admin.settings_user_reg_desc') },
         { key: 'comments', label: t('admin.settings_comments'), desc: t('admin.settings_comments_desc') },
         { key: 'ratings', label: t('admin.settings_ratings'), desc: t('admin.settings_ratings_desc') },

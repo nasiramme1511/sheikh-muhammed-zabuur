@@ -38,7 +38,7 @@ interface VideoResource {
   series?: SeriesItem | null;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Tajweed', 'Usul al-Fiqh', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -179,8 +179,14 @@ export default function VideoManagement() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    const allowed = ['mp4', 'webm', 'mov', 'mkv', 'ogv'];
+    if (!allowed.includes(ext)) {
+      setUploadError(`Invalid file type .${ext}. Only video files (${allowed.join(', ')}) are allowed. ZIP files should be uploaded via Bulk Upload.`);
+      e.target.value = '';
+      return;
+    }
     setUploadFile(file);
-    const ext = file.name.split('.').pop() || '';
     const baseName = file.name.substring(0, file.name.length - ext.length - 1);
     const pretty = baseName.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     setUploadTitle(pretty);
@@ -681,7 +687,7 @@ export default function VideoManagement() {
               <form onSubmit={handleUploadSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Video File</label>
-                  <input type="file" accept="video/*" onChange={handleFileChange} required className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-500 hover:file:bg-purple-500/20 file:cursor-pointer" />
+                  <input type="file" accept=".mp4,.webm,.mov,.mkv,.ogv" onChange={handleFileChange} required className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-500 hover:file:bg-purple-500/20 file:cursor-pointer" />
                   {uploadFile && <p className="text-xs text-gray-400 mt-1">Selected: {uploadFile.name} ({humanSize(uploadFile.size)})</p>}
                 </div>
                 <div>

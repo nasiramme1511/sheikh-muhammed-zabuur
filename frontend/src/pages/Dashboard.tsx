@@ -6,7 +6,6 @@ import { useTranslation, type TranslationKey } from '../i18n';
 import { users as usersApi, progress as progressApi } from '../lib/api';
 import type { UserProgress } from '../types';
 import LessonCard from '../components/LessonCard';
-import AIDashboardWidget from '../components/ai/AIDashboardWidget';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -77,10 +76,6 @@ export default function Dashboard() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mb-8">
-        <AIDashboardWidget />
       </div>
 
       {progress.length > 0 && (

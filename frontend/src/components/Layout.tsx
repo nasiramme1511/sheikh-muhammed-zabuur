@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BookOpen, Search, BookMarked, User, ArrowUp } from 'lucide-react';
+import { Home, BookOpen, Headphones, Radio, User, ArrowUp } from 'lucide-react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import FloatingPlayer from './FloatingPlayer';
-import AIChatButton from './ai/AIChatButton';
-import AIChatPanel from './ai/AIChatPanel';
+import FloatingTelegram from './FloatingTelegram';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from '../i18n';
@@ -18,10 +17,10 @@ import { useAppearance } from '../context/AppearanceContext';
 
 const navItems = [
   { icon: Home, key: 'nav.mobile_home', path: '/' },
+  { icon: Headphones, key: 'nav.audio_library', path: '/audio' },
   { icon: BookOpen, key: 'nav.series', path: '/series' },
-  { icon: Search, key: 'nav.mobile_search', path: '/search' },
-  { icon: BookMarked, key: 'nav.mobile_bookmarks', path: '/bookmarks', authRequired: true },
-  { icon: User, key: 'nav.mobile_profile', path: '/dashboard', authRequired: true },
+  { icon: Radio, key: 'nav.live_stream', path: '/live' },
+  { icon: User, key: 'nav.mobile_profile', path: '/login', authRequired: false },
 ];
 
 const guestNavItems: Array<{ icon: any; key: string; path: string; authRequired?: boolean }> = [
@@ -80,8 +79,7 @@ export default function Layout() {
       </main>
       <Footer />
       <FloatingPlayer />
-      <AIChatPanel />
-      <AIChatButton />
+      <FloatingTelegram />
       <InstallPrompt />
 
       <motion.button

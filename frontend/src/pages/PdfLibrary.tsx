@@ -23,8 +23,9 @@ const ALL_PDFS = 'All PDFs';
 
 const CATEGORIES = [
   ALL_PDFS,
-  'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Tajweed',
-  'Arabic', 'Usul', 'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
+  'Aqeedah', 'Hadith', 'Tafsir', 'Riyadus Salihin', 'Bulugh al-Maram',
+  'Fiqh', 'Seerah', 'Tajweed', 'Tajreed', 'Arabic', 'Usul',
+  'Manhaj', 'Adab', 'Khutbah', 'Ramadan',
   'Questions & Answers', 'General',
 ];
 

@@ -12,7 +12,7 @@ import { useTranslation } from '../i18n';
 import AdvancedVideoPlayer from '../components/AdvancedVideoPlayer';
 
 const ITEMS_PER_PAGE = 20;
-const CATEGORIES = ['All Categories', 'Aqeedah', 'Hadith', 'Tafsir', 'Fiqh', 'Seerah', 'Arabic', 'Tajweed', 'Manhaj', 'Adab', 'General'];
+const CATEGORIES = ['All Categories', 'Aqeedah', 'Hadith', 'Tafsir', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Arabic', 'Manhaj', 'Adab', 'General'];
 const RESOURCE_TYPES = ['All Types', 'PDF', 'AUDIO', 'VIDEO'];
 
 const TYPE_CONFIG: Record<string, { icon: any; color: string; bg: string; border: string }> = {
@@ -25,10 +25,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   Tafsir: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
   Aqeedah: 'bg-icc-500/20 text-icc-300 border-icc-500/30',
   Hadith: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  'Riyadus Salihin': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  'Bulugh al-Maram': 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+  Tajweed: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
+  Tajreed: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+  Usul: 'bg-violet-500/20 text-violet-300 border-violet-500/30',
   Fiqh: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
   Seerah: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
   Arabic: 'bg-red-500/20 text-red-300 border-red-500/30',
-  Tajweed: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
   Manhaj: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
   Adab: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
   General: 'bg-gray-500/20 text-gray-300 border-gray-500/30',

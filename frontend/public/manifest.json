@@ -1,18 +1,60 @@
 {
-  "name": "Sheikh Muhammed Zabuur — Official Educational Platform",
+  "name": "Sheikh Mohammed Zabuur — Official Islamic Learning Platform",
   "short_name": "Sh. Zabuur",
-  "description": "Learn Islamic knowledge offline with Sheikh Muhammed Zabuur. Download audio lectures, video lessons, and PDF books for offline use.",
+  "description": "Authentic Islamic education with Sheikh Mohammed Zabuur. Download audio lectures, video lessons, and PDF books. Study Tafsir, Hadith, Aqeedah, and Fiqh offline.",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#0F766E",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#0B1220",
   "theme_color": "#0F766E",
-  "categories": ["education", "religion", "islam"],
+  "categories": ["education", "religion", "islam", "books", "reference"],
   "lang": "en",
   "dir": "ltr",
   "scope": "/",
+  "id": "/",
   "prefer_related_applications": false,
   "icons": [
-    { "src": "/favicon.svg", "sizes": "48x48 96x96 128x128 192x192 256x256 512x512", "type": "image/svg+xml" }
-  ]
+    { "src": "/favicon.svg", "sizes": "48x48 96x96 128x128 192x192 256x256 512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Audio Lectures",
+      "short_name": "Audio",
+      "description": "Browse audio lectures by Sheikh Mohammed Zabuur",
+      "url": "/audio",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Video Lectures",
+      "short_name": "Videos",
+      "description": "Watch video lectures and recorded lessons",
+      "url": "/videos",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Study Series",
+      "short_name": "Series",
+      "description": "Explore structured Islamic study series",
+      "url": "/series",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Live Stream",
+      "short_name": "Live",
+      "description": "Join live stream broadcast",
+      "url": "/live",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "My Downloads",
+      "short_name": "Downloads",
+      "description": "Access your offline downloads",
+      "url": "/my-downloads",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "edge_side_panel": {}
 }

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, Award, Globe, Sparkles, Shield, MapPin, CheckCircle, Clock, BookMarked, Headphones, Target, Heart } from 'lucide-react';
 import { useSEO } from '../seo/metadata';
 import { useTranslation } from '../i18n';
+import LocationCard from '../components/LocationCard';
 
 export default function About() {
   const { t } = useTranslation();
@@ -210,6 +211,24 @@ export default function About() {
             ))}
           </ul>
           <p className="text-xs text-white/40 italic">{t('about.advanced_studies_note')}</p>
+        </motion.div>
+
+        {/* Teaching Location */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-8"
+        >
+          <div className="glass-card p-8 md:p-10 mb-4">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <MapPin className="w-6 h-6 text-icc-400" /> Teaching Location
+            </h2>
+            <p className="text-sm text-white/60 leading-relaxed mb-6">
+              Visitors can attend lessons and events at the Sheikh's teaching location. The center is open daily for students seeking authentic Islamic knowledge.
+            </p>
+          </div>
+          <LocationCard variant="full" />
         </motion.div>
 
         {/* Teaching Methodology */}

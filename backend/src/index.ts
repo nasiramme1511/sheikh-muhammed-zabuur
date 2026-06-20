@@ -7,36 +7,22 @@ import { execSync } from 'child_process';
 import prisma from './lib/prisma';
 import { authLimiter, apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/auth';
-import categoryRoutes from './routes/categories';
 import lessonRoutes from './routes/lessons';
-import bookRoutes from './routes/books';
-import bookmarkRoutes from './routes/bookmarks';
-import levelRoutes from './routes/levels';
-import progressRoutes from './routes/progress';
-import scheduleRoutes from './routes/schedules';
 import searchRoutes from './routes/search';
 import userRoutes from './routes/users';
 import telegramRoutes from './routes/telegram';
 import adminRoutes from './routes/admin';
-import aiRoutes from './routes/ai';
 import newsletterRoutes from './routes/newsletter';
 import resourcesRoutes from './routes/resources';
-import courseRoutes from './routes/courses';
-import notificationsRoutes from './routes/notifications';
-import analyticsRoutes from './routes/analytics';
 import scholarRoutes from './routes/scholar';
 import siteSettingsRoutes from './routes/siteSettings';
 import liveRoutes from './routes/live';
-import dashboardRoutes from './routes/dashboard';
-import importRoutes from './routes/import';
 import seriesRoutes from './routes/series';
 import resourceCategoryRoutes from './routes/resourceCategories';
 import appearanceRoutes from './routes/appearance';
 import settingsRoutes from './routes/settings';
-import downloadRoutes from './routes/download';
 import brandingRoutes from './routes/branding';
-import historyRoutes from './routes/history';
-import downloadsCrudRoutes from './routes/downloads';
+import downloadRoutes from './routes/download';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -53,12 +39,14 @@ const UPLOAD_DIR = path.join(__dirname, '../uploads');
 function deriveCategory(name: string): string {
   const n = path.basename(name, path.extname(name)).toLowerCase().replace(/[-_]/g, ' ');
   const pairs: [string, string][] = [
-    ['tafsir', 'Tafsir'], ['quran', 'Tafsir'], ['surah', 'Tafsir'], ['ayat', 'Tafsir'],
-    ['hadith', 'Hadith'], ['bukhari', 'Hadith'], ['muslim', 'Hadith'],
-    ['riyad', 'Riyadus Salihin'], ['salihin', 'Riyadus Salihin'], ['riyadh', 'Riyadus Salihin'],
+    ['tafsir', 'Tafsir'], ['quran', 'Tafsir'], ['surah', 'Tafsir'], ['ayat', 'Tafsir'], ['tafsiira', 'Tafsir'],
+    ['hadith', 'Hadith'], ['bukhari', 'Hadith'], ['muslim', 'Hadith'], ['bayquniyyah', 'Hadith'], ['bayquni', 'Hadith'],
+    ['riyad', 'Riyadus Salihin'], ['salihin', 'Riyadus Salihin'], ['riyadh', 'Riyadus Salihin'], ['riyada', 'Riyadus Salihin'],
     ['tajweed', 'Tajweed'], ['tajwid', 'Tajweed'], ['tahsin', 'Tajweed'], ['qaidah', 'Tajweed'], ['nuraniyyah', 'Tajweed'], ['noorani', 'Tajweed'],
-    ['usul al fiqh', 'Usul al-Fiqh'], ['usul', 'Usul al-Fiqh'],
-    ['fiqh', 'Fiqh'], ['salah', 'Fiqh'], ['prayer', 'Fiqh'], ['bulugh', 'Fiqh'], ['umdah', 'Fiqh'],
+    ['tajreed', 'Tajreed'], ['tajrid', 'Tajreed'],
+    ['bulugh', 'Bulugh al-Maram'], ['buluukaa', 'Bulugh al-Maram'], ['maram', 'Bulugh al-Maram'],
+    ['usul', 'Usul'], ['usool', 'Usul'], ['usuulu', 'Usul'],
+    ['fiqh', 'Fiqh'], ['salah', 'Fiqh'], ['prayer', 'Fiqh'], ['umdah', 'Fiqh'],
     ['seerah', 'Seerah'], ['sirah', 'Seerah'], ['prophet', 'Seerah'], ['raheeq', 'Seerah'], ['makhtum', 'Seerah'],
     ['aqeedah', 'Aqeedah'], ['aqidah', 'Aqeedah'], ['tawheed', 'Aqeedah'], ['tawhid', 'Aqeedah'], ['wasitiyyah', 'Aqeedah'],
     ['arabic', 'Arabic Language'], ['nahw', 'Arabic Language'], ['sarf', 'Arabic Language'], ['grammar', 'Arabic Language'], ['ajrumiyyah', 'Arabic Language'],
@@ -228,36 +216,22 @@ app.set('trust proxy', 1);
 app.use('/api', apiLimiter);
 
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/categories', categoryRoutes);
 app.use('/api/series', seriesRoutes);
-app.use('/api/levels', levelRoutes);
 app.use('/api/lessons', lessonRoutes);
-app.use('/api/books', bookRoutes);
-app.use('/api/bookmarks', bookmarkRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/schedules', scheduleRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/telegram', telegramRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/resources', resourcesRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/notifications', notificationsRoutes);
-app.use('/api/analytics', analyticsRoutes);
 app.use('/api/live', liveRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/admin/import', importRoutes);
 app.use('/api/resource-categories', resourceCategoryRoutes);
 app.use('/api/appearance', appearanceRoutes);
-app.use('/api/download', downloadRoutes);
 app.use('/api/admin/settings', settingsRoutes);
 app.use('/api/scholar', scholarRoutes);
 app.use('/api/site-settings', siteSettingsRoutes);
 app.use('/api/branding', brandingRoutes);
-app.use('/api/history', historyRoutes);
-app.use('/api/downloads', downloadsCrudRoutes);
+app.use('/api/downloads', downloadRoutes);
 
 // Serve client static files
 const CLIENT_DIST = path.join(__dirname, '../../frontend/dist');
@@ -288,152 +262,20 @@ app.get('*', (req, res) => {
 console.log('Database Connected');
 
 async function setupDatabase() {
-  // Fix old role enum values before syncing schema (STUDENT/TEACHER removed from Role enum)
   try {
     await prisma.$executeRawUnsafe("UPDATE User SET role = 'USER' WHERE role NOT IN ('USER', 'ADMIN', 'SUPER_ADMIN')");
   } catch {
-    console.warn('Role fix skipped');
+    // ignore
   }
 
-  // Sync Prisma schema to database
   try {
-    execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+    execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'ignore' });
   } catch {
-    console.warn('prisma db push failed — continuing anyway');
+    // ignore
   }
 }
 
-async function autoSeed() {
-  const count = await prisma.series.count();
-  if (count > 0) return; // already seeded
-
-  console.log('Auto-seeding production data...');
-
-  const seriesData = [
-    { name: "Tafsir Al-Qur'an", nameAmharic: 'ተፍሲር አል-ቁርአን', nameArabic: 'تفسير القرآن', nameOromic: "Tafsiira Al-Qur'aan", slug: 'tafsir-al-quran', description: "In-depth explanation and interpretation of the Noble Qur'an, covering meanings, context, and rulings.", icon: '📖', color: '#7C3AED', order: 1 },
-    { name: 'Riyadus Salihin', nameAmharic: 'ሪያዱስ ሷሊሒን', nameArabic: 'رياض الصالحين', nameOromic: 'Riyaadus Saalihiin', slug: 'riyadus-salihin', description: "Study of Imam an-Nawawi's renowned collection of hadith on righteous conduct.", icon: '🌿', color: '#059669', order: 2 },
-    { name: 'Bulugh al-Maram', nameAmharic: 'ቡሉግ አል-ማራም', nameArabic: 'بلوغ المرام', nameOromic: 'Bulugh al-Maraam', slug: 'bulugh-al-maram', description: "Comprehensive study of Ibn Hajar al-Asqalani's collection of hadith on Islamic jurisprudence.", icon: '⚖️', color: '#B45309', order: 3 },
-    { name: 'Usul ath-Thalathah', nameAmharic: 'ኡሱል አሥ-ሠላሠህ', nameArabic: 'الأصول الثلاثة', nameOromic: 'Usuul ath-Thalaatha', slug: 'usul-ath-thalathah', description: 'Study of the three fundamental principles of Islam based on the treatise by Muhammad ibn Abd al-Wahhab.', icon: '🕌', color: '#1E40AF', order: 4 },
-    { name: 'Kitab at-Tawheed', nameAmharic: 'ኪታብ አት-ተውሒድ', nameArabic: 'كتاب التوحيد', nameOromic: 'Kitaab at-Tawhiid', slug: 'kitab-at-tawheed', description: 'Study of the book of monotheism, explaining the concept of Tawheed and what contradicts it.', icon: '🤲', color: '#DC2626', order: 5 },
-    { name: 'Tajreed', nameAmharic: 'ታጅሪድ', nameArabic: 'تجريد', nameOromic: 'Tajriid', slug: 'tajreed', description: 'Refined selected hadith for deeper understanding of Islamic texts.', icon: '🎙️', color: '#4F46E5', order: 6 },
-    { name: 'Al-Bayquniyyah', nameAmharic: 'አል-በይቁኒያህ', nameArabic: 'البيقونية', nameOromic: 'Al-Bayquniyyah', slug: 'al-bayquniyyah', description: 'Study of the classical poem on hadith terminology and classification.', icon: '📜', color: '#0D9488', order: 7 },
-    { name: "Al-Arba'in an-Nawawiyyah", nameAmharic: 'አል-አርበዒን አን-ነወውይህ', nameArabic: 'الأربعون النووية', nameOromic: "Al-Arba'iin an-Nawawiyyah", slug: 'al-arbain-an-nawawiyyah', description: "Study of Imam an-Nawawi's collection of 40 essential hadith covering the fundamentals of Islam.", icon: '📗', color: '#DB2777', order: 8 },
-  ];
-  for (const s of seriesData) {
-    await prisma.series.upsert({ where: { slug: s.slug }, update: {}, create: s });
-  }
-
-  const categories = [
-    { name: 'Tafsir', nameAmharic: 'ተፍሲር', nameArabic: 'تفسير', nameOromic: 'Tafsiira', slug: 'tafsir', description: 'Quranic exegesis', icon: '📖', color: '#7C3AED', order: 1 },
-    { name: 'Usul', nameAmharic: 'ኡሱል', nameArabic: 'أصول', nameOromic: 'Usuulii', slug: 'usul', description: 'Principles of Islamic jurisprudence', icon: '⚖️', color: '#059669', order: 2 },
-    { name: 'Bulugh', nameAmharic: 'ቡሉግ', nameArabic: 'بلوغ', nameOromic: 'Bulughii', slug: 'bulugh', description: 'Hadith compilation on rulings', icon: '📚', color: '#B45309', order: 3 },
-    { name: 'Tajreed', nameAmharic: 'ታጅሪድ', nameArabic: 'تجريد', nameOromic: 'Tajriidii', slug: 'tajreed', description: 'Refined selected hadith', icon: '🎙️', color: '#4F46E5', order: 4 },
-    { name: 'Riyad', nameAmharic: 'ሪያድ', nameArabic: 'رياض', nameOromic: 'Riyaadii', slug: 'riyad', description: 'Gardens of the righteous', icon: '🌿', color: '#65A30D', order: 5 },
-  ];
-  for (const cat of categories) {
-    await prisma.category.upsert({ where: { slug: cat.slug }, update: {}, create: cat });
-  }
-
-  console.log('Auto-seed complete.');
-}
-
-// ── Assign unlinked lessons → series ──────────────────────────
-async function assignLessonsToSeries() {
-  const startTime = Date.now();
-  const [seriesList, catList, bookList] = await Promise.all([
-    prisma.series.findMany({ select: { id: true, slug: true } }),
-    prisma.category.findMany({ select: { id: true, slug: true, name: true } }),
-    prisma.book.findMany({ select: { id: true, slug: true, title: true } }),
-  ]);
-  const seriesBySlug = new Map(seriesList.map(s => [s.slug, s.id]));
-  const catBySlug = new Map(catList.map(c => [c.slug, c.id]));
-
-  // Category slug → series slug mapping
-  const CAT_SERIES: Record<string, string> = {
-    tafsir: 'tafsir-al-quran',
-    usul: 'usul-ath-thalathah',
-    bulugh: 'bulugh-al-maram',
-    tajreed: 'tajreed',
-    riyad: 'riyadus-salihin',
-  };
-
-  // Book slug → series slug mapping
-  const BOOK_SERIES: Record<string, string> = {
-    'kitab-at-tawheed': 'kitab-at-tawheed',
-    'tafsir-ibn-kathir': 'tafsir-al-quran',
-    'sahih-al-bukhari': 'riyadus-salihin',
-    'umdat-al-ahkam': 'bulugh-al-maram',
-    'riyadh-as-salihin': 'riyadus-salihin',
-    'al-manhaj-as-salim': 'usul-ath-thalathah',
-    'tafsiira-sheekh-muussaa': 'tafsir-al-quran',
-    'aqiidaa-kee-qabadhu': 'kitab-at-tawheed',
-    'hadiisa-afurtamman-nawaawwii': 'al-arbain-an-nawawiyyah',
-    'tafsiira-juziiwwan-sadan-boodaa': 'tafsir-al-quran',
-    'gabaabfamaa-bua-qabeessa-muslima-haaraaf': 'kitab-at-tawheed',
-  };
-
-  // Title keyword → series slug fallback
-  const TITLE_SERIES: [RegExp, string][] = [
-    [/(tafsir|tafsiira)/i, 'tafsir-al-quran'],
-    [/(aqeedah|aqiida|tawheed|tawhid)/i, 'kitab-at-tawheed'],
-    [/(hadith|hadiis)/i, 'riyadus-salihin'],
-    [/(salaat|xahaara|purif|prayer|condition)/i, 'bulugh-al-maram'],
-    [/^barnoota/i, 'usul-ath-thalathah'],
-  ];
-
-  const lessons = await prisma.lesson.findMany({
-    where: { seriesId: null },
-    select: { id: true, title: true, categoryId: true, bookId: true },
-  });
-  if (lessons.length === 0) return; // silent skip
-
-  let updated = 0;
-  let skipped = 0;
-  for (const lesson of lessons) {
-    let seriesSlug: string | null = null;
-    let reason = '';
-
-    if (lesson.categoryId) {
-      const cat = catList.find(c => c.id === lesson.categoryId);
-      if (cat && CAT_SERIES[cat.slug]) {
-        seriesSlug = CAT_SERIES[cat.slug];
-        reason = `category "${cat.name}" → "${seriesSlug}"`;
-      }
-    }
-
-    if (!seriesSlug && lesson.bookId) {
-      const book = bookList.find(b => b.id === lesson.bookId);
-      if (book && BOOK_SERIES[book.slug]) {
-        seriesSlug = BOOK_SERIES[book.slug];
-        reason = `book "${book.title}" → "${seriesSlug}"`;
-      }
-    }
-
-    if (!seriesSlug) {
-      for (const [regex, slug] of TITLE_SERIES) {
-        if (regex.test(lesson.title)) {
-          seriesSlug = slug;
-          reason = `title match → "${slug}"`;
-          break;
-        }
-      }
-    }
-
-    if (seriesSlug && seriesBySlug.has(seriesSlug)) {
-      await prisma.lesson.update({
-        where: { id: lesson.id },
-        data: { seriesId: seriesBySlug.get(seriesSlug)! },
-      });
-      updated++;
-    } else {
-      skipped++;
-    }
-  }
-  const elapsed = Date.now() - startTime;
-  console.log(`assignLessonsToSeries: ${updated} linked, ${skipped} skipped (${elapsed}ms)`);
-}
-
-setupDatabase().then(() => autoSeed()).then(() => assignLessonsToSeries()).then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
+setupDatabase().then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

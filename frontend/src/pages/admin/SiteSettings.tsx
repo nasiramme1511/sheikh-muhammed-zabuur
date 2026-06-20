@@ -17,6 +17,9 @@ interface SiteSettingsData {
   copyrightText: string;
   defaultLanguage: string;
   maintenanceMode: boolean;
+  telegramLink: string;
+  googleMapEmbed: string;
+  googleMapLink: string;
 }
 
 export default function AdminSiteSettings() {
@@ -32,6 +35,9 @@ export default function AdminSiteSettings() {
     copyrightText: '',
     defaultLanguage: 'en',
     maintenanceMode: false,
+    telegramLink: '',
+    googleMapEmbed: '',
+    googleMapLink: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -50,6 +56,9 @@ export default function AdminSiteSettings() {
         copyrightText: d.copyrightText || '',
         defaultLanguage: d.defaultLanguage || 'en',
         maintenanceMode: d.maintenanceMode || false,
+        telegramLink: d.telegramLink || '',
+        googleMapEmbed: d.googleMapEmbed || '',
+        googleMapLink: d.googleMapLink || '',
       });
     }).catch(() => {
       toast.error('Failed to load site settings');
@@ -133,6 +142,20 @@ export default function AdminSiteSettings() {
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Copyright Text</label>
             <input value={form.copyrightText} onChange={e => setForm(f => ({ ...f, copyrightText: e.target.value }))} className="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-icc-500 min-h-[44px]" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telegram Link</label>
+            <input value={form.telegramLink} onChange={e => setForm(f => ({ ...f, telegramLink: e.target.value }))} placeholder="https://t.me/sheikhmohammedzabuur" className="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-icc-500 min-h-[44px]" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Google Maps Embed URL</label>
+            <input value={form.googleMapEmbed} onChange={e => setForm(f => ({ ...f, googleMapEmbed: e.target.value }))} placeholder="<iframe src=...>" className="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-icc-500 min-h-[44px]" />
+            <p className="text-xs text-gray-500 mt-1">Paste the full embed iframe src URL from Google Maps</p>
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Google Maps URL (Location Link)</label>
+            <input value={form.googleMapLink} onChange={e => setForm(f => ({ ...f, googleMapLink: e.target.value }))} placeholder="https://maps.app.goo.gl/ehUvnR3LAsLNov3A7?g_st=ac" className="w-full px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-icc-500 min-h-[44px]" />
+            <p className="text-xs text-gray-500 mt-1">Used for Open in Google Maps, Get Directions, and QR Code on the Contact page and Footer</p>
           </div>
           <div className="md:col-span-2">
             <label className="flex items-center gap-3">

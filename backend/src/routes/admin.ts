@@ -3,6 +3,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import http from 'http';
+import https from 'https';
 import crypto from 'crypto';
 import prisma from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
@@ -108,21 +110,23 @@ const upload = multer({
 
 function deriveCategory(name: string): string {
   const n = name.toLowerCase();
-  if (n.includes('tafsir') || n.includes('quran') || n.includes('surah') || n.includes('ayat')) return 'Tafsir';
+  if (n.includes('tafsir') || n.includes('quran') || n.includes('surah') || n.includes('ayat') || n.includes('tafsiira')) return 'Tafsir';
   if (n.includes('aqeedah') || n.includes('aqidah') || n.includes('tawheed') || n.includes('wasitiyyah') || n.includes('iman') || n.includes('rububiyyah') || n.includes('uluhiyyah')) return 'Aqeedah';
-  if (n.includes('hadith') || n.includes('bukhari') || n.includes('muslim') || n.includes('sahih') || n.includes('ahkam')) return 'Hadith';
-  if (n.includes('fiqh') || n.includes('prayer') || n.includes('salah') || n.includes('wudu') || n.includes('zakat') || n.includes('sawm') || n.includes('hajj') || n.includes('bulugh') || n.includes('umdah')) return 'Fiqh';
+  if (n.includes('hadith') || n.includes('bukhari') || n.includes('muslim') || n.includes('sahih') || n.includes('ahkam') || n.includes('bayquniyyah') || n.includes('bayquni')) return 'Hadith';
+  if (n.includes('bulugh') || n.includes('buluukaa') || n.includes('maram')) return 'Bulugh al-Maram';
+  if (n.includes('fiqh') || n.includes('prayer') || n.includes('salah') || n.includes('wudu') || n.includes('zakat') || n.includes('sawm') || n.includes('hajj') || n.includes('umdah')) return 'Fiqh';
   if (n.includes('seerah') || n.includes('prophet') || n.includes('sirah') || n.includes('muhammad') || n.includes('raheeq') || n.includes('makhtum')) return 'Seerah';
   if (n.includes('arabic') || n.includes('grammar') || n.includes('nahw') || n.includes('sarf') || n.includes('ajrumiyyah')) return 'Arabic Language';
   if (n.includes('tajweed') || n.includes('recitation') || n.includes('tajwid') || n.includes('tahsin') || n.includes('qaidah') || n.includes('nuraniyyah')) return 'Tajweed';
+  if (n.includes('tajreed') || n.includes('tajrid')) return 'Tajreed';
   if (n.includes('manhaj') || n.includes('salaf')) return 'Manhaj';
   if (n.includes('character') || n.includes('adab') || n.includes('akhlaq') || n.includes('ikhlas') || n.includes('niyyah')) return 'Adab';
-  if (n.includes('riyad') || n.includes('salihin')) return 'Riyadus Salihin';
+  if (n.includes('riyad') || n.includes('salihin') || n.includes('riyada')) return 'Riyadus Salihin';
   if (n.includes('dawah') || n.includes('da\'wah')) return "Da'wah";
   if (n.includes('khutbah') || n.includes('sermon')) return 'Khutbah';
   if (n.includes('ramadan')) return 'Ramadan Series';
   if (n.includes('qa') || n.includes('question') || n.includes('fatwa')) return 'Questions & Answers';
-  if (n.includes('usul') || n.includes('usool')) return 'Usul al-Fiqh';
+  if (n.includes('usul') || n.includes('usool') || n.includes('usuulu')) return 'Usul';
   return 'General Lectures';
 }
 
@@ -132,6 +136,142 @@ function prettyTitle(name: string): string {
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+async function processZipFile(zipPath: string, zipFileName: string, duplicateAction: string, results: any[]): Promise<void> {
+  let zipErrors: string[] = [];
+  try {
+    const AdmZip = require('adm-zip');
+    const zip = new AdmZip(zipPath);
+    const zipEntries = zip.getEntries();
+    let extracted = 0;
+    let zipCreated = 0;
+    let zipSkipped = 0;
+    for (const entry of zipEntries) {
+      try {
+        if (entry.isDirectory) continue;
+        const entryExt = path.extname(entry.entryName).toLowerCase();
+        if (BLOCKED_EXTS.has(entryExt)) { results.push({ file: entry.entryName, status: 'skipped', message: 'Blocked extension: ' + entryExt }); zipSkipped++; continue; }
+        const detected = detectTypeFromExt(entryExt);
+        if (!detected) { results.push({ file: entry.entryName, status: 'skipped', message: 'Unsupported file type: ' + entryExt }); zipSkipped++; continue; }
+        const originalName = path.basename(entry.entryName);
+        const safeName = sanitizeFilename(originalName);
+        const extractDir = path.join(os.tmpdir(), 'zip-extract-' + Date.now());
+        if (!fs.existsSync(extractDir)) fs.mkdirSync(extractDir, { recursive: true });
+        const extractedPath = path.join(extractDir, safeName);
+        const entryData = entry.getData();
+        if (!entryData) { results.push({ file: entry.entryName, status: 'error', message: 'Failed to read entry data from ZIP' }); zipErrors.push('No data for ' + entry.entryName); continue; }
+        fs.writeFileSync(extractedPath, entryData);
+
+        const uploadResult = await uploadFile(extractedPath, safeName);
+        try { fs.unlinkSync(extractedPath); } catch {}
+        const fileUrl = uploadResult.url;
+
+        const title = prettyTitle(safeName);
+        const existing = await prisma.resource.findFirst({ where: { fileUrl } });
+        if (!existing || duplicateAction === 'replace') {
+          const data = {
+            title,
+            fileUrl,
+            fileHash: null as string | null,
+            fileType: detected.typeLabel,
+            resourceType: detected.resourceType as any,
+            category: deriveCategory(safeName),
+            collection: deriveCollectionFromName(safeName),
+            language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
+          };
+          if (existing) {
+            await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
+            results.push({ file: safeName, url: fileUrl, status: 'replaced' });
+            zipCreated++;
+          } else {
+            await prisma.resource.create({ data: { ...data, views: 0, downloads: 0 } });
+            results.push({ file: safeName, url: fileUrl, status: 'created' });
+            zipCreated++;
+          }
+          extracted++;
+        } else {
+          results.push({ file: safeName, url: fileUrl, status: 'skipped' });
+          zipSkipped++;
+        }
+      } catch (entryErr: any) {
+        zipErrors.push(`Entry ${entry.entryName}: ${entryErr.message}`);
+        results.push({ file: entry.entryName, status: 'error', message: entryErr.message });
+      }
+    }
+    const zipTotal = zipEntries.filter((e: any) => !e.isDirectory).length;
+    logImport(zipFileName, zipTotal, zipCreated, zipErrors.length, zipErrors);
+    results.push({ zip: zipFileName, extracted, created: zipCreated, skipped: zipSkipped, errors: zipErrors.length, status: 'extracted' });
+  } catch (zipErr: any) {
+    zipErrors.push(zipErr.message);
+    logImport(zipFileName, 0, 0, 1, [zipErr.message]);
+    results.push({ file: zipFileName, status: 'error', message: 'ZIP extraction failed: ' + zipErr.message });
+  }
+}
+
+// ── Upload from URL ─────────────────────────────────────────────
+router.post('/upload/from-url', async (req: AuthRequest, res: Response) => {
+  try {
+    const { url, duplicateAction } = req.body;
+    if (!url) return res.status(400).json({ error: 'URL is required' });
+
+    const urlObj = new URL(url);
+    const ext = path.extname(urlObj.pathname).toLowerCase();
+    if (!ext) return res.status(400).json({ error: 'Could not detect file extension from URL' });
+    if (BLOCKED_EXTS.has(ext)) return res.status(400).json({ error: 'File type not allowed' });
+    if (ext !== '.zip' && !detectTypeFromExt(ext)) return res.status(400).json({ error: 'Unsupported file type: ' + ext });
+
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'url-dl-'));
+    const fileName = path.basename(urlObj.pathname) || 'download' + ext;
+    const tempPath = path.join(tempDir, fileName);
+
+    await new Promise<void>((resolve, reject) => {
+      const mod = url.startsWith('https') ? https : http;
+      mod.get(url, (response) => {
+        if (response.statusCode !== 200) { reject(new Error('Download failed with status ' + response.statusCode)); return; }
+        const ws = fs.createWriteStream(tempPath);
+        response.pipe(ws);
+        ws.on('finish', () => { ws.close(); resolve(); });
+        ws.on('error', reject);
+      }).on('error', reject);
+    });
+
+    const results: any[] = [];
+    if (ext === '.zip') {
+      await processZipFile(tempPath, fileName, (duplicateAction as string) || 'skip', results);
+    } else {
+      const detected = detectTypeFromExt(ext)!;
+      const uploadResult = await uploadFile(tempPath, fileName);
+      const fileUrl = uploadResult.url;
+      const title = prettyTitle(fileName);
+      const act = (duplicateAction as string) || 'skip';
+      const existing = await prisma.resource.findFirst({ where: { fileUrl } });
+      if (existing && act === 'skip') {
+        results.push({ file: fileName, url: fileUrl, status: 'skipped' });
+      } else if (existing && act === 'replace') {
+        await prisma.resource.update({ where: { id: existing.id }, data: { title, category: deriveCategory(fileName), collection: deriveCollectionFromName(fileName), resourceType: detected.resourceType as any, fileType: detected.typeLabel, updatedAt: new Date() } });
+        results.push({ file: fileName, url: fileUrl, status: 'replaced' });
+      } else if (!existing) {
+        const resource = await prisma.resource.create({ data: { title, fileUrl, fileHash: null, fileType: detected.typeLabel, resourceType: detected.resourceType as any, category: deriveCategory(fileName), collection: deriveCollectionFromName(fileName), language: /[\u0600-\u06FF]/.test(fileName) ? 'ar' : 'en', views: 0, downloads: 0 } });
+        results.push({ id: resource.id, file: fileName, title, url: fileUrl, type: detected.typeLabel, status: 'created' });
+      }
+    }
+
+    try { fs.unlinkSync(tempPath); } catch {}
+    try { fs.rmdirSync(tempDir, { recursive: true }); } catch {}
+
+    res.json({
+      total: 1, created: results.filter(r => r.status === 'created').length,
+      skipped: results.filter(r => r.status === 'skipped').length,
+      replaced: results.filter(r => r.status === 'replaced').length,
+      extracted: results.filter(r => r.status === 'extracted').length,
+      errors: results.filter(r => r.status === 'error').length,
+      results,
+    });
+  } catch (err: any) {
+    console.error('URL upload error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.post('/upload', (req: AuthRequest, res: Response) => {
   upload.single('file')(req, res, async (err) => {
@@ -1230,77 +1370,10 @@ router.post('/upload/bulk', (req: AuthRequest, res: Response) => {
 
     for (const file of files) {
       try {
-        // Handle ZIP extraction
+        // Handle ZIP extraction (delegate to shared function)
         if (path.extname(file.originalname).toLowerCase() === '.zip') {
-          let zipErrors: string[] = [];
-          try {
-            const AdmZip = require('adm-zip');
-            const zip = new AdmZip(file.path);
-            const zipEntries = zip.getEntries();
-            let extracted = 0;
-            let zipCreated = 0;
-            let zipSkipped = 0;
-            for (const entry of zipEntries) {
-              try {
-                if (entry.isDirectory) continue;
-                const entryExt = path.extname(entry.entryName).toLowerCase();
-                if (BLOCKED_EXTS.has(entryExt)) continue;
-                const detected = detectTypeFromExt(entryExt);
-                if (!detected) continue;
-                const originalName = path.basename(entry.entryName);
-                const safeName = sanitizeFilename(originalName);
-                const extractDir = path.join(os.tmpdir(), 'zip-extract-' + Date.now());
-                if (!fs.existsSync(extractDir)) fs.mkdirSync(extractDir, { recursive: true });
-                const extractedPath = path.join(extractDir, safeName);
-                zip.extractEntryTo(entry, extractDir, false, true);
-                if (!fs.existsSync(extractedPath)) continue;
-
-                const uploadResult = await uploadFile(extractedPath, safeName);
-                try { fs.unlinkSync(extractedPath); } catch {}
-                const fileUrl = uploadResult.url;
-
-                const title = prettyTitle(safeName);
-                const existing = await prisma.resource.findFirst({ where: { fileUrl } });
-                if (!existing || duplicateAction === 'replace') {
-                  const data = {
-                    title,
-                    fileUrl,
-                    fileHash: null as string | null,
-                    fileType: detected.typeLabel,
-                    resourceType: detected.resourceType as any,
-                    category: deriveCategory(safeName),
-                    collection: deriveCollectionFromName(safeName),
-                    language: /[\u0600-\u06FF]/.test(safeName) ? 'ar' : 'en',
-                  };
-                  if (existing) {
-                    await prisma.resource.update({ where: { id: existing.id }, data: { ...data, updatedAt: new Date() } });
-                    results.push({ file: safeName, url: fileUrl, status: 'replaced' });
-                    zipCreated++;
-                  } else {
-                    await prisma.resource.create({ data: { ...data, views: 0, downloads: 0 } });
-                    results.push({ file: safeName, url: fileUrl, status: 'created' });
-                    zipCreated++;
-                  }
-                  extracted++;
-                } else {
-                  results.push({ file: safeName, url: fileUrl, status: 'skipped' });
-                  zipSkipped++;
-                }
-              } catch (entryErr: any) {
-                zipErrors.push(`Entry ${entry.entryName}: ${entryErr.message}`);
-                results.push({ file: entry.entryName, status: 'error', message: entryErr.message });
-              }
-            }
-            try { fs.unlinkSync(file.path); } catch {}
-            const zipTotal = zipEntries.filter((e: any) => !e.isDirectory).length;
-            logImport(file.originalname, zipTotal, zipCreated, zipErrors.length, zipErrors);
-            results.push({ zip: file.originalname, extracted, created: zipCreated, skipped: zipSkipped, errors: zipErrors.length, status: 'extracted' });
-          } catch (zipErr: any) {
-            zipErrors.push(zipErr.message);
-            logImport(file.originalname, 0, 0, 1, [zipErr.message]);
-            results.push({ file: file.originalname, status: 'error', message: 'ZIP extraction failed: ' + zipErr.message });
-            try { fs.unlinkSync(file.path); } catch {}
-          }
+          await processZipFile(file.path, file.originalname, duplicateAction, results);
+          try { fs.unlinkSync(file.path); } catch {}
           continue;
         }
 

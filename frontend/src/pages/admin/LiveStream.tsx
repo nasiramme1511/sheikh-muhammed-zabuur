@@ -65,11 +65,10 @@ export default function AdminLiveStream() {
   const [seriesList, setSeriesList] = useState<SeriesItem[]>([]);
 
   useEffect(() => {
-    liveApi.get()
+    liveApi.getCurrent()
       .then(res => {
-        setState(res.data);
-        setRecordingCollection(res.data.savedCollection || '');
-        setSeriesId(res.data.seriesId ? String(res.data.seriesId) : '');
+        const d = res.data;
+        setState(prev => ({ ...prev, isActive: !!d.isActive, title: d.title || '', url: d.streamUrl || '' }));
       })
       .catch(() => setError('Failed to load live stream settings'))
       .finally(() => setLoading(false));
@@ -83,8 +82,10 @@ export default function AdminLiveStream() {
     setError('');
     setSaved(false);
     try {
-      const res = await liveApi.update({ ...state, collection: recordingCollection || undefined, seriesId: seriesId || undefined });
-      setState(res.data);
+      const payload = { title: state.title, streamUrl: state.url, isLive: state.isActive };
+      if (state.isActive) {
+        await liveApi.start(payload);
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) {
@@ -98,7 +99,11 @@ export default function AdminLiveStream() {
     const updated = { ...state, isActive: !state.isActive };
     setState(updated);
     try {
-      await liveApi.update({ isActive: !state.isActive, collection: recordingCollection || undefined, seriesId: seriesId || undefined });
+      if (updated.isActive) {
+        await liveApi.start({ title: state.title, streamUrl: state.url, isLive: true });
+      } else {
+        await liveApi.end(1);
+      }
     } catch {
       setState(state); // revert
     }

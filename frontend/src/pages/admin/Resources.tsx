@@ -31,7 +31,7 @@ interface ResourceItem {
   book?: { id: number; title: string; slug?: string } | null;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Tajweed', 'Usul al-Fiqh', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Arabic Language', 'Manhaj', 'Adab', "Da'wah", 'Khutbah', 'Ramadan Series', 'Questions & Answers', 'General'];
 const RESOURCE_TYPES = ['PDF', 'AUDIO', 'VIDEO', 'IMAGE'];
 
 const TYPE_ICONS: Record<string, any> = {
@@ -117,10 +117,18 @@ export default function AdminResources() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+
+    // Reject ZIP files — they belong on Bulk Upload
+    if (ext === 'zip' || ext === 'rar' || ext === '7z') {
+      setUploadError(`Archive files (.${ext}) are not supported here. Please use the Bulk Upload page for ZIP archives.`);
+      e.target.value = '';
+      return;
+    }
+
     setUploadFile(file);
     
     // Auto-fill Title from name
-    const ext = file.name.split('.').pop() || '';
     const baseName = file.name.substring(0, file.name.length - ext.length - 1);
     const pretty = baseName
       .replace(/[-_]/g, ' ')
@@ -129,12 +137,11 @@ export default function AdminResources() {
 
     // Auto-detect type
     const mime = file.type;
-    const extLower = ext.toLowerCase();
-    if (mime === 'application/pdf' || extLower === 'pdf') {
+    if (mime === 'application/pdf' || ext === 'pdf') {
       setUploadResourceType('PDF');
-    } else if (mime.startsWith('audio/') || ['.mp3', '.wav', '.ogg', '.aac', '.m4a'].includes('.' + extLower)) {
+    } else if (mime.startsWith('audio/') || ['.mp3', '.wav', '.ogg', '.aac', '.m4a'].includes('.' + ext)) {
       setUploadResourceType('AUDIO');
-    } else if (mime.startsWith('video/') || ['.mp4', '.webm', '.ogv', '.mov'].includes('.' + extLower)) {
+    } else if (mime.startsWith('video/') || ['.mp4', '.webm', '.ogv', '.mov'].includes('.' + ext)) {
       setUploadResourceType('VIDEO');
     }
   };
@@ -808,7 +815,7 @@ export default function AdminResources() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">File</label>
                   <input
                     type="file"
-                    accept="image/*,audio/*,video/*,application/pdf"
+                    accept=".mp3,.wav,.m4a,.ogg,.aac,.mp4,.webm,.mov,.mkv,.ogv,.pdf,.jpg,.jpeg,.png,.webp,.gif"
                     onChange={handleFileChange}
                     required
                     className="w-full text-sm text-gray-500 dark:text-gray-400

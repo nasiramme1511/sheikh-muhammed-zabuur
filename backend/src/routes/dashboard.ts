@@ -149,12 +149,38 @@ router.delete('/bookmarks/:lessonId', async (req: AuthRequest, res: Response) =>
 router.get('/downloads', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const downloads = await prisma.usageLog.findMany({
+    const logs = await prisma.usageLog.findMany({
       where: { userId, action: { in: ['download', 'download_pdf', 'download_audio', 'download_video'] } },
       orderBy: { createdAt: 'desc' },
       take: 50,
     });
-    res.json(downloads);
+    const items = await Promise.all(logs.map(async (log) => {
+      let lesson: any = null;
+      let lessonId: number | undefined;
+      let fileUrl: string | undefined;
+      let fileSize: number | undefined;
+      try {
+        const meta = JSON.parse(log.metadata || '{}');
+        lessonId = meta.resourceId || meta.lessonId;
+        if (lessonId) {
+          const resource = await prisma.resource.findUnique({ where: { id: lessonId } });
+          if (resource) {
+            lesson = { title: resource.title, description: resource.description };
+            fileUrl = resource.fileUrl;
+            fileSize = resource.fileSize || undefined;
+          }
+        }
+      } catch { /* metadata not valid JSON */ }
+      return {
+        id: log.id,
+        lessonId,
+        lesson,
+        fileUrl,
+        fileSize,
+        downloadedAt: log.createdAt.toISOString(),
+      };
+    }));
+    res.json(items);
   } catch {
     res.status(500).json({ error: 'Failed to fetch downloads' });
   }

@@ -18,7 +18,7 @@ interface ScheduleEntry {
   category: string;
 }
 
-const CATEGORIES = ['Tafsir', 'Hadith', 'Seerah', 'Fiqh', 'Aqeedah', 'Q&A', 'Ramadan Series', 'General'];
+const CATEGORIES = ['Tafsir', 'Hadith', 'Riyadus Salihin', 'Bulugh al-Maram', 'Tajweed', 'Tajreed', 'Usul', 'Fiqh', 'Seerah', 'Aqeedah', 'Q&A', 'Ramadan Series', 'General'];
 
 const STATUS_STYLES: Record<string, string> = {
   upcoming: 'bg-blue-500/10 text-blue-400 border-blue-500/20',

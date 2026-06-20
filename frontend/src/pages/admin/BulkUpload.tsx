@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, X, FileText, Music, Video, Image,
   AlertCircle, CheckCircle, RefreshCw, Archive, File,
-  Download, Trash2,
+  Download, Trash2, Globe,
 } from 'lucide-react';
 import { admin } from '../../lib/api';
 
@@ -31,7 +31,38 @@ export default function AdminBulkUpload() {
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [deleteAllType, setDeleteAllType] = useState<'AUDIO' | 'VIDEO' | 'PDF'>('AUDIO');
   const [deletingAll, setDeletingAll] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [urlLoading, setUrlLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const autoTriggered = useRef(false);
+
+  const doUpload = async (fileList: File[]) => {
+    if (fileList.length === 0) return;
+    setUploading(true);
+    setResults([]);
+    const formData = new FormData();
+    for (const f of fileList) {
+      formData.append('files', f);
+    }
+    formData.append('duplicateAction', duplicateAction);
+    try {
+      const res = await admin.uploadBulk(formData);
+      setResults(res.data.results || []);
+    } catch {
+      setResults([{ status: 'error', message: 'Upload failed. Check server connection.' }]);
+    }
+    setUploading(false);
+  };
+
+  useEffect(() => {
+    if (files.length > 0 && !uploading && !autoTriggered.current) {
+      autoTriggered.current = true;
+      doUpload(files);
+    }
+    if (files.length === 0) {
+      autoTriggered.current = false;
+    }
+  }, [files]);
 
   const handleDeleteAll = async () => {
     setDeletingAll(true);
@@ -49,29 +80,21 @@ export default function AdminBulkUpload() {
       const allowed = ['mp3', 'wav', 'm4a', 'ogg', 'aac', 'mp4', 'webm', 'mov', 'mkv', 'ogv', 'pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif', 'zip'];
       return allowed.includes(ext);
     });
-    setFiles(prev => [...prev, ...newFiles]);
+    if (newFiles.length > 0) setFiles(newFiles);
   };
 
-  const removeFile = (i: number) => {
-    setFiles(prev => prev.filter((_, idx) => idx !== i));
-  };
-
-  const upload = async () => {
-    if (files.length === 0) return;
-    setUploading(true);
+  const handleUrlSubmit = async () => {
+    if (!urlInput.trim()) return;
+    setUrlLoading(true);
     setResults([]);
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append('files', file);
-    }
-    formData.append('duplicateAction', duplicateAction);
     try {
-      const res = await admin.uploadBulk(formData);
+      const res = await admin.uploadFromUrl({ url: urlInput.trim(), duplicateAction });
       setResults(res.data.results || []);
+      setUrlInput('');
     } catch {
-      setResults([{ status: 'error', message: 'Upload failed. Check server connection.' }]);
+      setResults([{ status: 'error', message: 'URL download failed. Check the link and server connection.' }]);
     }
-    setUploading(false);
+    setUrlLoading(false);
   };
 
   const totalCreated = results.filter(r => r.status === 'created').length;
@@ -116,127 +139,49 @@ export default function AdminBulkUpload() {
         </p>
       </div>
 
-      {/* File list */}
-      {files.length > 0 && (
-        <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {files.length} file{files.length > 1 ? 's' : ''} selected
-            </span>
-            <button onClick={() => setFiles([])} className="text-xs text-red-400 hover:text-red-300 font-medium">
-              Clear all
-            </button>
-          </div>
-          <div className="divide-y divide-gray-100 dark:divide-gray-700/50 max-h-64 overflow-y-auto">
-            {files.map((file, i) => {
-              const ext = file.name.split('.').pop()?.toLowerCase();
-              const Icon = ext === 'pdf' ? FileText : ['mp3', 'wav', 'm4a', 'ogg', 'aac'].includes(ext || '') ? Music : ['mp4', 'webm', 'mov', 'mkv'].includes(ext || '') ? Video : ext === 'zip' ? Archive : Image;
-              const color = ext === 'pdf' ? 'text-red-400' : ['mp3', 'wav', 'm4a', 'ogg', 'aac'].includes(ext || '') ? 'text-blue-400' : ['mp4', 'webm', 'mov', 'mkv'].includes(ext || '') ? 'text-purple-400' : ext === 'zip' ? 'text-amber-400' : 'text-icc-400';
-              return (
-                <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                  <Icon className={`w-4 h-4 shrink-0 ${color}`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{file.name}</p>
-                    <p className="text-xs text-gray-400">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
-                  </div>
-                  <button onClick={() => removeFile(i)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-400">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+      {/* Upload from URL */}
+      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex items-center gap-3 mb-3">
+          <Globe className="w-5 h-5 text-icc-500" />
+          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Upload from URL</span>
         </div>
-      )}
-
-      {/* Controls */}
-      {files.length > 0 && (
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-500">Duplicates:</label>
-            <select
-              value={duplicateAction}
-              onChange={(e) => setDuplicateAction(e.target.value as any)}
-              className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
-            >
-              <option value="skip">Skip</option>
-              <option value="replace">Replace</option>
-            </select>
-          </div>
+        <div className="flex gap-2">
+          <input
+            type="url"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            placeholder="Paste a download link (Google Drive, Dropbox, etc.)"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-icc-500/50"
+          />
           <button
-            onClick={upload}
-            disabled={uploading}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:opacity-50 text-white text-sm font-semibold transition-all"
+            onClick={handleUrlSubmit}
+            disabled={urlLoading || !urlInput.trim()}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-icc-500 hover:bg-icc-400 disabled:opacity-50 text-white text-sm font-semibold transition-all whitespace-nowrap"
           >
-            {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {uploading ? `Uploading ${files.length} files...` : `Upload ${files.length} Files`}
-          </button>
-        </div>
-      )}
-
-      {/* Delete All Resources */}
-      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-red-200 dark:border-red-900/50 overflow-hidden">
-        <div className="px-4 py-3 border-b border-red-200 dark:border-red-900/50 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Delete All Resources</h3>
-        </div>
-        <div className="p-4 flex flex-wrap gap-3">
-          <button
-            onClick={() => { setDeleteAllType('AUDIO'); setShowDeleteAllConfirm(true); }}
-            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
-          >
-            <Trash2 className="w-4 h-4" /> Delete All Audio
-          </button>
-          <button
-            onClick={() => { setDeleteAllType('VIDEO'); setShowDeleteAllConfirm(true); }}
-            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
-          >
-            <Trash2 className="w-4 h-4" /> Delete All Videos
-          </button>
-          <button
-            onClick={() => { setDeleteAllType('PDF'); setShowDeleteAllConfirm(true); }}
-            className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"
-          >
-            <Trash2 className="w-4 h-4" /> Delete All PDFs
+            {urlLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {urlLoading ? 'Downloading...' : 'Download & Process'}
           </button>
         </div>
       </div>
 
-      {/* Delete All Confirm Modal */}
-      {showDeleteAllConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full mx-4"
-          >
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-3">
-                <Trash2 className="w-6 h-6 text-red-500" />
-              </div>
-              <h3 className="font-bold text-lg">
-                Delete All {deleteAllType === 'AUDIO' ? 'Audio' : deleteAllType === 'VIDEO' ? 'Videos' : 'PDFs'}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                This will permanently delete every {deleteAllType === 'AUDIO' ? 'audio file' : deleteAllType === 'VIDEO' ? 'video' : 'PDF'} in the database, including trashed items. This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteAllConfirm(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteAll}
-                disabled={deletingAll}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
-              >
-                {deletingAll ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                Delete All Permanently
-              </button>
-            </div>
-          </motion.div>
+      {/* Duplicate action selector */}
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-gray-500">Duplicates:</label>
+        <select
+          value={duplicateAction}
+          onChange={(e) => setDuplicateAction(e.target.value as any)}
+          className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm"
+        >
+          <option value="skip">Skip</option>
+          <option value="replace">Replace</option>
+        </select>
+      </div>
+
+      {/* Upload progress */}
+      {uploading && (
+        <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3">
+          <RefreshCw className="w-5 h-5 text-icc-500 animate-spin" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">Uploading and processing files...</span>
         </div>
       )}
 
@@ -279,6 +224,37 @@ export default function AdminBulkUpload() {
               </AnimatePresence>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Delete All Resources */}
+      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-red-200 dark:border-red-900/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-red-200 dark:border-red-900/50 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Delete All Resources</h3>
+        </div>
+        <div className="p-4 flex flex-wrap gap-3">
+          <button onClick={() => { setDeleteAllType('AUDIO'); setShowDeleteAllConfirm(true); }} className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"><Trash2 className="w-4 h-4" /> Delete All Audio</button>
+          <button onClick={() => { setDeleteAllType('VIDEO'); setShowDeleteAllConfirm(true); }} className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"><Trash2 className="w-4 h-4" /> Delete All Videos</button>
+          <button onClick={() => { setDeleteAllType('PDF'); setShowDeleteAllConfirm(true); }} className="btn-danger text-sm px-4 py-2 inline-flex items-center gap-2"><Trash2 className="w-4 h-4" /> Delete All PDFs</button>
+        </div>
+      </div>
+
+      {/* Delete All Confirm Modal */}
+      {showDeleteAllConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-3"><Trash2 className="w-6 h-6 text-red-500" /></div>
+              <h3 className="font-bold text-lg">Delete All {deleteAllType === 'AUDIO' ? 'Audio' : deleteAllType === 'VIDEO' ? 'Videos' : 'PDFs'}</h3>
+              <p className="text-sm text-gray-500 mt-1">This will permanently delete every {deleteAllType === 'AUDIO' ? 'audio file' : deleteAllType === 'VIDEO' ? 'video' : 'PDF'} in the database, including trashed items. This action cannot be undone.</p>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowDeleteAllConfirm(false)} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+              <button onClick={handleDeleteAll} disabled={deletingAll} className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-all">
+                {deletingAll ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />} Delete All Permanently
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </motion.div>

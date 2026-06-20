@@ -34,12 +34,6 @@ export const auth = {
   register: (email: string, password: string, name: string) => api.post('/auth/register', { email, password, name }),
 };
 
-export const categories = {
-  getAll: () => api.get('/categories'),
-  getBySlug: (slug: string) => api.get(`/categories/${slug}`),
-  getBeginner: () => api.get('/categories/beginner'),
-};
-
 export const search = {
   all: (q: string, type?: string) => api.get('/search', { params: { q, type } }),
 };
@@ -59,19 +53,19 @@ export const users = {
   getStats: () => api.get('/users/stats'),
 };
 
-export const books = {
-  getAll: () => api.get('/books'),
-  getBySlug: (slug: string) => api.get(`/books/${slug}`),
-  getByTeacher: (teacherId: number) => api.get(`/books/teacher/${teacherId}`),
-};
-
 export const newsletter = {
   subscribe: (email: string, language?: string) => api.post('/newsletter/subscribe', { email, language }),
 };
 
 export const live = {
-  get: () => api.get('/live'),
-  update: (data: any) => api.put('/live', data),
+  get: (params?: any) => api.get('/live', { params }),
+  getCurrent: () => api.get('/live/current'),
+  start: (data: any) => api.post('/live/start', data),
+  end: (id: number) => api.put(`/live/end/${id}`),
+  update: (...args: any[]) => {
+    if (args.length === 1) return api.put('/live', args[0]);
+    return api.put(`/live/${args[0]}`, args[1]);
+  },
 };
 
 export const appearance = {
@@ -108,6 +102,7 @@ export const admin = {
     headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 600000,
   }),
+  uploadFromUrl: (data: { url: string; duplicateAction?: string }) => api.post('/admin/upload/from-url', data, { timeout: 600000 }),
   resources: {
     getAll: () => api.get('/admin/resources'),
     getTrash: () => api.get('/admin/resources/trash'),
@@ -208,61 +203,18 @@ export const bulkImport = {
 };
 
 export const dashboard = {
-  get: () => api.get('/dashboard'),
-  getBookmarks: () => api.get('/dashboard/bookmarks'),
-  checkBookmark: (lessonId: number) => api.get(`/dashboard/bookmarks/check/${lessonId}`),
-  addBookmark: (lessonId: number) => api.post(`/dashboard/bookmarks/${lessonId}`),
-  removeBookmark: (lessonId: number) => api.delete(`/dashboard/bookmarks/${lessonId}`),
-  getDownloads: () => api.get('/dashboard/downloads'),
-  getActivity: () => api.get('/dashboard/activity'),
-  getRecommended: () => api.get('/dashboard/recommended'),
+  get: (params?: any) => api.get('/dashboard', { params }),
+  getActivity: (params?: any) => api.get('/dashboard/activity', { params }),
+  getBookmarks: (params?: any) => api.get('/dashboard/bookmarks', { params }),
+  getDownloads: (params?: any) => api.get('/dashboard/downloads', { params }),
+  removeBookmark: (id: number) => api.delete(`/dashboard/bookmarks/${id}`),
   updateProfile: (data: any) => api.put('/dashboard/profile', data),
   changePassword: (data: any) => api.put('/dashboard/password', data),
-};
-
-export const downloads = {
-  getSecureUrl: (resourceId: number) => `/api/download/${resourceId}`,
-  track: (resourceId: number) => api.post(`/download/track/${resourceId}`),
-  download: (resourceId: number) => api.get(`/download/${resourceId}`, { responseType: 'blob' }),
-};
-
-// Convenience aliases used by AudioPlayer, LessonDetail etc.
-export const bookmarks = {
-  getAll: () => api.get('/bookmarks'),
-  add: (lessonId: number) => api.post(`/bookmarks/lesson/${lessonId}`),
-  remove: (lessonId: number) => api.delete(`/bookmarks/lesson/${lessonId}`),
-  check: (lessonId: number) => api.get(`/bookmarks/check/${lessonId}`),
-  addSeries: (seriesId: number) => api.post(`/bookmarks/series/${seriesId}`),
-};
-
-export const progress = {
-  getAll: () => api.get('/progress'),
-  update: (lessonId: number, position: number, completed = false) =>
-    api.post('/progress', { lessonId, position, completed }),
 };
 
 export const lessons = {
   getBySlug: (slug: string) => api.get(`/lessons/${slug}`),
   getAll: (params?: any) => api.get('/lessons', { params }),
-};
-
-export const collections = {
-  getBySlug: (slug: string, params?: any) => api.get(`/resources/collections/${slug}`, { params }),
-  getStats: () => api.get('/resources/collections/stats'),
-};
-
-export const courses = {
-  getAll: (params?: any) => api.get('/courses', { params }),
-  getBySlug: (slug: string) => api.get(`/courses/${slug}`),
-  getMyEnrollments: () => api.get('/courses/my-enrollments'),
-  enroll: (courseId: number) => api.post(`/courses/${courseId}/enroll`),
-  update: (id: number, data: any) => api.put(`/admin/courses/${id}`, data),
-};
-
-export const levels = {
-  getAll: () => api.get('/levels'),
-  getBySlug: (slug: string) => api.get(`/levels/${slug}`),
-  getLessons: (slug: string) => api.get(`/levels/${slug}/lessons`),
 };
 
 export const scholarProfile = {
@@ -282,6 +234,60 @@ export const siteSettings = {
   update: (data: any) => api.put('/site-settings', data),
 };
 
+export const categories = {
+  getAll: (params?: any) => api.get('/categories', { params }),
+  getBySlug: (slug: string, params?: any) => api.get(`/categories/${slug}`, { params }),
+  getStats: () => api.get('/categories/stats'),
+  getBeginner: () => api.get('/categories/beginner'),
+};
+
+export const collections = {
+  getAll: (params?: any) => api.get('/collections', { params }),
+  getBySlug: (slug: string, params?: any) => api.get(`/collections/${slug}`, { params }),
+  getStats: () => api.get('/collections/stats'),
+};
+
+export const books = {
+  getAll: (params?: any) => api.get('/books', { params }),
+  getBySlug: (slug: string, params?: any) => api.get(`/books/${slug}`, { params }),
+};
+
+export const levels = {
+  getAll: (params?: any) => api.get('/levels', { params }),
+  getBySlug: (slug: string, params?: any) => api.get(`/levels/${slug}`, { params }),
+  getLessons: (slug: string, params?: any) => api.get(`/levels/${slug}/lessons`, { params }),
+};
+
+export const bookmarks = {
+  getAll: (params?: any) => api.get('/bookmarks', { params }),
+  add: (data: any) => api.post('/bookmarks', data),
+  remove: (id: number) => api.delete(`/bookmarks/${id}`),
+  removeBookmark: (id: number) => api.delete(`/bookmarks/${id}`),
+};
+
+export const progress = {
+  get: (params?: any) => api.get('/progress', { params }),
+  getAll: (params?: any) => api.get('/progress', { params }),
+  update: (...args: any[]) => {
+    if (args.length === 1) return api.put('/progress', args[0]);
+    if (args.length === 2) return api.put(`/progress/${args[0]}`, { currentTime: args[1] });
+    return api.put(`/progress/${args[0]}`, { currentTime: args[1], completed: args[2] });
+  },
+};
+
+export const historyApi = {
+  getListening: (params?: any) => api.get('/history/listening', { params }),
+  getWatching: (params?: any) => api.get('/history/watching', { params }),
+  getActivity: (params?: any) => api.get('/history/activity', { params }),
+  deleteListening: (id: number) => api.delete(`/history/listening/${id}`),
+  deleteWatching: (id: number) => api.delete(`/history/watching/${id}`),
+};
+
+export const downloadsApi = {
+  getAll: (params?: any) => api.get('/downloads', { params }),
+  remove: (id: number) => api.delete(`/downloads/${id}`),
+};
+
 export const series = {
   getAll: () => api.get('/series'),
   getBySlug: (slug: string, params?: any) => api.get(`/series/${slug}`, { params }),
@@ -299,21 +305,18 @@ export const branding = {
   },
 };
 
-export const historyApi = {
-  getListening: () => api.get('/history/listening'),
-  updateListening: (lessonId: number, position: number, duration?: number) =>
-    api.post('/history/listening', { lessonId, position, duration }),
-  deleteListening: (lessonId: number) => api.delete(`/history/listening/${lessonId}`),
-  getWatching: () => api.get('/history/watching'),
-  updateWatching: (lessonId: number, position: number, duration?: number) =>
-    api.post('/history/watching', { lessonId, position, duration }),
-  deleteWatching: (lessonId: number) => api.delete(`/history/watching/${lessonId}`),
+export const audioLessons = {
+  getAll: () => api.get('/audio-lessons'),
+  getBySeries: (seriesId: number) => api.get(`/audio-lessons/series/${seriesId}`),
 };
 
-export const downloadsApi = {
-  getAll: () => api.get('/downloads'),
-  add: (lessonId: number, type: 'AUDIO' | 'PDF', fileUrl: string, fileSize?: number) =>
-    api.post('/downloads', { lessonId, type, fileUrl, fileSize }),
-  remove: (lessonId: number) => api.delete(`/downloads/${lessonId}`),
+export const videoLessons = {
+  getAll: () => api.get('/video-lessons'),
+  getBySeries: (seriesId: number) => api.get(`/video-lessons/series/${seriesId}`),
 };
 
+export const liveRecordings = {
+  getAll: () => api.get('/live/recordings'),
+  create: (data: any) => api.post('/live/recordings', data),
+  delete: (id: number) => api.delete(`/live/recordings/${id}`),
+};

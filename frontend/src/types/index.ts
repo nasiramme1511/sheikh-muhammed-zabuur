@@ -13,6 +13,106 @@ export interface User {
   createdAt: string;
 }
 
+export interface Level {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  order: number;
+  icon?: string;
+  color?: string;
+  _count?: { lessons: number };
+  [key: string]: any;
+}
+
+export interface Bookmark {
+  id: number;
+  resourceId: number;
+  lessonId?: number;
+  userId: number;
+  createdAt: string;
+  resource?: Resource;
+  lesson?: Lesson;
+  [key: string]: any;
+}
+
+export interface UserProgress {
+  id: number;
+  userId: number;
+  lessonId: number;
+  completed: boolean;
+  progress: number;
+  lastPosition?: number;
+  position?: number;
+  createdAt: string;
+  updatedAt: string;
+  lesson?: Lesson;
+}
+
+export interface BookmarkItem {
+  id: number;
+  title: string;
+  url: string;
+  type: string;
+  lessonId?: number;
+  lesson?: any;
+  createdAt: string;
+  [key: string]: any;
+}
+
+export interface DownloadItem {
+  id: number;
+  title: string;
+  url: string;
+  fileUrl?: string;
+  type: string;
+  size?: number;
+  fileSize?: number;
+  lessonId?: number;
+  lesson?: any;
+  downloadedAt: string;
+  [key: string]: any;
+}
+
+export interface ListeningHistoryItem {
+  id: number;
+  title: string;
+  url: string;
+  duration?: number;
+  completed?: boolean;
+  progress?: number;
+  position?: number;
+  lastPlayedAt?: string;
+  lessonId?: number;
+  lesson?: any;
+  playedAt: string;
+  [key: string]: any;
+}
+
+export interface WatchHistoryItem {
+  id: number;
+  title: string;
+  url: string;
+  duration?: number;
+  completed?: boolean;
+  progress?: number;
+  position?: number;
+  lastWatchedAt?: string;
+  lessonId?: number;
+  lesson?: any;
+  watchedAt: string;
+  [key: string]: any;
+}
+
+export interface UsageLog {
+  id: number;
+  action: string;
+  resourceType?: string;
+  metadata?: any;
+  createdAt: string;
+  [key: string]: any;
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -61,23 +161,6 @@ export interface Book {
   _count?: { lessons: number };
 }
 
-export interface Level {
-  id: number;
-  name: string;
-  nameAmharic?: string;
-  nameArabic?: string;
-  nameOromic?: string;
-  slug: string;
-  description?: string;
-  descriptionAmharic?: string;
-  descriptionArabic?: string;
-  descriptionOromic?: string;
-  order: number;
-  icon?: string;
-  color?: string;
-  _count?: { lessons: number };
-}
-
 export interface Series {
   id: number;
   name: string;
@@ -97,7 +180,6 @@ export interface Series {
   totalHours: number;
   createdAt: string;
   updatedAt: string;
-  _count?: { lessons: number };
 }
 
 export interface Lesson {
@@ -112,10 +194,8 @@ export interface Lesson {
   descriptionArabic?: string;
   descriptionOromic?: string;
   audioUrl: string;
-  pdfUrl?: string;
   videoUrl?: string;
-  transcript?: string;
-  notes?: string;
+  pdfUrl?: string;
   duration?: number;
   episodeNumber?: number;
   seriesId?: number;
@@ -123,59 +203,30 @@ export interface Lesson {
   bookId?: number;
   levelId?: number;
   courseId?: number;
-  difficulty: string;
-  isBeginner: boolean;
+  isBeginner?: boolean;
+  difficulty?: any;
+  category?: any;
+  book?: any;
+  level?: any;
   published: boolean;
-  createdAt: string;
-  series?: Series;
-  category?: Category;
-  book?: Book;
-  level?: Level;
-  userProgress?: UserProgress | null;
+  userProgress?: UserProgress;
   isBookmarked?: boolean;
   related?: Lesson[];
-}
-
-export interface Bookmark {
-  id: number;
-  userId: number;
-  lessonId: number;
   createdAt: string;
-  lesson: Lesson;
-}
-
-export interface UserProgress {
-  id: number;
-  userId: number;
-  lessonId: number;
-  position: number;
-  completed: boolean;
   updatedAt: string;
-  lesson?: Lesson;
-}
-
-export interface Schedule {
-  id: number;
-  userId: number;
-  lessonId: number;
-  dayOfWeek?: number;
-  time?: string;
-  active: boolean;
-  lesson: { id: number; title: string; slug: string; audioUrl: string; duration?: number };
+  series?: Series;
 }
 
 export interface SearchResults {
-  audio: Resource[];
-  videos: Resource[];
-  pdfs: Resource[];
-  recordings: Resource[];
-  telegramChannels?: {
-    id: number;
-    name: string;
-    link: string;
-    teacherName: string | null;
-    description: string | null;
-  }[];
+  lessons: Lesson[];
+  audioLessons: AudioLesson[];
+  videoLessons: VideoLesson[];
+  resources: Resource[];
+  audio: any[];
+  videos: any[];
+  pdfs: any[];
+  recordings: any[];
+  telegramChannels: any[];
 }
 
 export interface ChannelData {
@@ -193,46 +244,6 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export interface Course {
-  id: number;
-  title: string;
-  slug: string;
-  thumbnail?: string;
-  description?: string;
-  categoryId?: number;
-  levelId?: number;
-  language: string;
-  duration?: number;
-  status: 'DRAFT' | 'PUBLISHED';
-  createdAt: string;
-  updatedAt: string;
-  category?: Category;
-  level?: Level;
-  lessons?: Lesson[];
-  announcements?: Announcement[];
-  _count?: { lessons: number };
-}
-
-export interface Announcement {
-  id: number;
-  courseId?: number;
-  title: string;
-  content: string;
-  createdAt: string;
-}
-
-export interface UsageLog {
-  id: number;
-  userId: number;
-  lessonId?: number;
-  resourceId?: number;
-  action: string;
-  metadata?: string;
-  createdAt: string;
-  lesson?: Lesson;
-  resource?: Resource;
-}
-
 export interface Resource {
   id: number;
   name: string;
@@ -242,7 +253,6 @@ export interface Resource {
   collection?: string;
   language: string;
   author?: string;
-  bookId?: number;
   url: string;
   size: number;
   sizeHuman: string;
@@ -255,7 +265,7 @@ export interface Resource {
   downloads: number;
   views: number;
   thumbnail?: string;
-  book?: { id: number; title: string; slug?: string };
+  book?: Book;
 }
 
 export interface ScholarProfile {
@@ -285,15 +295,11 @@ export interface ScholarProfile {
 export interface SiteSettings {
   id: number;
   siteName: string;
-  siteDescription?: string;
-  logo?: string;
-  favicon?: string;
-  splashScreen?: string;
-  heroImage?: string;
-  socialShareImage?: string;
-  dashboardBanner?: string;
-  appleTouchIcon?: string;
-  pwaMaskableIcon?: string;
+  telegramLink?: string;
+  youtubeLink?: string;
+  facebookLink?: string;
+  googleMapEmbed?: string;
+  googleMapLink?: string;
   contactEmail?: string;
   phone?: string;
   address?: string;
@@ -302,84 +308,73 @@ export interface SiteSettings {
   maintenanceMode: boolean;
 }
 
-export type DownloadStatus = 'pending' | 'downloading' | 'completed' | 'paused' | 'error';
+export type DownloadStatus = 'pending' | 'downloading' | 'completed' | 'error';
 
 export interface OfflineResource {
   id: string;
   resourceId: number;
   type: 'AUDIO' | 'VIDEO' | 'PDF';
   title: string;
-  description?: string;
-  category?: string;
   url: string;
-  blob?: Blob;
   fileSize: number;
   sizeHuman: string;
   duration?: number;
   thumbnail?: string;
   downloadedAt: number;
-  lastPlayedAt?: number;
-  playPosition?: number;
   status: DownloadStatus;
   progress: number;
-  error?: string;
+  playPosition?: number;
+  lastPlayedAt?: string;
 }
 
-export type BookmarkType = 'LESSON' | 'SERIES' | 'PDF';
-
-export interface BookmarkItem {
+export interface AudioLesson {
   id: number;
-  userId: number;
-  lessonId?: number;
+  title: string;
+  slug: string;
+  description?: string;
+  audioUrl: string;
+  thumbnail?: string;
+  duration?: number;
   seriesId?: number;
-  pdfId?: number;
-  type: BookmarkType;
+  downloads: number;
   createdAt: string;
-  lesson?: Lesson & { series?: Series };
-  series?: Series;
+  updatedAt: string;
 }
 
-export interface ListeningHistoryItem {
+export interface VideoLesson {
   id: number;
-  userId: number;
-  lessonId: number;
-  position: number;
-  duration: number;
-  progress: number;
-  completed: boolean;
-  lastPlayedAt: string;
-  lesson: Lesson & { series?: Series };
+  title: string;
+  slug: string;
+  description?: string;
+  videoUrl: string;
+  thumbnail?: string;
+  duration?: number;
+  seriesId?: number;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface WatchHistoryItem {
+export interface LiveStream {
   id: number;
-  userId: number;
-  lessonId: number;
-  position: number;
-  duration: number;
-  progress: number;
-  completed: boolean;
-  lastWatchedAt: string;
-  lesson: Lesson & { series?: Series };
+  title: string;
+  description?: string;
+  streamUrl: string;
+  platform: string;
+  isLive: boolean;
+  viewerCount: number;
+  scheduledAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type DownloadType = 'AUDIO' | 'PDF';
-
-export interface DownloadItem {
+export interface LiveRecording {
   id: number;
-  userId: number;
-  lessonId: number;
-  type: DownloadType;
-  fileUrl: string;
-  fileSize: number;
-  downloadedAt: string;
-  lesson: {
-    id: number;
-    title: string;
-    slug: string;
-    duration?: number;
-    audioUrl: string;
-    seriesId?: number;
-  };
+  title: string;
+  description?: string;
+  videoUrl: string;
+  thumbnail?: string;
+  recordedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
-

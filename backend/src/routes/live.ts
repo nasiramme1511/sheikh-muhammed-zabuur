@@ -2,190 +2,185 @@ import { Router, Request, Response } from 'express';
 import { authenticate } from '../middleware/auth';
 import { adminOnly } from '../middleware/admin';
 import prisma from '../lib/prisma';
-import fs from 'fs';
-import path from 'path';
 
 const router = Router();
 
-const DATA_DIR = path.join(__dirname, '../../data');
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-const LIVESTREAM_FILE = path.join(DATA_DIR, 'livestream.json');
-
-interface UpcomingStream {
-  id: string;
-  title: string;
-  description?: string;
-  youtubeUrl?: string;
-  scheduledFor: string;
-  startDate?: string;
-  duration?: number;
-  status?: 'upcoming' | 'live' | 'ended';
-  category?: string;
-  collection?: string;
-  seriesId?: number | null;
-}
-
-interface LivestreamState {
-  url: string;
-  isActive: boolean;
-  title: string;
-  chatUrl: string;
-  youtubeChannelId: string;
-  schedule: UpcomingStream[];
-  viewers: number;
-  totalViewers: number;
-  totalStreams: number;
-  totalWatchHours: number;
-  activeSubscribers: number;
-}
-
-const defaultState: LivestreamState = {
-  url: '',
-  isActive: false,
-  title: 'Weekly Islamic Lecture',
-  chatUrl: '',
-  youtubeChannelId: '',
-  schedule: [],
-  viewers: 0,
-  totalViewers: 0,
-  totalStreams: 0,
-  totalWatchHours: 0,
-  activeSubscribers: 0,
-};
-
-function readState(): LivestreamState {
+// GET /api/live/current
+router.get('/current', async (_req: Request, res: Response) => {
   try {
-    if (fs.existsSync(LIVESTREAM_FILE)) {
-      const data = fs.readFileSync(LIVESTREAM_FILE, 'utf-8');
-      return JSON.parse(data);
-    }
+    const stream = await prisma.liveStream.findFirst({
+      where: { isLive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(stream || { isLive: false });
   } catch (err) {
-    console.error('Error reading livestream state:', err);
+    res.status(500).json({ error: 'Failed to fetch live stream' });
   }
-  return defaultState;
-}
-
-function writeState(state: LivestreamState) {
-  try {
-    fs.writeFileSync(LIVESTREAM_FILE, JSON.stringify(state, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Error writing livestream state:', err);
-  }
-}
-
-// GET /api/live
-router.get('/', (_req: Request, res: Response) => {
-  res.json(readState());
 });
 
-// PUT /api/live
+// GET /api/live
+router.get('/', async (_req: Request, res: Response) => {
+  try {
+    const stream = await prisma.liveStream.findFirst({
+      where: { isLive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    const schedule = await prisma.liveStream.findMany({
+      where: { isLive: false, scheduledAt: { gte: new Date() } },
+      orderBy: { scheduledAt: 'asc' },
+    });
+    res.json({
+      url: stream?.streamUrl || '',
+      isActive: !!stream,
+      title: stream?.title || '',
+      chatUrl: '',
+      youtubeChannelId: '',
+      schedule: schedule.map(s => ({
+        id: s.id.toString(),
+        title: s.title,
+        description: s.description,
+        scheduledFor: s.scheduledAt?.toISOString() || '',
+        status: 'upcoming' as const,
+      })),
+      viewerCount: stream?.viewerCount || 0,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch live stream' });
+  }
+});
+
+// POST /api/live/start
+router.post('/start', authenticate, adminOnly, async (req: Request, res: Response) => {
+  try {
+    const { title, description, streamUrl, platform } = req.body;
+    const stream = await prisma.liveStream.create({
+      data: {
+        title: title || 'Live Broadcast',
+        description,
+        streamUrl,
+        platform: platform || 'youtube',
+        isLive: true,
+        viewerCount: 0,
+        scheduledAt: new Date(),
+      },
+    });
+    res.json(stream);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to start live stream' });
+  }
+});
+
+// POST /api/live/end
+router.post('/end', authenticate, adminOnly, async (req: Request, res: Response) => {
+  try {
+    const activeStream = await prisma.liveStream.findFirst({
+      where: { isLive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!activeStream) {
+      return res.status(404).json({ error: 'No active live stream found' });
+    }
+    const { title, videoUrl, thumbnail } = req.body;
+    // Save as recording
+    await prisma.liveRecording.create({
+      data: {
+        title: title || activeStream.title,
+        videoUrl: videoUrl || activeStream.streamUrl || '',
+        thumbnail,
+        recordedAt: new Date(),
+      },
+    });
+    // End the stream
+    const ended = await prisma.liveStream.update({
+      where: { id: activeStream.id },
+      data: { isLive: false },
+    });
+    res.json(ended);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to end live stream' });
+  }
+});
+
+// GET /api/live/recordings
+router.get('/recordings', async (_req: Request, res: Response) => {
+  try {
+    const recordings = await prisma.liveRecording.findMany({
+      orderBy: { recordedAt: 'desc' },
+    });
+    res.json(recordings);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch recordings' });
+  }
+});
+
+// POST /api/live/recordings
+router.post('/recordings', authenticate, adminOnly, async (req: Request, res: Response) => {
+  try {
+    const { title, description, videoUrl, thumbnail, recordedAt } = req.body;
+    const recording = await prisma.liveRecording.create({
+      data: {
+        title,
+        description,
+        videoUrl,
+        thumbnail,
+        recordedAt: recordedAt ? new Date(recordedAt) : new Date(),
+      },
+    });
+    res.json(recording);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create recording' });
+  }
+});
+
+// DELETE /api/live/recordings/:id
+router.delete('/recordings/:id', authenticate, adminOnly, async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    await prisma.liveRecording.delete({ where: { id } });
+    res.json({ message: 'Recording deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete recording' });
+  }
+});
+
+// Backward compatible: PUT /api/live (used by admin panel)
 router.put('/', authenticate, adminOnly, async (req: Request, res: Response) => {
   try {
-    const { url, isActive, title, chatUrl, youtubeChannelId, schedule, collection, seriesId, viewers, totalViewers, totalStreams, totalWatchHours, activeSubscribers } = req.body;
-    const currentState = readState();
-    const wasActive = currentState.isActive;
-
-    if (url !== undefined) currentState.url = url;
-    if (isActive !== undefined) currentState.isActive = !!isActive;
-    if (title !== undefined) currentState.title = title;
-    if (chatUrl !== undefined) currentState.chatUrl = chatUrl;
-    if (youtubeChannelId !== undefined) currentState.youtubeChannelId = youtubeChannelId;
-    if (schedule !== undefined && Array.isArray(schedule)) {
-      currentState.schedule = schedule;
-    }
-    if (viewers !== undefined) currentState.viewers = viewers;
-    if (totalViewers !== undefined) currentState.totalViewers = totalViewers;
-    if (totalStreams !== undefined) currentState.totalStreams = totalStreams;
-    if (totalWatchHours !== undefined) currentState.totalWatchHours = totalWatchHours;
-    if (activeSubscribers !== undefined) currentState.activeSubscribers = activeSubscribers;
-
-    // Track analytics: increment totalStreams when going live
-    if (!wasActive && currentState.isActive) {
-      currentState.totalStreams = (currentState.totalStreams || 0) + 1;
-    }
-
-    writeState(currentState);
-
-    // Auto-save recording when stream ends
-    let savedRecordingUrl = '';
-    if (wasActive && !currentState.isActive && currentState.url) {
-      try {
-        const finalTitle = title || currentState.title || 'Live Stream Recording';
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        const existing = await prisma.resource.findFirst({
-          where: { fileUrl: currentState.url, fileType: 'recording' },
+    const { url, isActive, title } = req.body;
+    if (isActive) {
+      const existing = await prisma.liveStream.findFirst({
+        where: { isLive: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (existing) {
+        await prisma.liveStream.update({
+          where: { id: existing.id },
+          data: { streamUrl: url || existing.streamUrl, title: title || existing.title },
         });
-        if (!existing) {
-          const seriesIdNum = seriesId ? parseInt(seriesId, 10) : null;
-          const rec = await prisma.resource.create({
-            data: {
-              title: `${finalTitle} (${dateStr})`,
-              fileUrl: currentState.url,
-              fileType: 'recording',
-              resourceType: 'VIDEO',
-              category: 'General Lectures',
-              collection: collection || null,
-              seriesId: seriesIdNum,
-              language: 'en',
-              views: 0,
-              downloads: 0,
-            },
-          });
-          savedRecordingUrl = rec.fileUrl;
-
-          // Auto-create Lesson for recordings with a seriesId
-          if (seriesIdNum) {
-            const slugBase = finalTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now();
-            const maxEp = await prisma.lesson.aggregate({ where: { seriesId: seriesIdNum }, _max: { episodeNumber: true } });
-            const episodeNumber = (maxEp._max.episodeNumber ?? 0) + 1;
-            await prisma.lesson.create({
-              data: {
-                title: `${finalTitle} (${dateStr})`,
-                slug: slugBase,
-                audioUrl: '',
-                videoUrl: currentState.url,
-                seriesId: seriesIdNum,
-                episodeNumber,
-                published: true,
-              },
-            });
-          }
-        }
-      } catch (recErr) {
-        console.error('Failed to auto-save recording:', recErr);
+      } else {
+        await prisma.liveStream.create({
+          data: {
+            title: title || 'Live Broadcast',
+            streamUrl: url || '',
+            isLive: true,
+          },
+        });
+      }
+    } else {
+      const active = await prisma.liveStream.findFirst({
+        where: { isLive: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (active) {
+        await prisma.liveStream.update({
+          where: { id: active.id },
+          data: { isLive: false },
+        });
       }
     }
-
-    // Auto-mark scheduled streams as ended when stream ends
-    if (wasActive && !currentState.isActive) {
-      currentState.schedule = currentState.schedule.map(s => {
-        if (s.status === 'live') return { ...s, status: 'ended' as const };
-        return s;
-      });
-      writeState(currentState);
-    }
-
-    // Mark scheduled streams as live when starting
-    if (!wasActive && currentState.isActive) {
-      currentState.schedule = currentState.schedule.map(s => {
-        if (s.status === 'upcoming') {
-          const schedDate = s.scheduledFor || s.startDate;
-          if (schedDate) {
-            const diff = Math.abs(new Date().getTime() - new Date(schedDate).getTime());
-            if (diff < 3600000) return { ...s, status: 'live' as const };
-          }
-        }
-        return s;
-      });
-      writeState(currentState);
-    }
-
-    res.json({ ...currentState, savedRecording: savedRecordingUrl });
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update live stream details' });
+    res.status(500).json({ error: 'Failed to update live stream' });
   }
 });
 

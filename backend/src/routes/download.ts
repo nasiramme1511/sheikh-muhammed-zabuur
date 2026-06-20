@@ -10,6 +10,46 @@ const UPLOAD_DIR = path.join(__dirname, '../../uploads');
 
 router.use(authenticate);
 
+router.get('/', async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const logs = await prisma.usageLog.findMany({
+      where: { userId, action: { in: ['download', 'download_pdf', 'download_audio', 'download_video'] } },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+    const items = await Promise.all(logs.map(async (log) => {
+      let lesson: any = null;
+      let lessonId: number | undefined;
+      let fileUrl: string | undefined;
+      let fileSize: number | undefined;
+      try {
+        const meta = JSON.parse(log.metadata || '{}');
+        lessonId = meta.resourceId || meta.lessonId;
+        if (lessonId) {
+          const resource = await prisma.resource.findUnique({ where: { id: lessonId } });
+          if (resource) {
+            lesson = { title: resource.title, description: resource.description };
+            fileUrl = resource.fileUrl;
+            fileSize = resource.fileSize || undefined;
+          }
+        }
+      } catch { /* metadata not valid JSON */ }
+      return {
+        id: log.id,
+        lessonId,
+        lesson,
+        fileUrl,
+        fileSize,
+        downloadedAt: log.createdAt.toISOString(),
+      };
+    }));
+    res.json(items);
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch downloads' });
+  }
+});
+
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
@@ -96,6 +136,21 @@ router.post('/track/:id', async (req: AuthRequest, res: Response) => {
     res.json({ success: true, url: resource.fileUrl });
   } catch (err) {
     res.status(500).json({ error: 'Failed to track download' });
+  }
+});
+
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const lessonId = Number(req.params.id);
+    if (isNaN(lessonId)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+    await prisma.usageLog.deleteMany({
+      where: { userId: req.userId!, metadata: { contains: `"resourceId":${lessonId}` } },
+    });
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Failed to remove download' });
   }
 });
 

@@ -467,7 +467,7 @@ export default function AdminImport() {
                       <label className="block text-xs text-white/50 mb-1">Category</label>
                       <select value={editCategory} onChange={e => setEditCategory(e.target.value)}
                         className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm">
-                        {['Tafsir','Hadith','Riyadus Salihin','Tajweed','Usul al-Fiqh','Fiqh','Seerah','Aqeedah','Arabic Language','Manhaj','Adab',"Da'wah",'Khutbah','Ramadan Series','Questions & Answers','General Lectures'].map(c => (
+                        {['Tafsir','Hadith','Riyadus Salihin','Bulugh al-Maram','Tajweed','Tajreed','Usul','Fiqh','Seerah','Aqeedah','Arabic Language','Manhaj','Adab',"Da'wah",'Khutbah','Ramadan Series','Questions & Answers','General Lectures'].map(c => (
                           <option key={c} value={c}>{c}</option>
                         ))}
                       </select>

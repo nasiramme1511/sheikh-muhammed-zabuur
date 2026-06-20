@@ -1,22 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MessageSquare, Send, Sparkles, MapPin } from 'lucide-react';
+import { MapPin, Mail, MessageSquare, Send, ExternalLink, Phone, Navigation, Sparkles } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { useSEO } from '../seo/metadata';
+import { siteSettings } from '../lib/api';
+import LocationCard from '../components/LocationCard';
 import toast from 'react-hot-toast';
-
-const contactMethods = [
-  { icon: Mail, labelKey: 'contact.email' as const, value: 'info@sheikhmohammedzabuur.com', href: 'mailto:info@sheikhmohammedzabuur.com' },
-  { icon: MessageSquare, labelKey: 'contact.telegram' as const, value: '@Sheikh_Mohammed_Zabuur', href: 'https://t.me/Sheikh_Mohammed_Zabuur' },
-  { icon: MapPin, labelKey: 'footer.contact_us' as const, valueKey: 'contact.address_value' as const, href: '#' },
-];
+import type { SiteSettings } from '../types';
 
 export default function Contact() {
   const { t } = useTranslation();
   useSEO({ title: 'Contact', description: `Get in touch with ${t('app.title')}.` });
 
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    siteSettings.get().then(res => {
+      if (res.data) setSettings(res.data);
+    }).catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,12 +31,20 @@ export default function Contact() {
     setLoading(false);
   };
 
+  const contactEmail = settings?.contactEmail || 'info@sheikhmohammedzabuur.com';
+  const telegramLink = settings?.telegramLink || 'https://t.me/sheikhmohammedzabuur';
+  const address = settings?.address || t('contact.address_value');
+  const phone = settings?.phone || '';
+  const googleMapEmbed = settings?.googleMapEmbed || '';
+  const googleMapLink = settings?.googleMapLink || 'https://maps.google.com/?q=Ethiopia';
+
   return (
     <div className="pt-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold-500/5 rounded-full blur-[150px]" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-16">
+        {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -42,37 +54,111 @@ export default function Contact() {
             <Sparkles className="w-3.5 h-3.5 text-icc-400" />
             <span className="text-xs font-medium text-icc-300">{t('footer.contact_us')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{t('footer.contact_us')}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Contact Us</h1>
           <p className="text-lg text-white/60 max-w-2xl mx-auto">{t('contact.subtitle')}</p>
         </motion.div>
 
+        {/* Contact Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {contactMethods.map((method, i) => {
-            const Icon = method.icon;
-            return (
-              <motion.a
-                key={i}
-                href={method.href}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-card-premium p-6 text-center block"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-icc-500/10 flex items-center justify-center mx-auto mb-3">
-                  <Icon className="w-6 h-6 text-icc-400" />
-                </div>
-                <h3 className="text-white font-medium mb-1">{t(method.labelKey)}</h3>
-                <p className="text-sm text-white/50">{'valueKey' in method ? t((method as any).valueKey) : method.value}</p>
-              </motion.a>
-            );
-          })}
+          <motion.a
+            href={`mailto:${contactEmail}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0 }}
+            className="glass-card-premium p-6 text-center block"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-icc-500/10 flex items-center justify-center mx-auto mb-3">
+              <Mail className="w-6 h-6 text-icc-400" />
+            </div>
+            <h3 className="text-white font-medium mb-1">{t('contact.email')}</h3>
+            <p className="text-sm text-white/50">{contactEmail}</p>
+          </motion.a>
+
+          <motion.a
+            href={telegramLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="glass-card-premium p-6 text-center block"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-icc-500/10 flex items-center justify-center mx-auto mb-3">
+              <MessageSquare className="w-6 h-6 text-icc-400" />
+            </div>
+            <h3 className="text-white font-medium mb-1">{t('contact.telegram')}</h3>
+            <p className="text-sm text-white/50">@sheikhmohammedzabuur</p>
+          </motion.a>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="glass-card-premium p-6 text-center"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-icc-500/10 flex items-center justify-center mx-auto mb-3">
+              <MapPin className="w-6 h-6 text-icc-400" />
+            </div>
+            <h3 className="text-white font-medium mb-1">{t('footer.contact_us')}</h3>
+            <p className="text-sm text-white/50">{address}</p>
+          </motion.div>
         </div>
 
+        {/* Location Card */}
+        <div className="mb-12">
+          <LocationCard variant="full" />
+        </div>
+
+        {/* Google Maps */}
+        {googleMapEmbed && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mb-12"
+          >
+            <div className="glass-card-premium p-4">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src={googleMapEmbed}
+                  className="absolute inset-0 w-full h-full rounded-xl"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Sheikh Mohammed Zabuur Location"
+                />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3 justify-center">
+                <a
+                  href={googleMapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-icc-500 text-white hover:bg-icc-600 transition-all text-sm font-semibold"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Open in Google Maps
+                </a>
+                <a
+                  href={`${googleMapLink}?directions=1`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 transition-all text-sm font-medium"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Get Directions
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Contact Form */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-2xl mx-auto mb-12"
         >
           <form onSubmit={handleSubmit} className="glass-card-premium p-8 space-y-5">
             <div>
@@ -120,6 +206,60 @@ export default function Contact() {
             </button>
           </form>
         </motion.div>
+
+        {/* Telegram CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="max-w-2xl mx-auto mb-8"
+        >
+          <div className="glass-card-premium p-8 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-icc-500/10 flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-7 h-7 text-icc-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Join us on Telegram</h2>
+            <p className="text-white/60 mb-6 max-w-md mx-auto">
+              Stay updated with the latest lectures, announcements, and Islamic content delivered straight to your device.
+            </p>
+            <a
+              href={telegramLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-icc inline-flex items-center gap-2 px-8 py-3"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Join Telegram Channel
+            </a>
+          </div>
+        </motion.div>
+
+        {/* WhatsApp / Call */}
+        {phone && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href={`tel:${phone}`}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20 transition-all text-sm font-medium"
+            >
+              <Phone className="w-4 h-4" />
+              Call Us
+            </a>
+            <a
+              href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-sm font-medium"
+            >
+              <MessageSquare className="w-4 h-4" />
+              WhatsApp
+            </a>
+          </motion.div>
+        )}
       </div>
     </div>
   );
