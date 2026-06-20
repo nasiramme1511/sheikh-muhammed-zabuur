@@ -289,7 +289,7 @@ console.log('Database Connected');
 
 // Sync Prisma schema to database
 try {
-  execSync('npx prisma db push --skip-generate', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+  execSync('npx prisma db push --skip-generate --accept-data-loss', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
 } catch {
   console.warn('prisma db push failed — continuing anyway');
 }
