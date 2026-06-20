@@ -23,12 +23,9 @@ const TELEGRAM_CHANNELS = [
 ];
 
 const PLATFORM_LINKS = [
+  { label: 'nav.home', href: '/' },
   { label: 'nav.series', href: '/series' },
-  { label: 'nav.audio_lectures', href: '/audio' },
-  { label: 'nav.video_lectures', href: '/videos' },
-  { label: 'nav.pdf_library', href: '/pdfs' },
   { label: 'nav.live_stream', href: '/live' },
-  { label: 'nav.recordings', href: '/recordings' },
   { label: 'nav.about_sheikh', href: '/about' },
   { label: 'nav.contact', href: '/contact' },
 ];
