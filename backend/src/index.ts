@@ -294,7 +294,41 @@ try {
   console.warn('prisma db push failed — continuing anyway');
 }
 
-repairResourceTypes().then(() => syncUploadsToDb()).then(() => {
+async function autoSeed() {
+  const count = await prisma.series.count();
+  if (count > 0) return; // already seeded
+
+  console.log('Auto-seeding production data...');
+
+  const seriesData = [
+    { name: "Tafsir Al-Qur'an", nameAmharic: 'ተፍሲር አል-ቁርአን', nameArabic: 'تفسير القرآن', nameOromic: "Tafsiira Al-Qur'aan", slug: 'tafsir-al-quran', description: "In-depth explanation and interpretation of the Noble Qur'an, covering meanings, context, and rulings.", icon: '📖', color: '#7C3AED', order: 1 },
+    { name: 'Riyadus Salihin', nameAmharic: 'ሪያዱስ ሷሊሒን', nameArabic: 'رياض الصالحين', nameOromic: 'Riyaadus Saalihiin', slug: 'riyadus-salihin', description: "Study of Imam an-Nawawi's renowned collection of hadith on righteous conduct.", icon: '🌿', color: '#059669', order: 2 },
+    { name: 'Bulugh al-Maram', nameAmharic: 'ቡሉግ አል-ማራም', nameArabic: 'بلوغ المرام', nameOromic: 'Bulugh al-Maraam', slug: 'bulugh-al-maram', description: "Comprehensive study of Ibn Hajar al-Asqalani's collection of hadith on Islamic jurisprudence.", icon: '⚖️', color: '#B45309', order: 3 },
+    { name: 'Usul ath-Thalathah', nameAmharic: 'ኡሱል አሥ-ሠላሠህ', nameArabic: 'الأصول الثلاثة', nameOromic: 'Usuul ath-Thalaatha', slug: 'usul-ath-thalathah', description: 'Study of the three fundamental principles of Islam based on the treatise by Muhammad ibn Abd al-Wahhab.', icon: '🕌', color: '#1E40AF', order: 4 },
+    { name: 'Kitab at-Tawheed', nameAmharic: 'ኪታብ አት-ተውሒድ', nameArabic: 'كتاب التوحيد', nameOromic: 'Kitaab at-Tawhiid', slug: 'kitab-at-tawheed', description: 'Study of the book of monotheism, explaining the concept of Tawheed and what contradicts it.', icon: '🤲', color: '#DC2626', order: 5 },
+    { name: 'Tajreed', nameAmharic: 'ታጅሪድ', nameArabic: 'تجريد', nameOromic: 'Tajriid', slug: 'tajreed', description: 'Refined selected hadith for deeper understanding of Islamic texts.', icon: '🎙️', color: '#4F46E5', order: 6 },
+    { name: 'Al-Bayquniyyah', nameAmharic: 'አል-በይቁኒያህ', nameArabic: 'البيقونية', nameOromic: 'Al-Bayquniyyah', slug: 'al-bayquniyyah', description: 'Study of the classical poem on hadith terminology and classification.', icon: '📜', color: '#0D9488', order: 7 },
+    { name: "Al-Arba'in an-Nawawiyyah", nameAmharic: 'አል-አርበዒን አን-ነወውይህ', nameArabic: 'الأربعون النووية', nameOromic: "Al-Arba'iin an-Nawawiyyah", slug: 'al-arbain-an-nawawiyyah', description: "Study of Imam an-Nawawi's collection of 40 essential hadith covering the fundamentals of Islam.", icon: '📗', color: '#DB2777', order: 8 },
+  ];
+  for (const s of seriesData) {
+    await prisma.series.upsert({ where: { slug: s.slug }, update: {}, create: s });
+  }
+
+  const categories = [
+    { name: 'Tafsir', nameAmharic: 'ተፍሲር', nameArabic: 'تفسير', nameOromic: 'Tafsiira', slug: 'tafsir', description: 'Quranic exegesis', icon: '📖', color: '#7C3AED', order: 1 },
+    { name: 'Usul', nameAmharic: 'ኡሱል', nameArabic: 'أصول', nameOromic: 'Usuulii', slug: 'usul', description: 'Principles of Islamic jurisprudence', icon: '⚖️', color: '#059669', order: 2 },
+    { name: 'Bulugh', nameAmharic: 'ቡሉግ', nameArabic: 'بلوغ', nameOromic: 'Bulughii', slug: 'bulugh', description: 'Hadith compilation on rulings', icon: '📚', color: '#B45309', order: 3 },
+    { name: 'Tajreed', nameAmharic: 'ታጅሪድ', nameArabic: 'تجريد', nameOromic: 'Tajriidii', slug: 'tajreed', description: 'Refined selected hadith', icon: '🎙️', color: '#4F46E5', order: 4 },
+    { name: 'Riyad', nameAmharic: 'ሪያድ', nameArabic: 'رياض', nameOromic: 'Riyaadii', slug: 'riyad', description: 'Gardens of the righteous', icon: '🌿', color: '#65A30D', order: 5 },
+  ];
+  for (const cat of categories) {
+    await prisma.category.upsert({ where: { slug: cat.slug }, update: {}, create: cat });
+  }
+
+  console.log('Auto-seed complete.');
+}
+
+autoSeed().then(() => repairResourceTypes()).then(() => syncUploadsToDb()).then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
