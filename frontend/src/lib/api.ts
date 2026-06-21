@@ -99,7 +99,6 @@ export const admin = {
     onUploadProgress: onProgress ? (e) => { if (e.total) onProgress(Math.round((e.loaded / e.total) * 100)); } : undefined,
   }),
   uploadBulk: (formData: FormData) => api.post('/admin/upload/bulk', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 600000,
   }),
   uploadFromUrl: (data: { url: string; duplicateAction?: string }) => api.post('/admin/upload/from-url', data, { timeout: 600000 }),
