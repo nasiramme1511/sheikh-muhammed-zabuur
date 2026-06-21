@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#064E4A"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="40%" stop-color="#D4A017"/>
+      <stop offset="100%" stop-color="#B8941E"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="230"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" fill="#111827"/>
+  <circle cx="256" cy="256" r="245" fill="url(#bgGrad)"/>
+  <circle cx="256" cy="256" r="240" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.4"/>
+  <circle cx="256" cy="256" r="230" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.2"/>
+  <g filter="url(#shadow)">
+    <path d="M 148 215 Q 260 188, 372 215 C 395 220, 400 238, 388 258 Q 365 308, 320 375 Q 298 408, 268 422"
+          fill="none" stroke="url(#gold)" stroke-width="36" stroke-linecap="round"/>
+    <path d="M 268 422 Q 245 452, 218 462"
+          fill="none" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" opacity="0.35"/>
+    <path d="M 268 422 Q 296 455, 328 458"
+          fill="none" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" opacity="0.35"/>
+    <polygon points="225,82 265,118 225,154 185,118" fill="url(#gold)"/>
+    <polygon points="225,97 250,118 225,139 200,118" fill="#064E4A"/>
+  </g>
+</svg>

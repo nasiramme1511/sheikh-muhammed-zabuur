@@ -3,12 +3,15 @@ const path = require('path');
 const fs = require('fs');
 
 const publicDir = path.resolve(__dirname, '../public');
-const svgPath = path.join(publicDir, 'favicon.svg');
-const svgContent = fs.readFileSync(svgPath, 'utf-8');
 
 const sizes = [48, 96, 180, 192, 512];
 
 async function generate() {
+  // Generate icons from favicon SVG
+  const svgPath = path.join(publicDir, 'favicon.svg');
+  if (!fs.existsSync(svgPath)) throw new Error('favicon.svg not found');
+  const svgContent = fs.readFileSync(svgPath, 'utf-8');
+
   for (const size of sizes) {
     await sharp(Buffer.from(svgContent))
       .resize(size, size)
@@ -23,6 +26,7 @@ async function generate() {
     .toFile(path.join(publicDir, 'apple-touch-icon.png'));
   console.log('Generated apple-touch-icon.png');
 
+  // Generate OG image PNG
   const ogSvgPath = path.join(publicDir, 'og-image.svg');
   if (fs.existsSync(ogSvgPath)) {
     const ogSvg = fs.readFileSync(ogSvgPath, 'utf-8');
@@ -33,7 +37,7 @@ async function generate() {
     console.log('Generated og-image.png');
   }
 
-  console.log('Done!');
+  console.log('All icons generated successfully!');
 }
 
 generate().catch(err => {

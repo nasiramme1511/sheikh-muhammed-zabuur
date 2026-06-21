@@ -1703,6 +1703,135 @@ router.post('/resources/bulk-publish', async (req: AuthRequest, res: Response) =
   }
 });
 
+// ── Series Admin CRUD ─────────────────────────────────────────
+router.get('/series', async (_req: AuthRequest, res: Response) => {
+  try {
+    const series = await prisma.series.findMany({
+      orderBy: { order: 'asc' },
+      include: {
+        _count: { select: { lessons: true } },
+      },
+    });
+    const result = series.map(s => ({
+      ...s,
+      totalLessons: s._count.lessons,
+      _count: undefined,
+    }));
+    res.json(result);
+  } catch (err) {
+    console.error('Failed to fetch series:', err);
+    res.status(500).json({ error: 'Failed to fetch series' });
+  }
+});
+
+router.get('/series/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid series ID' });
+
+    const series = await prisma.series.findUnique({
+      where: { id },
+      include: {
+        _count: { select: { lessons: true } },
+      },
+    });
+    if (!series) return res.status(404).json({ error: 'Series not found' });
+
+    res.json({ ...series, totalLessons: series._count.lessons, _count: undefined });
+  } catch (err) {
+    console.error('Failed to fetch series:', err);
+    res.status(500).json({ error: 'Failed to fetch series' });
+  }
+});
+
+router.post('/series', async (req: AuthRequest, res: Response) => {
+  try {
+    const { name, nameAmharic, nameArabic, nameOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, image, icon, color, order } = req.body;
+    if (!name || !slug) return res.status(400).json({ error: 'Name and slug are required' });
+
+    const existing = await prisma.series.findUnique({ where: { slug } });
+    if (existing) return res.status(409).json({ error: 'A series with this slug already exists' });
+
+    const series = await prisma.series.create({
+      data: {
+        name, nameAmharic, nameArabic, nameOromic,
+        slug,
+        description, descriptionAmharic, descriptionArabic, descriptionOromic,
+        image, icon, color,
+        order: order || 0,
+      },
+    });
+    res.status(201).json(series);
+  } catch (err) {
+    console.error('Failed to create series:', err);
+    res.status(500).json({ error: 'Failed to create series' });
+  }
+});
+
+router.put('/series/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid series ID' });
+
+    const { name, nameAmharic, nameArabic, nameOromic, slug, description, descriptionAmharic, descriptionArabic, descriptionOromic, image, icon, color, order } = req.body;
+
+    const existing = await prisma.series.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'Series not found' });
+
+    if (slug && slug !== existing.slug) {
+      const slugExists = await prisma.series.findUnique({ where: { slug } });
+      if (slugExists) return res.status(409).json({ error: 'A series with this slug already exists' });
+    }
+
+    const series = await prisma.series.update({
+      where: { id },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(nameAmharic !== undefined && { nameAmharic }),
+        ...(nameArabic !== undefined && { nameArabic }),
+        ...(nameOromic !== undefined && { nameOromic }),
+        ...(slug !== undefined && { slug }),
+        ...(description !== undefined && { description }),
+        ...(descriptionAmharic !== undefined && { descriptionAmharic }),
+        ...(descriptionArabic !== undefined && { descriptionArabic }),
+        ...(descriptionOromic !== undefined && { descriptionOromic }),
+        ...(image !== undefined && { image }),
+        ...(icon !== undefined && { icon }),
+        ...(color !== undefined && { color }),
+        ...(order !== undefined && { order }),
+      },
+    });
+    res.json(series);
+  } catch (err) {
+    console.error('Failed to update series:', err);
+    res.status(500).json({ error: 'Failed to update series' });
+  }
+});
+
+router.delete('/series/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid series ID' });
+
+    const existing = await prisma.series.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'Series not found' });
+
+    await prisma.$transaction(async (tx) => {
+      await tx.lesson.updateMany({ where: { seriesId: id }, data: { seriesId: null } });
+      await tx.audioLesson.updateMany({ where: { seriesId: id }, data: { seriesId: null } });
+      await tx.videoLesson.updateMany({ where: { seriesId: id }, data: { seriesId: null } });
+      await tx.resource.updateMany({ where: { seriesId: id }, data: { seriesId: null } });
+      await tx.bookmark.deleteMany({ where: { seriesId: id } });
+      await tx.series.delete({ where: { id } });
+    });
+
+    res.json({ message: 'Series deleted successfully' });
+  } catch (err) {
+    console.error('Failed to delete series:', err);
+    res.status(500).json({ error: 'Failed to delete series' });
+  }
+});
+
 // ── Helper functions ──────────────────────────────────────────
 function deriveCollectionFromName(filename: string): string | null {
   const n = path.basename(filename, path.extname(filename)).toLowerCase().replace(/[-_]/g, ' ');

@@ -6,7 +6,7 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "any",
-  "background_color": "#0B1220",
+  "background_color": "#064E4A",
   "theme_color": "#0F766E",
   "categories": ["education", "religion", "islam", "books", "reference"],
   "lang": "en",
@@ -15,7 +15,12 @@
   "id": "/",
   "prefer_related_applications": false,
   "icons": [
-    { "src": "/favicon.svg", "sizes": "48x48 96x96 128x128 192x192 256x256 512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "/icon-48.png", "sizes": "48x48", "type": "image/png" },
+    { "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "48x48 96x96 128x128 192x192 256x256 512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-maskable.svg", "sizes": "48x48 96x96 128x128 192x192 256x256 512x512", "type": "image/svg+xml", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
@@ -23,35 +28,35 @@
       "short_name": "Audio",
       "description": "Browse audio lectures by Sheikh Mohammed Zabuur",
       "url": "/audio",
-      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Video Lectures",
       "short_name": "Videos",
       "description": "Watch video lectures and recorded lessons",
       "url": "/videos",
-      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Study Series",
       "short_name": "Series",
       "description": "Explore structured Islamic study series",
       "url": "/series",
-      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Live Stream",
       "short_name": "Live",
       "description": "Join live stream broadcast",
       "url": "/live",
-      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "My Downloads",
       "short_name": "Downloads",
       "description": "Access your offline downloads",
       "url": "/my-downloads",
-      "icons": [{ "src": "/favicon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     }
   ],
   "screenshots": [],

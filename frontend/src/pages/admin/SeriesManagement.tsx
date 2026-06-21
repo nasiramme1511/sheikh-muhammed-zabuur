@@ -48,10 +48,10 @@ export default function SeriesManagement() {
   const handleSave = async () => {
     try {
       if (editing) {
-        await adminApi.lessons.update(editing.id, form);
+        await adminApi.series.update(editing.id, form);
         toast.success(t('admin.series_updated'));
       } else {
-        await adminApi.lessons.create(form);
+        await adminApi.series.create(form);
         toast.success(t('admin.series_created'));
       }
       setShowModal(false);
@@ -64,7 +64,7 @@ export default function SeriesManagement() {
   const handleDelete = async (id: number) => {
     if (!confirm(t('admin.confirm_delete'))) return;
     try {
-      await adminApi.lessons.delete(id);
+      await adminApi.series.delete(id);
       toast.success(t('admin.series_deleted'));
       fetchData();
     } catch {

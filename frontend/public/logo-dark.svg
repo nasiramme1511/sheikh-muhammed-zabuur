@@ -10,11 +10,8 @@
       <stop offset="100%" stop-color="#064E4A"/>
     </linearGradient>
     <filter id="shadow">
-      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.3"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.4"/>
     </filter>
-    <clipPath id="badgeClip">
-      <circle cx="90" cy="90" r="56"/>
-    </clipPath>
     <style>
       <![CDATA[
       @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@700&family=Poppins:wght@400;600;700;800&display=swap');
@@ -27,15 +24,14 @@
   <g filter="url(#shadow)">
     <circle cx="90" cy="90" r="62" fill="url(#bgBadge)" stroke="url(#gold)" stroke-width="2"/>
     <circle cx="90" cy="90" r="54" fill="none" stroke="url(#gold)" stroke-width="0.5" opacity="0.3"/>
-    <circle cx="90" cy="90" r="58" fill="url(#gold)"/>
-    <g clip-path="url(#badgeClip)">
-      <image href="images/sheikh-zabuur.jpg" x="34" y="34" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-    </g>
-    <g transform="translate(130, 122)">
-      <circle cx="0" cy="0" r="18" fill="url(#bgBadge)" stroke="url(#gold)" stroke-width="1.5"/>
-      <path d="M -7 -8 Q -1 -9, 5 -8 C 7 -7, 7 -4, 6 -1 Q 4 4, 0 9" fill="none" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"/>
-      <polygon points="0,-15 5,-9 0,-3 -5,-9" fill="url(#gold)"/>
-    </g>
+    <path d="M 48 92 Q 90 80, 128 92 C 138 94, 140 102, 135 112 Q 125 132, 104 142 Q 96 146, 88 148"
+          fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 88 148 Q 78 162, 66 166"
+          fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+    <path d="M 88 148 Q 98 162, 112 164"
+          fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+    <polygon points="76,58 91,71 76,84 61,71" fill="url(#gold)"/>
+    <polygon points="76,63 86,71 76,79 66,71" fill="#064E4A"/>
   </g>
   <text x="180" y="62" class="ar" font-size="22" fill="url(#gold)" dominant-baseline="central">الشيخ محمد زبور</text>
   <text x="180" y="102" class="en-title" font-size="30" fill="#FFFFFF" dominant-baseline="central" letter-spacing="-0.5">Sheikh Mohammed Zabuur</text>

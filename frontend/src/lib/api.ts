@@ -173,6 +173,13 @@ export const admin = {
     update: (id: number, data: any) => api.put(`/admin/books/${id}`, data),
     delete: (id: number) => api.delete(`/admin/books/${id}`),
   },
+  series: {
+    getAll: () => api.get('/admin/series'),
+    getById: (id: number) => api.get(`/admin/series/${id}`),
+    create: (data: any) => api.post('/admin/series', data),
+    update: (id: number, data: any) => api.put(`/admin/series/${id}`, data),
+    delete: (id: number) => api.delete(`/admin/series/${id}`),
+  },
 };
 
 export const telegram = {
